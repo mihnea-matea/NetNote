@@ -1,8 +1,8 @@
 | Key | Value |
 | --- | --- |
 | Date : | 20.11.2024 |
-| Time : | 14:00 |
-| Location : | Flux Hall C |
+| Time : | 14:45 |
+| Location : | Drebbelweg (DW) IZ1 |
 | Chair | Mihnea Matea |
 | Minute Taker | Thijs van Deventer |
 | Attendees : | Madhav Tiwari, Bianca Radoi, Stefania Faur |
