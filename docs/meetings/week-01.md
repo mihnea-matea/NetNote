@@ -6,6 +6,7 @@
 | Chair | Mihnea Matea |
 | Minute Taker | Thijs van Deventer |
 | Attendees : | Madhav Tiwari, Bianca Radoi, Stefania Faur |
+
 Agenda Items :
 - Opening by chair (1 min )
 - Check - in : How is everyone doing ? (3 min )
