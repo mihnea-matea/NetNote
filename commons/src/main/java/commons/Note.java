@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -14,20 +15,23 @@ public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    private long id;
 
-    public String title;
-    public String content;
-    public LocalDateTime creationTime;
+    @Column(nullable = false)
+    @NotNull
+    private String title;
+
+    private String content;
+    private LocalDateTime creationTime;
 
     private Note() {
         // for object mappers
     }
 
-    public Note(String title, String content, LocalDateTime creationTime) {
+    public Note(String title, String content) {
         this.title = title;
         this.content = content;
-        this.creationTime = creationTime;
+        this.creationTime = LocalDateTime.now();
     }
 
     @Override
@@ -43,5 +47,29 @@ public class Note {
     @Override
     public String toString(){
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+    }
+
+    public long getId(){
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public LocalDateTime getCreationTime() {
+        return creationTime;
     }
 }
