@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="542.0" prefWidth="830.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <SplitPane fx:id="splitPane" dividerPositions="0.1872686898593634" layoutX="82.0" layoutY="26.0" orientation="VERTICAL" prefHeight="392.0" prefWidth="604.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" style="-fx-background-color: #B23A48;" SplitPane.resizableWithParent="false">
+               <children>
+                  <HBox fillHeight="false" layoutX="108.0" layoutY="63.0" prefHeight="0.0" prefWidth="587.0" AnchorPane.leftAnchor="108.0" AnchorPane.rightAnchor="133.5999999999999">
+                     <children>
+                        <TextField fx:id="searchField" prefHeight="26.0" prefWidth="518.0" promptText="Enter the word you are looking for" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="84.0" style="-fx-background-color: #fed0bb;" text="Search" textFill="#b23a48" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="Kristen ITC" size="12.0" />
+                           </font></Button>
+                     </children>
+                  </HBox>
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="340.0" layoutY="4.0" prefHeight="58.0" prefWidth="173.0" text="NetNote" textAlignment="CENTER" textFill="#fed0bb" AnchorPane.leftAnchor="340.0" AnchorPane.rightAnchor="315.19999999999993" AnchorPane.topAnchor="4.0">
+                     <font>
+                        <Font name="Kristen ITC" size="36.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" SplitPane.resizableWithParent="false">
+               <children>
+                  <SplitPane dividerPositions="0.18675099866844205" layoutY="26.0" prefHeight="329.6" prefWidth="602.4" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #8C2F39;" SplitPane.resizableWithParent="false">
+                           <children>
+                              <ListView prefHeight="410.0" prefWidth="151.0" AnchorPane.bottomAnchor="44.80000000000001" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Button layoutX="-3.0" layoutY="427.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="42.0" style="-fx-background-color: #fed0bb; -fx-font-family: Elephant; -fx-font-size: 20;" text="-" textFill="#b23a48" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
+                              <Button alignment="CENTER" layoutX="54.0" layoutY="412.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="43.0" prefWidth="42.0" style="-fx-background-color: #fed0bb; -fx-font-family: Elephant;" text="Add a note" textFill="#b23a48" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="54.0" AnchorPane.rightAnchor="52.79999999999998">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font></Button>
+                              <Button layoutX="108.0" layoutY="412.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="42.0" style="-fx-background-color: #fed0bb; -fx-font-family: Elephant; -fx-font-size: 17;" text="&lt;-" textFill="#b23a48" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
+                           <children>
+                              <SplitPane dividerPositions="0.6895933014354066" prefHeight="328.0" prefWidth="485.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <items>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
+                                       <children>
+                                          <TextArea layoutY="44.0" prefHeight="390.0" prefWidth="458.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0" />
+                                          <Label prefHeight="43.0" prefWidth="458.0" text="Note title">
+                                             <font>
+                                                <Font name="Kristen ITC" size="20.0" />
+                                             </font>
+                                          </Label>
+                                       </children></AnchorPane>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="434.0" prefWidth="186.0" style="-fx-background-color: #fed0bb;" SplitPane.resizableWithParent="false" />
+                                </items>
+                              </SplitPane>
+                           </children>
+                        </AnchorPane>
+                    </items>
+                  </SplitPane>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>
