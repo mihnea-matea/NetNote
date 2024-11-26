@@ -16,7 +16,7 @@ public class NoteTest {
     @Test
     public void notEqualsTest() throws InterruptedException {
         Note n = new Note("Test Title", "Same content");
-        Thread.sleep(1); /// make sure that they have different creation times
+        Thread.sleep(1); /// make sure that the notes have different creation times
         Note n1 = new Note("Test Title", "Same content");
         System.out.println(n.getCreationTime());
         System.out.println(n1.getCreationTime());
@@ -24,15 +24,9 @@ public class NoteTest {
     }
 
     @Test
-    public void equalsHashcodeTest(){
+    public void notEqualsHashcodeTest() throws InterruptedException {
         Note n = new Note("Test Title", "Same content");
-        Note n1 = new Note("Test Title", "Same content");
-        assertEquals(n.hashCode(), n1.hashCode());
-    }
-
-    @Test
-    public void notEqualsHashcodeTest(){
-        Note n = new Note("Test Title", "Same content");
+        Thread.sleep(1); ///Make sure that the notes have different creation times
         Note n1 = new Note("Test Title", "Other content");
         assertNotEquals(n.hashCode(), n1.hashCode());
     }
