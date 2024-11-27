@@ -33,7 +33,7 @@ public class Note {
     private String content;
     private LocalDateTime creationTime;
 
-    private Note() {
+    public Note() {
         // for object mappers
     }
 

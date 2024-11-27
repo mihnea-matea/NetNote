@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import commons.Note;
 import org.glassfish.jersey.client.ClientConfig;
 
 import commons.Quote;
@@ -51,7 +52,8 @@ public class ServerUtils {
 		return ClientBuilder.newClient(new ClientConfig()) //
 				.target(SERVER).path("api/quotes") //
 				.request(APPLICATION_JSON) //
-				.get(new GenericType<List<Quote>>() {});
+				.get(new GenericType<List<Quote>>() {
+				});
 	}
 
 	public Quote addQuote(Quote quote) {
@@ -73,5 +75,29 @@ public class ServerUtils {
 			}
 		}
 		return true;
+	}
+
+	// NOTES SECTION -------------------------------------------------------
+
+	/**
+	 * get all the notes that are saved at that path
+	 * @return the nites
+	 */
+	public List<Note> getNotes() {
+		return ClientBuilder.newClient(new ClientConfig()) //
+				.target(SERVER).path("api/notes") //
+				.request(APPLICATION_JSON) //
+				.get(new GenericType<List<Note>>() {});
+	}
+
+	/**
+	 * add a new note to the server
+	 * @param note
+     */
+	public Note addNote(Note note) {
+		return ClientBuilder.newClient(new ClientConfig()) //
+				.target(SERVER).path("api/notes") //
+				.request(APPLICATION_JSON) //
+				.post(Entity.entity(note, APPLICATION_JSON), Note.class);
 	}
 }
