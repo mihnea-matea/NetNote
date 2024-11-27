@@ -22,7 +22,6 @@ public class MainClient extends Application {
         stage.setTitle("NetNote");
         stage.setScene(scene);
         stage.show();
-
     }
 
     public static URL getLocation(String path){
