@@ -18,8 +18,6 @@ public class NoteTest {
         Note n = new Note("Test Title", "Same content");
         Thread.sleep(1); /// make sure that the notes have different creation times
         Note n1 = new Note("Test Title", "Same content");
-        System.out.println(n.getCreationTime());
-        System.out.println(n1.getCreationTime());
         assertNotEquals(n, n1);
     }
 
@@ -31,4 +29,17 @@ public class NoteTest {
         assertNotEquals(n.hashCode(), n1.hashCode());
     }
 
+    @Test
+    public void setTitleTest() {
+        Note n = new Note("Title 1", "Same content");
+        n.setTitle("Title 2");
+        assertEquals(n.getTitle(), "Title 2");
+    }
+
+    @Test
+    public void setContentTest() {
+        Note n = new Note("Test Title", "Some content");
+        n.setContent("Other content");
+        assertEquals(n.getContent(), "Other content");
+    }
 }
