@@ -31,7 +31,7 @@ public class Note {
     private String title;
 
     private String content;
-    private LocalDateTime creationTime;
+    private final LocalDateTime creationTime = LocalDateTime.now();
 
     public Note() {
         // for object mappers
@@ -45,7 +45,6 @@ public class Note {
     public Note(String title, String content) {
         this.title = title;
         this.content = content;
-        this.creationTime = LocalDateTime.now();
     }
 
     /**
