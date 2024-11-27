@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="542.0" prefWidth="830.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="542.0" prefWidth="830.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.MarkdownCtrl">
    <children>
       <SplitPane fx:id="splitPane" dividerPositions="0.1872686898593634" layoutX="82.0" layoutY="26.0" orientation="VERTICAL" prefHeight="392.0" prefWidth="604.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -40,7 +40,7 @@
                            <children>
                               <ListView prefHeight="410.0" prefWidth="151.0" AnchorPane.bottomAnchor="44.80000000000001" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                               <Button layoutX="-3.0" layoutY="427.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="42.0" style="-fx-background-color: #fed0bb; -fx-font-family: Elephant; -fx-font-size: 20;" text="-" textFill="#b23a48" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
-                              <Button alignment="CENTER" layoutX="54.0" layoutY="412.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="43.0" prefWidth="42.0" style="-fx-background-color: #fed0bb; -fx-font-family: Elephant;" text="Add a note" textFill="#b23a48" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="54.0" AnchorPane.rightAnchor="52.79999999999998">
+                              <Button alignment="CENTER" layoutX="54.0" layoutY="412.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="43.0" prefWidth="42.0" style="-fx-background-color: #fed0bb; -fx-font-family: Elephant;" text="Add a note" textFill="#b23a48" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="54.0" AnchorPane.rightAnchor="52.79999999999998">
                                  <font>
                                     <Font size="20.0" />
                                  </font></Button>
@@ -53,14 +53,21 @@
                                 <items>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
                                        <children>
-                                          <TextArea layoutY="44.0" prefHeight="390.0" prefWidth="458.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0" />
-                                          <Label prefHeight="43.0" prefWidth="458.0" text="Note title">
+                                          <TextArea fx:id="markdownTitle" prefHeight="43.0" prefWidth="458.0" promptText="Note title" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
-                                                <Font name="Kristen ITC" size="20.0" />
+                                                <Font name="Calibri" size="12.0" />
                                              </font>
-                                          </Label>
+                                          </TextArea>
+                                          <TextArea fx:id="markdownText" layoutY="44.0" prefHeight="390.0" prefWidth="458.0" promptText="content" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0">
+                                             <font>
+                                                <Font name="Calibri" size="14.0" />
+                                             </font></TextArea>
                                        </children></AnchorPane>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="434.0" prefWidth="186.0" style="-fx-background-color: #fed0bb;" SplitPane.resizableWithParent="false" />
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="434.0" prefWidth="186.0" style="-fx-background-color: #fed0bb;" SplitPane.resizableWithParent="false">
+                                       <children>
+                                          <Label fx:id="htmlText" layoutY="44.0" prefHeight="390.0" prefWidth="205.0" text="Label" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0" />
+                                          <Label fx:id="htmlTitle" prefHeight="43.0" prefWidth="205.0" text="Label" AnchorPane.bottomAnchor="390.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children></AnchorPane>
                                 </items>
                               </SplitPane>
                            </children>
