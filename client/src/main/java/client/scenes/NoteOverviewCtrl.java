@@ -2,10 +2,9 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.Note;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.ListView;
 
 import java.util.List;
 
@@ -14,55 +13,51 @@ public class NoteOverviewCtrl {
     private final ServerUtils server;
 
     @FXML
-    private TableView<Note> noteTable;
-
-    @FXML
-    private TableColumn<Note, String> titleColumn;
-
-    @FXML
-    private TableColumn<Note, String> contentColumn;
+    private ListView<String> noteList;
 
     public NoteOverviewCtrl(ServerUtils server) {
         this.server = server;
     }
 
     /**
-     * setting up the table with all the entries
+     * Setting up the ListView with all the entries.
      */
     @FXML
     public void initialize() {
-        titleColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getTitle()));
-        contentColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getContent()));
-
         loadNotes();
     }
 
     /**
-     * get the notes from the table
+     * Get the notes from the server and display them in the ListView.
      */
     public void loadNotes() {
         List<Note> notes = server.getNotes();
         if (notes != null) {
-            noteTable.getItems().setAll(notes);
+            // Convert notes to a list of strings
+            var noteStrings = FXCollections.observableArrayList(
+                    notes.stream()
+                            .map(note -> note.getTitle())
+                            .toList()
+            );
+            noteList.setItems(noteStrings);
         } else {
             System.out.println("No notes available or server error.");
         }
     }
 
     /**
-     * add a new note to the table
+     * Add a new note to the ListView and server.
      */
     @FXML
     public void addNote() {
-        // placeholder because idk
         Note newNote = new Note();
-        newNote.setTitle("my note");
-        newNote.setContent("some content idk");
+        newNote.setTitle("My Note");
+        newNote.setContent("Some content idk");
         Note addedNote = server.addNote(newNote);
-        noteTable.getItems().add(addedNote);
+        if (addedNote != null) {
+            noteList.getItems().add(addedNote.getTitle());
+        }
     }
+//this is temporary and it should be replaced by a real add once we have the logic for it
 }
-// This probably needs another fxml file for the table view and adding the notes !!!!!!!!!!!!!!!!!
 
