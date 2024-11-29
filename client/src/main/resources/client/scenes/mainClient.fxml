@@ -67,7 +67,7 @@
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="434.0" prefWidth="186.0" style="-fx-background-color: #fed0bb;" SplitPane.resizableWithParent="false">
                                        <children>
                                           <WebView fx:id="htmlText" layoutX="2.0" layoutY="44.0" opacity="0.57" prefHeight="390.0" prefWidth="205.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="43.200000000000045" />
-                                          <WebView fx:id="htmlTitle" layoutX="2.0" layoutY="-7.0" opacity="0.15" prefHeight="50.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <WebView fx:id="htmlTitle" layoutX="2.0" layoutY="-7.0" opacity="0.35" prefHeight="50.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children></AnchorPane>
                                 </items>
                               </SplitPane>

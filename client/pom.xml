@@ -24,6 +24,24 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark-ext-gfm-tables</artifactId>
+			<version>0.24.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.nibor.autolink</groupId>
+			<artifactId>autolink</artifactId>
+			<version>0.11.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark-ext-image-attributes</artifactId>
+			<version>0.24.0</version>
+		</dependency>
+
+		<dependency>
 			<groupId>csep</groupId>
 			<artifactId>commons</artifactId>
 			<version>0.0.1-SNAPSHOT</version>

@@ -7,9 +7,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebView;
+import org.commonmark.Extension;
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.commonmark.ext.gfm.tables.TablesExtension;
+import java.util.List;
 public class MarkdownCtrl {
     @FXML
     private TextArea markdownTitle;
@@ -23,8 +26,9 @@ public class MarkdownCtrl {
     @FXML
     private TextArea markdownText;
 
-    private final Parser parserM = Parser.builder().build();
-    private final HtmlRenderer rendererH = HtmlRenderer.builder().build();
+    private final List<Extension> extensions = List.of(TablesExtension.create());
+    private final Parser parserM = Parser.builder().extensions(extensions).build();
+    private final HtmlRenderer rendererH = HtmlRenderer.builder().extensions(extensions).build();
 
     public MarkdownCtrl(){}
 
@@ -48,14 +52,34 @@ public class MarkdownCtrl {
             markdown.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observableValue, String string, String t1) {
-                    if(t1==null|| html ==null){
+                    if(t1==null|| html ==null) {
                         return;
                     }
                     Node doc= parserM.parse(t1);
-                    String htmlString= rendererH.render(doc);
+                    // loading in table format with the help of ChatGPT
+                    String htmlString= """
+                        <html>
+                        <head>
+                            <style>
+                                table {
+                                    border-collapse: collapse;
+                                }
+                                th, td {
+                                    border: 1px solid black;
+                                    padding: 8px;
+                                    text-align: left;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                        """ + rendererH.render(doc) + """
+                        </body>
+                        </html>
+                        """;
                     html.getEngine().loadContent(htmlString);
                 }
             });
+
         }
     }
     @FXML
