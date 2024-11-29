@@ -82,7 +82,7 @@ public class MarkdownCtrl {
 
         }
     }
-    
+
     @FXML
     public void generateMarkdownTitle(){
         Node document = new Document();
