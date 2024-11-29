@@ -38,10 +38,10 @@ public class MarkdownCtrl {
                 }
             }
         });
-        generateMarkdownTitle();
-        generateMarkdownText();
         renderMarkdownToHTML(markdownTitle, htmlTitle);
         renderMarkdownToHTML(markdownText, htmlText);
+        generateMarkdownTitle();
+        generateMarkdownText();
     }
     private void renderMarkdownToHTML(TextArea markdown, WebView html) {
         if(markdown !=null){
