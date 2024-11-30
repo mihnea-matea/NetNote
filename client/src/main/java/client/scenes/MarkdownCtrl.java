@@ -1,8 +1,13 @@
 package client.scenes;
+import commons.Note;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -14,6 +19,12 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 import java.util.List;
 public class MarkdownCtrl {
+
+    private ObservableList<Note> notes = FXCollections.observableArrayList();
+
+    @FXML
+    private ListView<Note> noteNameList;
+
     @FXML
     private TextArea markdownTitle;
 
@@ -46,6 +57,26 @@ public class MarkdownCtrl {
         renderMarkdownToHTML(markdownText, htmlText);
         generateMarkdownTitle();
         generateMarkdownText();
+        noteNameList.setItems(notes);
+
+        noteNameList.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Note note, boolean empty) {
+                super.updateItem(note, empty);
+                if(empty || note == null || note.getTitle() == null){
+                    setText(null);
+                } else {
+                    setText(note.getTitle());
+                }
+            }
+        });
+
+        noteNameList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue != null){
+                displayNoteContent(newValue);
+            }
+        });
+
     }
     private void renderMarkdownToHTML(TextArea markdown, WebView html) {
         if(markdown !=null){
@@ -118,5 +149,33 @@ public class MarkdownCtrl {
         String text= markdownText.getText();
         markdownText.setText(text+"\n");
         markdownText.positionCaret(markdownText.getLength());
+    }
+
+    /**
+     * Sets the main window to show the contents of the selected note
+     * @param note - Selected note
+     */
+    private void displayNoteContent(Note note){
+        markdownText.setText(note.getContent());
+    }
+
+    /**
+     * Sets the main window to show the title of the selected note
+     * @param note - Selected note
+     */
+    private void displayNoteTitle(Note note){
+        markdownTitle.setText(note.getTitle());
+    }
+
+    /**
+     * Gets selected note and verifies it exists before displaying it
+     */
+    @FXML
+    private void handleNoteSelection() {
+        Note note = noteNameList.getSelectionModel().getSelectedItem();
+        if(note != null){
+            displayNoteTitle(note);
+            displayNoteContent(note);
+        }
     }
 }
