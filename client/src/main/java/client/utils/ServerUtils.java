@@ -63,6 +63,8 @@ public class ServerUtils {
 				.post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
 	}
 
+
+//this is from the quote setup but i think we should keep it
 	public boolean isServerAvailable() {
 		try {
 			ClientBuilder.newClient(new ClientConfig()) //
@@ -78,26 +80,62 @@ public class ServerUtils {
 	}
 
 	// NOTES SECTION -------------------------------------------------------
-
 	/**
-	 * get all the notes that are saved at that path
-	 * @return the nites
+	 * Get all notes saved on the server
+	 * @return A list of all notes
 	 */
 	public List<Note> getNotes() {
-		return ClientBuilder.newClient(new ClientConfig()) //
-				.target(SERVER).path("api/notes") //
-				.request(APPLICATION_JSON) //
+		return ClientBuilder.newClient(new ClientConfig())
+				.target(SERVER).path("api/notes")
+				.request(APPLICATION_JSON)
 				.get(new GenericType<List<Note>>() {});
 	}
 
 	/**
-	 * add a new note to the server
-	 * @param note
-     */
+	 * Get a single note by its id
+	 * @param id The id of the note
+	 * @return The specific note
+	 */
+	public Note getNoteById(long id) {
+		return ClientBuilder.newClient(new ClientConfig())
+				.target(SERVER).path("api/notes/" + id)
+				.request(APPLICATION_JSON)
+				.get(Note.class);
+	}
+
+	/**
+	 * Add a new note to the server
+	 * @param note The note object to add.
+	 * @return The added note from the server
+	 */
 	public Note addNote(Note note) {
-		return ClientBuilder.newClient(new ClientConfig()) //
-				.target(SERVER).path("api/notes") //
-				.request(APPLICATION_JSON) //
+		return ClientBuilder.newClient(new ClientConfig())
+				.target(SERVER).path("api/notes")
+				.request(APPLICATION_JSON)
 				.post(Entity.entity(note, APPLICATION_JSON), Note.class);
 	}
+
+	/**
+	 * Update an existing note on the server
+	 * @param note The updated note
+	 * @return The updated note from the server
+	 */
+	public Note updateNote(Note note) {
+		return ClientBuilder.newClient(new ClientConfig())
+				.target(SERVER).path("api/notes/" + note.getId())
+				.request(APPLICATION_JSON)
+				.put(Entity.entity(note, APPLICATION_JSON), Note.class);
+	}
+
+	/**
+	 * Delete a note by its id
+	 * @param id The id of the note to delete.
+	 */
+	public void deleteNote(long id) {
+		ClientBuilder.newClient(new ClientConfig())
+				.target(SERVER).path("api/notes/" + id)
+				.request(APPLICATION_JSON)
+				.delete();
+	}
+	//we can add error messages and try catch blocks for operations, but we should at least have a label that can display the message first
 }
