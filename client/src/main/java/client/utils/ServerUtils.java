@@ -23,6 +23,8 @@ import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import commons.Note;
@@ -138,4 +140,14 @@ public class ServerUtils {
 				.delete();
 	}
 	//we can add error messages and try catch blocks for operations, but we should at least have a label that can display the message first
+
+	public List<Note> getFilteredNotes(String filter) {
+		//Generative AI used for figuring out encoding
+		String encodedFilter = URLEncoder.encode(filter, StandardCharsets.UTF_8);
+		return ClientBuilder.newClient(new ClientConfig()).target(SERVER + "api/notes/search?filter=" + encodedFilter)
+				.request(APPLICATION_JSON)
+				.get(new GenericType<List<Note>>() {
+				});
+	}
+
 }

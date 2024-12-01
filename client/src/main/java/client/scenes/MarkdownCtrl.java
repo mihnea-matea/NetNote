@@ -1,5 +1,6 @@
 package client.scenes;
 import client.scenes.MainNetNodeCtrl;
+import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Note;
 import javafx.beans.value.ChangeListener;
@@ -8,12 +9,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 import org.commonmark.Extension;
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
@@ -39,6 +42,14 @@ public class MarkdownCtrl {
 
     @FXML
     private TextArea markdownText;
+
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private Button searchButton;
+
+    private ServerUtils serverUtils = new ServerUtils();
 
     private final List<Extension> extensions = List.of(TablesExtension.create());
     private final Parser parserM = Parser.builder().extensions(extensions).build();
@@ -79,6 +90,7 @@ public class MarkdownCtrl {
 
         noteNameList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue != null){
+                displayNoteTitle(newValue);
                 displayNoteContent(newValue);
             }
         });
@@ -161,7 +173,7 @@ public class MarkdownCtrl {
      * Sets the main window to show the contents of the selected note
      * @param note - Selected note
      */
-    private void displayNoteContent(Note note){
+    public void displayNoteContent(Note note){
         markdownText.setText(note.getContent());
     }
 
@@ -169,7 +181,7 @@ public class MarkdownCtrl {
      * Sets the main window to show the title of the selected note
      * @param note - Selected note
      */
-    private void displayNoteTitle(Note note){
+    public void displayNoteTitle(Note note){
         markdownTitle.setText(note.getTitle());
     }
 
@@ -184,4 +196,34 @@ public class MarkdownCtrl {
             displayNoteContent(note);
         }
     }
+
+    @FXML
+    private void search(){
+        String filter = searchField.getText().trim();
+        if(!filter.isEmpty()) {
+            List<Note> filteredNotes = serverUtils.getFilteredNotes(filter);
+
+            if (filteredNotes.isEmpty()) {
+                System.out.println("No notes found.");
+                return;
+            }
+
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("client/scenes/noteSearch.fxml"));
+                Parent parent = loader.load();
+                NoteSearchCtrl noteSearchCtrl = loader.getController();
+
+                noteSearchCtrl.setResult(filteredNotes, this);
+
+                Stage stage = new Stage();
+                stage.setTitle("Search Results");
+                stage.setScene(new Scene(parent));
+                stage.setResizable(false);
+                stage.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
