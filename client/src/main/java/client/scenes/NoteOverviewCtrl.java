@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import com.google.inject.Inject;
 import commons.Note;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -15,6 +16,7 @@ public class NoteOverviewCtrl {
     @FXML
     private ListView<String> noteList;
 
+    @Inject
     public NoteOverviewCtrl(ServerUtils server) {
         this.server = server;
     }

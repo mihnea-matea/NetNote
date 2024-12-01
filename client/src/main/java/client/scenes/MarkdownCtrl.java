@@ -1,4 +1,6 @@
 package client.scenes;
+import client.MainNetNodeCtrl;
+import com.google.inject.Inject;
 import commons.Note;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,6 +23,7 @@ import java.util.List;
 public class MarkdownCtrl {
 
     private ObservableList<Note> notes = FXCollections.observableArrayList();
+    private final MainNetNodeCtrl pc;
 
     @FXML
     private ListView<Note> noteNameList;
@@ -41,7 +44,10 @@ public class MarkdownCtrl {
     private final Parser parserM = Parser.builder().extensions(extensions).build();
     private final HtmlRenderer rendererH = HtmlRenderer.builder().extensions(extensions).build();
 
-    public MarkdownCtrl(){}
+    @Inject
+    public MarkdownCtrl(MainNetNodeCtrl p) {
+        this.pc = p;
+    }
 
     @FXML
     public void initialize(){
