@@ -225,5 +225,11 @@ public class MarkdownCtrl {
             }
         }
     }
+    /**
+     * Sets the scene to the addNote scene when bottom left button is pressed
+     */
+    public void addButtonPress(){
+        pc.showAddScene();
+    }
 
 }

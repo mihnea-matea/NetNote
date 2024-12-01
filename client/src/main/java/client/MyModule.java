@@ -29,6 +29,6 @@ public class MyModule implements Module {
         binder.bind(QuoteOverviewCtrl.class).in(Scopes.SINGLETON);
         binder.bind(NoteOverviewCtrl.class).in(Scopes.SINGLETON);
         binder.bind(AddNoteCtrl.class).in(Scopes.SINGLETON);
-
+        binder.bind(MainNetNodeCtrl.class).in(Scopes.SINGLETON);
     }
 }
