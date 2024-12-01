@@ -1,5 +1,8 @@
 package client;
 
+import client.scenes.MainNetNodeCtrl;
+import client.scenes.AddNoteCtrl;
+import client.scenes.MarkdownCtrl;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,21 +10,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-
 import java.net.URL;
+import com.google.inject.Injector;
+import com.google.inject.Guice;
+
+
 
 public class MainClient extends Application {
-    @FXML
-    private TextArea markdownTitle;
-
-    @FXML
-    private WebView htmlText;
-
-    @FXML
-    private WebView htmlTitle;
-
-    @FXML
-    private TextArea markdownText;
+    private static final Injector INJECTOR = Guice.createInjector( new MyModule());
+    private static final MyFXML FXML = new MyFXML(INJECTOR);
 
     public static void main(String[] args){
         launch();
@@ -29,12 +26,10 @@ public class MainClient extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        var fxml=new FXMLLoader();
-        fxml.setLocation(getLocation("client/scenes/mainClient.fxml"));
-        var scene=new Scene(fxml.load());
-
-        stage.setTitle("NetNote");
-        stage.setScene(scene);
+        var mainScene = FXML.load(MarkdownCtrl.class, "client", "scenes", "mainClient.fxml");
+        var addScene = FXML.load(AddNoteCtrl.class, "client","scenes", "AddNote.fxml");
+        var pc = INJECTOR.getInstance(MainNetNodeCtrl.class);
+        pc.init(stage, mainScene, addScene);
         stage.show();
     }
 
