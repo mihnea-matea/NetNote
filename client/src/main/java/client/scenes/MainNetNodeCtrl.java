@@ -1,4 +1,4 @@
-package client.scenes;
+package client;
 import client.scenes.AddNoteCtrl;
 import client.scenes.MarkdownCtrl;
 import javafx.scene.Parent ;
