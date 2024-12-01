@@ -157,6 +157,13 @@ public class MarkdownCtrl {
         markdownText.positionCaret(markdownText.getLength());
     }
 
+    @FXML
+    public void refreshNoteList(){
+        List <Note> newNoteList = pc.getNoteOverviewCtrl().loadAndReturnNotes();
+        notes.clear();
+        notes.addAll(newNoteList);
+    }
+
     /**
      * Sets the main window to show the contents of the selected note
      * @param note - Selected note

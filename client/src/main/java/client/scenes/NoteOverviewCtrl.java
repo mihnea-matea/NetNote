@@ -47,6 +47,13 @@ public class NoteOverviewCtrl {
         }
     }
 
+    public List<Note> loadAndReturnNotes(){
+        List<Note> notes = server.getNotes();
+        if(notes == null)
+            System.out.println("No notes available or server error.");
+        return notes;
+    }
+
     /**
      * Add a new note to the ListView and server.
      */
