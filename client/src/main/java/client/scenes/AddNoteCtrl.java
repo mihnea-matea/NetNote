@@ -1,7 +1,7 @@
 package client.scenes;
 
 import com.google.inject.Inject;
-import client.MainNetNodeCtrl;
+import client.scenes.MainNetNodeCtrl;
 
 public class AddNoteCtrl{
     private MainNetNodeCtrl pc;

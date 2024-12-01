@@ -1,5 +1,5 @@
 package client.scenes;
-import client.MainNetNodeCtrl;
+import client.scenes.MainNetNodeCtrl;
 import com.google.inject.Inject;
 import commons.Note;
 import javafx.beans.value.ChangeListener;

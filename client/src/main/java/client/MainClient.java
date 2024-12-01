@@ -1,6 +1,6 @@
 package client;
 
-import client.MainNetNodeCtrl;
+import client.scenes.MainNetNodeCtrl;
 import client.scenes.AddNoteCtrl;
 import client.scenes.MarkdownCtrl;
 import javafx.application.Application;
