@@ -29,6 +29,7 @@ class MarkdownCtrlTest extends ApplicationTest{
         assertEquals(markdownCtrl.markdownTitle.getText(), markdownTitleArea.getText());
         assertEquals(markdownCtrl.markdownText.getText(), markdownTextArea.getText());
     }
+    
 
     @Test
     void generateMarkdownTitleTestTrue() {
