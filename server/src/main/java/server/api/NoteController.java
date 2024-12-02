@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.NoteRepository;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 //This is just the quote controller but with some small changes!!!!!!!!!!!!!!!!!
@@ -46,10 +48,12 @@ public class NoteController {
     }
 
     @GetMapping("/search")
-    public List<Note> noteSearcher(@RequestParam("word") String word) {
-        if (word == null || word.trim().isEmpty()) {return repo.findAll();}
+    public ResponseEntity<List<Note>> noteSearcher(@RequestParam("filter") String filter) {
+        System.out.println(filter);
+        if (filter == null || filter.trim().isEmpty()) {return ResponseEntity.badRequest().body(Collections.emptyList());}
 
-        String query = "SELECT n FROM Note n WHERE LOWER(n.content) LIKE LOWER(CONCAT('%', :word, '%'))";
-        return entityManager.createQuery(query, Note.class).setParameter("word", word.trim()).getResultList();
+        String query = "SELECT n FROM Note n WHERE LOWER(n.content) LIKE LOWER(CONCAT('%', :filter, '%'))";
+        List<Note> notes = entityManager.createQuery(query, Note.class).setParameter("filter", filter.trim()).getResultList();
+        return ResponseEntity.ok(notes);
     }
 }
