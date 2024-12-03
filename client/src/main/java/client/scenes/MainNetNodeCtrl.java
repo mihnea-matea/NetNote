@@ -12,13 +12,17 @@ public class MainNetNodeCtrl{
 
     private Scene MainScene ;
     public Scene AddScene;
+    private NoteOverviewCtrl noteOverviewCtrl;
+    private MarkdownCtrl markdownCtrl;
 
-    public void init(Stage primaryStage , Pair <MarkdownCtrl, Parent > mainScene , Pair <AddNoteCtrl, Parent > addNoteScene ){
+    public void init(Stage primaryStage , Pair <MarkdownCtrl, Parent > mainScene , Pair <AddNoteCtrl, Parent > addNoteScene, NoteOverviewCtrl noteOverviewCtrl, MarkdownCtrl markdownCtrl ){
         this.primaryStage = primaryStage;
         this.MainScene = new Scene(mainScene.getValue());
         this.AddScene = new Scene(addNoteScene.getValue());
         showMainScene();
         primaryStage.show();
+        this.noteOverviewCtrl= noteOverviewCtrl;
+        this.markdownCtrl = markdownCtrl;
     }
     public void showMainScene(){
         primaryStage.setTitle("NetNode");
@@ -35,5 +39,8 @@ public class MainNetNodeCtrl{
             return;
         }
         primaryStage.setScene(AddScene);
+    }
+    public NoteOverviewCtrl getNoteOverviewCtrl() {
+        return noteOverviewCtrl;
     }
 }

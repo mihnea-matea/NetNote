@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NoteOverviewCtrl {
@@ -45,6 +46,15 @@ public class NoteOverviewCtrl {
         } else {
             System.out.println("No notes available or server error.");
         }
+    }
+
+    public List<Note> loadAndReturnNotes(){
+        List<Note> notes = server.getNotes();
+        if(notes == null) {
+            System.out.println("No notes available or server error.");
+            notes = new ArrayList<>();
+        }
+        return notes;
     }
 
     /**

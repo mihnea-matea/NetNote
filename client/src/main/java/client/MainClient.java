@@ -3,6 +3,7 @@ package client;
 import client.scenes.MainNetNodeCtrl;
 import client.scenes.AddNoteCtrl;
 import client.scenes.MarkdownCtrl;
+import client.scenes.NoteOverviewCtrl;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import java.net.URL;
@@ -24,7 +25,9 @@ public class MainClient extends Application {
         var mainScene = FXML.load(MarkdownCtrl.class, "client", "scenes", "mainClient.fxml");
         var addScene = FXML.load(AddNoteCtrl.class, "client","scenes", "AddNote.fxml");
         var pc = INJECTOR.getInstance(MainNetNodeCtrl.class);
-        pc.init(stage, mainScene, addScene);
+        var noteOverviewCtrl = INJECTOR.getInstance(NoteOverviewCtrl.class);
+        var markdownCtrl = INJECTOR. getInstance(MarkdownCtrl.class);
+        pc.init(stage, mainScene, addScene, noteOverviewCtrl, markdownCtrl);
         stage.show();
     }
 
