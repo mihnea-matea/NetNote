@@ -25,6 +25,14 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.testfx</groupId>
+			<artifactId>openjfx-monocle</artifactId>
+			<version>21.0.2</version>
+			<scope> test</scope>
+		</dependency>
+
+
+		<dependency>
 			<groupId>org.commonmark</groupId>
 			<artifactId>commonmark</artifactId>
 			<version>0.24.0</version>
@@ -135,9 +143,14 @@
 					<argLine>
 						--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
 						--add-opens=javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED
+						-Dtestfx.headless=true
+						-Djavafx.platform=monocle
+						-Dprism.order=sw
+						-Dprism.text=t2k
 					</argLine>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
