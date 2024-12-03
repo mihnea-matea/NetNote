@@ -1,5 +1,4 @@
 package client.scenes;
-import client.scenes.MainNetNodeCtrl;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Note;
@@ -23,16 +22,18 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 import java.util.List;
-public class MarkdownCtrl {
+public class MarkdownCtrl{
 
     private ObservableList<Note> notes = FXCollections.observableArrayList();
     private final MainNetNodeCtrl pc;
+    protected String errorMessageTitle;
+    protected String errorMessageText;
 
     @FXML
     private ListView<Note> noteNameList;
 
     @FXML
-    private TextArea markdownTitle;
+    protected TextArea markdownTitle;
 
     @FXML
     private WebView htmlText;
@@ -41,7 +42,7 @@ public class MarkdownCtrl {
     private WebView htmlTitle;
 
     @FXML
-    private TextArea markdownText;
+    protected TextArea markdownText;
 
     @FXML
     private TextField searchField;
@@ -55,6 +56,10 @@ public class MarkdownCtrl {
     private final Parser parserM = Parser.builder().extensions(extensions).build();
     private final HtmlRenderer rendererH = HtmlRenderer.builder().extensions(extensions).build();
 
+    /**
+     * constructor
+     * @param p primary controller
+     */
     @Inject
     public MarkdownCtrl(MainNetNodeCtrl p) {
         this.pc = p;
@@ -74,6 +79,9 @@ public class MarkdownCtrl {
         renderMarkdownToHTML(markdownText, htmlText);
         generateMarkdownTitle();
         generateMarkdownText();
+        if(noteNameList==null){
+            noteNameList=new ListView<>();
+        }
         noteNameList.setItems(notes);
 
         noteNameList.setCellFactory(param -> new ListCell<>() {
@@ -96,7 +104,13 @@ public class MarkdownCtrl {
         });
 
     }
-    private void renderMarkdownToHTML(TextArea markdown, WebView html) {
+
+    /**
+     * transforms from Markdown format to html
+     * @param markdown textArea
+     * @param html webView
+     */
+    public void renderMarkdownToHTML(TextArea markdown, WebView html) {
         if(markdown !=null){
             markdown.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -132,6 +146,9 @@ public class MarkdownCtrl {
         }
     }
 
+    /**
+     * Shows Markdown format for title
+     */
     @FXML
     public void generateMarkdownTitle(){
         Node document = new Document();
@@ -144,8 +161,14 @@ public class MarkdownCtrl {
             Text text=(Text)(document.getFirstChild().getFirstChild());
             markdownTitle.setText(text.getLiteral());
         }
+        else{
+            errorMessageTitle="MarkdownTitle is null";
+        }
     }
 
+    /**
+     * Shows Markdown format for text
+     */
     @FXML
     public void generateMarkdownText(){
         Node document = new Document();
@@ -162,7 +185,14 @@ public class MarkdownCtrl {
             Text text = (Text)(document.getFirstChild().getFirstChild());
             markdownText.setText(text.getLiteral());
         }
+        else{
+            errorMessageText="MarkdownText is null";
+        }
     }
+
+    /**
+     * new line when the Enter key is pressed
+     */
     public void enterPress(){
         String text= markdownText.getText();
         markdownText.setText(text+"\n");
