@@ -26,14 +26,14 @@ public class MarkdownCtrl{
 
     private ObservableList<Note> notes = FXCollections.observableArrayList();
     private final MainNetNodeCtrl pc;
-    protected String errorMessageTitle;
-    protected String errorMessageText;
+    private String errorMessageTitle;
+    private String errorMessageText;
 
     @FXML
     private ListView<Note> noteNameList;
 
     @FXML
-    protected TextArea markdownTitle;
+    private TextArea markdownTitle;
 
     @FXML
     private WebView htmlText;
@@ -42,7 +42,7 @@ public class MarkdownCtrl{
     private WebView htmlTitle;
 
     @FXML
-    protected TextArea markdownText;
+    private TextArea markdownText;
 
     @FXML
     private TextField searchField;
@@ -191,12 +191,16 @@ public class MarkdownCtrl{
     }
 
     /**
-     * new line when the Enter key is pressed
+     * sets the caret position after the new text was added
      */
     public void enterPress(){
         String text= markdownText.getText();
-        markdownText.setText(text+"\n");
-        markdownText.positionCaret(markdownText.getLength());
+        int position=markdownText.getCaretPosition();
+        String textAfterEnter=text.substring(0, position);
+        textAfterEnter+=text.substring(position);
+        markdownText.setText(textAfterEnter);
+        markdownText.positionCaret(position);
+
     }
 
     @FXML
@@ -269,4 +273,51 @@ public class MarkdownCtrl{
         pc.showAddScene();
     }
 
+    /**
+     * getter method for markdownText
+     * @return markdownText
+     */
+    public TextArea getMarkdownText() {
+        return markdownText;
+    }
+
+    /**
+     * setter method for markdownText
+     * @param markdownText a TextArea
+     */
+    public void setMarkdownText(TextArea markdownText) {
+        this.markdownText = markdownText;
+    }
+
+    /**
+     * getter method for errorMessageTitle
+     * @return errorMessageTitle
+     */
+    public String getErrorMessageTitle() {
+        return errorMessageTitle;
+    }
+
+    /**
+     * getter method for errorMessageText
+     * @return errorMessageText
+     */
+    public String getErrorMessageText() {
+        return errorMessageText;
+    }
+
+    /**
+     * getter method for markdownTitle
+     * @return markdownTitle
+     */
+    public TextArea getMarkdownTitle() {
+        return markdownTitle;
+    }
+
+    /**
+     * setter method for markdownTitle
+     * @param markdownTitle a TextArea
+     */
+    public void setMarkdownTitle(TextArea markdownTitle) {
+        this.markdownTitle = markdownTitle;
+    }
 }
