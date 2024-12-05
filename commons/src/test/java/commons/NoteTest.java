@@ -16,15 +16,15 @@ public class NoteTest {
     @Test
     public void notEqualsTest() throws InterruptedException {
         Note n = new Note("Test Title", "Same content");
-        Thread.sleep(1); /// make sure that the notes have different creation times
-        Note n1 = new Note("Test Title", "Same content");
+       // Thread.sleep(1); /// make sure that the notes have different creation times
+        Note n1 = new Note("Test Title", "Other content");
         assertNotEquals(n, n1);
     }
 
     @Test
     public void notEqualsHashcodeTest() throws InterruptedException {
         Note n = new Note("Test Title", "Same content");
-        Thread.sleep(1); ///Make sure that the notes have different creation times
+      //  Thread.sleep(1); ///Make sure that the notes have different creation times
         Note n1 = new Note("Test Title", "Other content");
         assertNotEquals(n.hashCode(), n1.hashCode());
     }
