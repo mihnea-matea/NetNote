@@ -111,6 +111,8 @@ public class ServerUtils {
 	 * @return The added note from the server
 	 */
 	public Note addNote(Note note) {
+		String url = SERVER + "api/notes";
+		System.out.println("POST request to URL: " + url);
 		return ClientBuilder.newClient(new ClientConfig())
 				.target(SERVER).path("api/notes")
 				.request(APPLICATION_JSON)
@@ -149,5 +151,4 @@ public class ServerUtils {
 				.get(new GenericType<List<Note>>() {
 				});
 	}
-
 }

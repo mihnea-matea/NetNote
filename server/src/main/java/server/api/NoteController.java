@@ -6,8 +6,6 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.NoteRepository;
-
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

@@ -1,8 +1,11 @@
 package client.scenes;
 
+import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import client.scenes.MainNetNodeCtrl;
+import commons.Note;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 
 public class AddNoteCtrl{
@@ -12,18 +15,44 @@ public class AddNoteCtrl{
     @FXML
     private TextField ContentsText;
 
+    private final ServerUtils server;
     private final MainNetNodeCtrl pc;
 
     @Inject
-    public AddNoteCtrl(MainNetNodeCtrl p){
-        this.pc = p;
+    public AddNoteCtrl(MainNetNodeCtrl pc, ServerUtils server){
+        this.server= server;
+        this.pc = pc;
     }
 
     public void apply() {
-        System.out.println("You added a note" +
-                "\nNote will be added to server");
-        pc.showMainScene();
-        clearFields();
+        String title = TitleText.getText();
+        String content = ContentsText.getText();
+
+        if (title == null || title.trim().isEmpty()) {
+            showAlert("Error", "Title is required!", Alert.AlertType.ERROR);
+            return;
+        }
+
+        Note newNote = new Note();
+        newNote.setTitle(title);
+        newNote.setContent(content);
+        System.out.println("addNote method is being called");
+        try {
+            server.addNote(newNote);
+            showAlert("Success", "Note added successfully!", Alert.AlertType.INFORMATION);
+            pc.showMainScene();
+            clearFields();
+        } catch (Exception e) {
+            showAlert("Error", "Failed to add note: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void showAlert(String title, String message, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     public void cancel(){
