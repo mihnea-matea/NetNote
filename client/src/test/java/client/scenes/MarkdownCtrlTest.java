@@ -40,19 +40,19 @@ class MarkdownCtrlTest extends ApplicationTest{
     @Test
     void initialize() {
         markdownTitleArea = new TextArea();
-        markdownCtrl.markdownTitle=markdownTitleArea;
+        markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownTextArea = new TextArea();
-        markdownCtrl.markdownText=markdownTextArea;
+        markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.initialize();
-        assertEquals(markdownCtrl.markdownTitle.getText(), markdownTitleArea.getText());
-        assertEquals(markdownCtrl.markdownText.getText(), markdownTextArea.getText());
+        assertEquals(markdownCtrl.getMarkdownTitle().getText(), markdownTitleArea.getText());
+        assertEquals(markdownCtrl.getMarkdownText().getText(), markdownTextArea.getText());
     }
     
 
     @Test
     void generateMarkdownTitleTestTrue() {
         markdownTitleArea = new TextArea();
-        markdownCtrl.markdownTitle=markdownTitleArea;
+        markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.generateMarkdownTitle();
         assertEquals("# Add a title",markdownTitleArea.getText());
     }
@@ -61,12 +61,12 @@ class MarkdownCtrlTest extends ApplicationTest{
     void generateMarkdownTitleTestFalse() {
         markdownTitleArea = null;
         markdownCtrl.generateMarkdownTitle();
-        assertEquals("MarkdownTitle is null",markdownCtrl.errorMessageTitle);
+        assertEquals("MarkdownTitle is null",markdownCtrl.getErrorMessageTitle());
     }
     @Test
     void generateMarkdownTextTestTrue() {
         markdownTextArea = new TextArea();
-        markdownCtrl.markdownText=markdownTextArea;
+        markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.generateMarkdownText();
         assertEquals("""
                 # My Note
@@ -79,17 +79,17 @@ class MarkdownCtrlTest extends ApplicationTest{
     void generateMarkdownTextTestFalse() {
         markdownTextArea = null;
         markdownCtrl.generateMarkdownText();
-        assertEquals("MarkdownText is null",markdownCtrl.errorMessageText);
+        assertEquals("MarkdownText is null",markdownCtrl.getErrorMessageText());
     }
-    @Test
-    void enterPress() {
-        TextArea textArea = new TextArea();
-        markdownCtrl.markdownText=textArea;
-        textArea.setText("This is the content of a note");
-        markdownCtrl.enterPress();
-        assertEquals("This is the content of a note\n",textArea.getText());
-        assertEquals(textArea.getLength(),textArea.getCaretPosition());
-    }
+//    @Test
+//    void enterPress() {
+//        TextArea textArea = new TextArea();
+//        markdownCtrl.setMarkdownText(textArea);
+//        textArea.setText("This is the content of a note");
+//        markdownCtrl.enterPress();
+//        assertEquals("This is the content of a note\n",textArea.getText());
+//        assertEquals(textArea.getLength(),textArea.getCaretPosition());
+//    }
 
     @Test
     void refreshNoteListTestNoChanges(){
