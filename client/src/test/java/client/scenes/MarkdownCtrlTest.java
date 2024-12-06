@@ -1,21 +1,39 @@
 package client.scenes;
+import java.util.ArrayList;
+
+import client.utils.ServerUtils;
+import commons.Note;
 import javafx.scene.control.TextArea;
 import javafx.scene.web.WebView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.testfx.framework.junit5.ApplicationTest;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 class MarkdownCtrlTest extends ApplicationTest{
+
     MainNetNodeCtrl mainNetNode;
     private MarkdownCtrl markdownCtrl;
     private TextArea markdownTitleArea;
     private TextArea markdownTextArea;
     private WebView html;
 
+    @Mock
+    private ServerUtils serverUtils;
+
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
+        when(serverUtils.getNotes()).thenReturn(List.of(new Note(), new Note()));
         mainNetNode = new MainNetNodeCtrl();
+        NoteOverviewCtrl noteOverviewCtrl = new NoteOverviewCtrl(serverUtils);
+        mainNetNode.setNoteOverviewCtrl(noteOverviewCtrl);
         markdownCtrl = new MarkdownCtrl(mainNetNode);
     }
 
@@ -72,4 +90,12 @@ class MarkdownCtrlTest extends ApplicationTest{
 //        assertEquals("This is the content of a note\n",textArea.getText());
 //        assertEquals(textArea.getLength(),textArea.getCaretPosition());
 //    }
+
+    @Test
+    void refreshNoteListTestNoChanges(){
+        List<Note> oldNoteList = mainNetNode.getNoteOverviewCtrl().loadAndReturnNotes();
+        markdownCtrl.refreshNoteList();
+        List<Note> newNoteList = mainNetNode.getNoteOverviewCtrl().loadAndReturnNotes();
+        assertEquals(oldNoteList, newNoteList);
+    }
 }
