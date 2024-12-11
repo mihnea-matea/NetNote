@@ -1,5 +1,4 @@
 package client.scenes;
-import java.util.ArrayList;
 
 import client.utils.ServerUtils;
 import commons.Note;
@@ -16,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-class MarkdownCtrlTest extends ApplicationTest{
+class MarkdownCtrlTest extends ApplicationTest {
 
     MainNetNodeCtrl mainNetNode;
     private MarkdownCtrl markdownCtrl;
@@ -47,22 +46,23 @@ class MarkdownCtrlTest extends ApplicationTest{
         assertEquals(markdownCtrl.getMarkdownTitle().getText(), markdownTitleArea.getText());
         assertEquals(markdownCtrl.getMarkdownText().getText(), markdownTextArea.getText());
     }
-    
+
 
     @Test
     void generateMarkdownTitleTestTrue() {
         markdownTitleArea = new TextArea();
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.generateMarkdownTitle();
-        assertEquals("# Add a title",markdownTitleArea.getText());
+        assertEquals("# Add a title", markdownTitleArea.getText());
     }
 
     @Test
     void generateMarkdownTitleTestFalse() {
         markdownTitleArea = null;
         markdownCtrl.generateMarkdownTitle();
-        assertEquals("MarkdownTitle is null",markdownCtrl.getErrorMessageTitle());
+        assertEquals("MarkdownTitle is null", markdownCtrl.getErrorMessageTitle());
     }
+
     @Test
     void generateMarkdownTextTestTrue() {
         markdownTextArea = new TextArea();
@@ -72,30 +72,31 @@ class MarkdownCtrlTest extends ApplicationTest{
                 # My Note
                 This is the content of a note
                 ## A Sub section
-                You can write **bold** and *italic*""",markdownTextArea.getText());
+                You can write **bold** and *italic*""", markdownTextArea.getText());
     }
 
     @Test
     void generateMarkdownTextTestFalse() {
         markdownTextArea = null;
         markdownCtrl.generateMarkdownText();
-        assertEquals("MarkdownText is null",markdownCtrl.getErrorMessageText());
+        assertEquals("MarkdownText is null", markdownCtrl.getErrorMessageText());
     }
-//    @Test
-//    void enterPress() {
-//        TextArea textArea = new TextArea();
-//        markdownCtrl.setMarkdownText(textArea);
-//        textArea.setText("This is the content of a note");
-//        markdownCtrl.enterPress();
-//        assertEquals("This is the content of a note\n",textArea.getText());
-//        assertEquals(textArea.getLength(),textArea.getCaretPosition());
-//    }
 
     @Test
-    void refreshNoteListTestNoChanges(){
+    void refreshNoteListTestNoChanges() {
         List<Note> oldNoteList = mainNetNode.getNoteOverviewCtrl().loadAndReturnNotes();
         markdownCtrl.refreshNoteList();
         List<Note> newNoteList = mainNetNode.getNoteOverviewCtrl().loadAndReturnNotes();
         assertEquals(oldNoteList, newNoteList);
     }
+    @Test
+    void enterPressTest () {
+        TextArea textArea = new TextArea();
+        markdownCtrl.setMarkdownText(textArea);
+        textArea.setText("This is the content of a note");
+        textArea.positionCaret(10);
+        markdownCtrl.enterPress();
+        assertEquals("This is the content of a note", textArea.getText());
+        assertEquals(10, textArea.getCaretPosition());
+        }
 }

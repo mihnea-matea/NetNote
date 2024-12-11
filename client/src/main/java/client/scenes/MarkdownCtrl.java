@@ -2,6 +2,8 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Note;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -67,6 +69,12 @@ public class MarkdownCtrl{
 
     @FXML
     public void initialize(){
+        markdownText.scrollTopProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                synchronizeScroll(markdownText,htmlText);
+            }
+        });
         markdownText.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
@@ -102,6 +110,7 @@ public class MarkdownCtrl{
                 displayNoteContent(newValue);
             }
         });
+
 
     }
 
@@ -144,6 +153,16 @@ public class MarkdownCtrl{
             });
 
         }
+    }
+
+    public void synchronizeScroll(TextArea text, WebView html){
+        double scrollTop=text.getScrollTop();
+        double contentHeight = text.getHeight();
+        double scrollHeight=text.getScrollTop()+contentHeight;
+        double scrollPercentage=scrollTop/scrollHeight;
+        //JavaScript command with the help of gpt
+        String jsCommand="window.scrollTo(0, document.body.scrollHeight * "+scrollPercentage + ");";
+        html.getEngine().executeScript(jsCommand);
     }
 
     /**
