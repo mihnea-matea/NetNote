@@ -43,4 +43,7 @@ public class MainNetNodeCtrl{
     public NoteOverviewCtrl getNoteOverviewCtrl() {
         return noteOverviewCtrl;
     }
+    public void setNoteOverviewCtrl(NoteOverviewCtrl noteOverviewCtrl) {
+        this.noteOverviewCtrl = noteOverviewCtrl;
+    }
 }
