@@ -112,7 +112,7 @@ public class ServerUtils {
 	 */
 	public Note addNote(Note note) {
 		String url = SERVER + "api/notes";
-		System.out.println("POST request to URL: " + url);
+		//System.out.println("POST request to URL: " + url); just a testing statement
 		return ClientBuilder.newClient(new ClientConfig())
 				.target(SERVER).path("api/notes")
 				.request(APPLICATION_JSON)

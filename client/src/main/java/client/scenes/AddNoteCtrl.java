@@ -36,7 +36,7 @@ public class AddNoteCtrl{
         Note newNote = new Note();
         newNote.setTitle(title);
         newNote.setContent(content);
-        System.out.println("addNote method is being called");
+        //System.out.println("addNote method is being called"); just a testing statement
         try {
             server.addNote(newNote);
             showAlert("Success", "Note added successfully!", Alert.AlertType.INFORMATION);
