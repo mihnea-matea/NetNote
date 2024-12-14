@@ -149,7 +149,7 @@ public class MarkdownCtrl{
     }
 
     private void autosaveCurrentNote(){
-        if(currentlyEditedNote != null)
+        if(currentlyEditedNote == null)
             return;
         currentlyEditedNote.setTitle(markdownTitle.getText());
         currentlyEditedNote.setContent(markdownText.getText());
@@ -199,13 +199,6 @@ public class MarkdownCtrl{
                         </html>
                         """;
                     html.getEngine().loadContent(htmlString);
-                    if(currentlyEditedNote != null){
-                        int currDifference = 0;
-                        if(oldValue == null)
-                            oldValue = "";
-                        if(newValue == null)
-                            newValue = "";
-                    }
                 }
             });
 
