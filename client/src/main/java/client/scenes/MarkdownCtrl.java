@@ -23,6 +23,8 @@ import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
+
+import java.util.ArrayList;
 import java.util.List;
 public class MarkdownCtrl{
 
@@ -222,12 +224,24 @@ public class MarkdownCtrl{
 
     }
 
-    @FXML
-    public void refreshNoteList(){
-        List <Note> newNoteList = pc.getNoteOverviewCtrl().loadAndReturnNotes();
-        notes.clear();
-        notes.addAll(newNoteList);
-    }
+//    @FXML
+//    public void refreshNoteList(){
+//        List <Note> newNoteList = pc.getNoteOverviewCtrl().loadAndReturnNotes();
+//        notes.clear();
+//        notes.addAll(newNoteList);
+//    }
+//
+//    @FXML
+//    public void refreshNoteList() {
+//        List<Note> newNoteList = server.getNotes(); // Fetch notes directly from the server
+//        if (newNoteList == null) {
+//            System.out.println("No notes available or server error.");
+//            newNoteList = new ArrayList<>();
+//        }
+//        notes.clear();
+//        notes.addAll(newNoteList);
+//    }
+
 
     /**
      * Sets the main window to show the contents of the selected note

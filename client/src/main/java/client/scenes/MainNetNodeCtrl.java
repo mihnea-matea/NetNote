@@ -12,16 +12,16 @@ public class MainNetNodeCtrl{
 
     private Scene MainScene ;
     public Scene AddScene;
-    private NoteOverviewCtrl noteOverviewCtrl;
+    //private NoteOverviewCtrl noteOverviewCtrl;
     private MarkdownCtrl markdownCtrl;
 
-    public void init(Stage primaryStage , Pair <MarkdownCtrl, Parent > mainScene , Pair <AddNoteCtrl, Parent > addNoteScene, NoteOverviewCtrl noteOverviewCtrl, MarkdownCtrl markdownCtrl ){
+    public void init(Stage primaryStage , Pair <MarkdownCtrl, Parent > mainScene , Pair <AddNoteCtrl, Parent > addNoteScene, MarkdownCtrl markdownCtrl ){
         this.primaryStage = primaryStage;
         this.MainScene = new Scene(mainScene.getValue());
         this.AddScene = new Scene(addNoteScene.getValue());
         showMainScene();
         primaryStage.show();
-        this.noteOverviewCtrl= noteOverviewCtrl;
+        //this.noteOverviewCtrl= noteOverviewCtrl;
         this.markdownCtrl = markdownCtrl;
     }
     public void showMainScene(){
@@ -40,10 +40,10 @@ public class MainNetNodeCtrl{
         }
         primaryStage.setScene(AddScene);
     }
-    public NoteOverviewCtrl getNoteOverviewCtrl() {
-        return noteOverviewCtrl;
-    }
-    public void setNoteOverviewCtrl(NoteOverviewCtrl noteOverviewCtrl) {
-        this.noteOverviewCtrl = noteOverviewCtrl;
-    }
+//    public NoteOverviewCtrl getNoteOverviewCtrl() {
+//        return noteOverviewCtrl;
+//    }
+//    public void setNoteOverviewCtrl(NoteOverviewCtrl noteOverviewCtrl) {
+//        this.noteOverviewCtrl = noteOverviewCtrl;
+//    }
 }

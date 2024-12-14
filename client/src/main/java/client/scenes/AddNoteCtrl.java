@@ -2,7 +2,6 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import client.scenes.MainNetNodeCtrl;
 import commons.Note;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
