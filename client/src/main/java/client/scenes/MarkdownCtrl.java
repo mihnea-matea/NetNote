@@ -52,6 +52,11 @@ public class MarkdownCtrl{
     @FXML
     private Button searchButton;
 
+    private Note currentlyEditedNote;
+
+    private int charsModifiedSinceLastSave;
+    private static final int CHAR_NO_FOR_AUTOSAVE = 5;
+
     private ServerUtils serverUtils = new ServerUtils();
 
     private final List<Extension> extensions = List.of(TablesExtension.create());
@@ -106,11 +111,56 @@ public class MarkdownCtrl{
 
         noteNameList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue != null){
+                currentlyEditedNote = newValue;
                 displayNoteTitle(newValue);
                 displayNoteContent(newValue);
+                charsModifiedSinceLastSave = 0;
             }
         });
 
+        /*
+            The check for control chars was with the help of GPT
+         */
+        markdownText.addEventFilter(KeyEvent.KEY_TYPED,event -> {
+            if(currentlyEditedNote != null){
+                String ch = event.getCharacter();
+                if(!ch.isEmpty() && Character.isISOControl(ch.charAt(0))) {
+                    charsModifiedSinceLastSave++;
+                    if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
+                        autosaveCurrentNote();
+                        charsModifiedSinceLastSave = 0;
+                    }
+                }
+            }
+        });
+
+        markdownTitle.addEventFilter(KeyEvent.KEY_TYPED,event -> {
+            if(currentlyEditedNote != null){
+                String ch = event.getCharacter();
+                if(!ch.isEmpty() && Character.isISOControl(ch.charAt(0))) {
+                    charsModifiedSinceLastSave++;
+                    if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
+                        autosaveCurrentNote();
+                        charsModifiedSinceLastSave = 0;
+                    }
+                }
+            }
+        });
+    }
+
+    private void autosaveCurrentNote(){
+        if(currentlyEditedNote != null)
+            return;
+        currentlyEditedNote.setTitle(markdownTitle.getText());
+        currentlyEditedNote.setContent(markdownText.getText());
+
+        Note updatedNote = serverUtils.updateNote(currentlyEditedNote);
+        if(updatedNote == null)
+            System.out.println("Can't autosave note.");
+        else {
+            currentlyEditedNote = updatedNote;
+            System.out.println("Note autosaved.");
+        }
 
     }
 
@@ -123,11 +173,11 @@ public class MarkdownCtrl{
         if(markdown !=null){
             markdown.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observableValue, String string, String t1) {
-                    if(t1==null|| html ==null) {
+                public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+                    if(newValue==null|| html ==null) {
                         return;
                     }
-                    Node doc= parserM.parse(t1);
+                    Node doc= parserM.parse(newValue);
                     // loading in table format with the help of ChatGPT
                     String htmlString= """
                         <html>
@@ -149,6 +199,13 @@ public class MarkdownCtrl{
                         </html>
                         """;
                     html.getEngine().loadContent(htmlString);
+                    if(currentlyEditedNote != null){
+                        int currDifference = 0;
+                        if(oldValue == null)
+                            oldValue = "";
+                        if(newValue == null)
+                            newValue = "";
+                    }
                 }
             });
 
