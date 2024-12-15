@@ -4,17 +4,35 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Directory {
-    private String Title;
-    private ArrayList<Note> Notes;
+    private String title;
+    private ArrayList<Note> notes;
+    private static final String SERVER = "http://localhost:8080/";
 
     /**
      * creates an instance of a Directory
-     * @param Title
-     * @param Notes
+     * @param title
      */
-    public Directory(String Title, ArrayList<Note> Notes) {
-        this.Title = Title;
-        this.Notes = Notes;
+    public Directory(String title) {
+        this.title = title;
+        this.notes = new ArrayList<>();
+        List<Note> allNotes = ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/notes")
+                .request(APPLICATION_JSON)
+                .get(new GenericType<List<Note>>() {});
+        for(int i = 0; i < allNotes.size(); i++){
+            if(allNotes.get(i).getTitle().equals(this.title)){
+                this.notes.add(allNotes.get(i));
+            }
+        }
+    }
+
+    /**
+     * creates an instance of a Directory
+     * @return
+     */
+    public Directory(String title, ArrayList<Note> notes) {
+        this.title = title;
+        this.notes = notes;
     }
 
     public String getTitle() {
@@ -26,27 +44,27 @@ public class Directory {
     }
 
     public ArrayList<Note> getNotes() {
-        return Notes;
+        return notes;
     }
 
     public void setNotes(ArrayList<Note> Notes) {
-        this.Notes = Notes;
+        this.notes = Notes;
     }
 
     public void addNote(Note Note) {
-        Notes.add(Note);
+        notes.add(Note);
     }
 
     public void removeNote(Note Note) {
-        Notes.remove(Note);
+        notes.remove(Note);
     }
 
     public boolean containsNote(Note Note) {
-        return Notes.contains(Note);
+        return notes.contains(Note);
     }
 
     public String toString() {
-        return Title + "\n" + Notes.toString();
+        return title + "\n" + notes.toString();
     }
 
     @Override

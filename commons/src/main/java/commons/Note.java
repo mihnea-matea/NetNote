@@ -40,13 +40,25 @@ public class Note {
     }
 
     /**
-     * Creates a new note with a certain title and content and sets the creation time as the current time
+     * Creates a new note with a certain title and content and sets a directory
+     * @param title the title of the note
+     * @param content the content of the note
+     * @param directory the directory of the note
+     */
+    public Note(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    /**
+     * Creates a new note with a certain title and content and sets the default directory
      * @param title the title of the note
      * @param content the content of the note
      */
     public Note(String title, String content) {
         this.title = title;
         this.content = content;
+        this.directory = "default";
     }
 
     /**
