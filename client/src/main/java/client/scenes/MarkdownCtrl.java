@@ -124,7 +124,7 @@ public class MarkdownCtrl{
         markdownText.addEventFilter(KeyEvent.KEY_TYPED,event -> {
             if(currentlyEditedNote != null){
                 String ch = event.getCharacter();
-                if(!ch.isEmpty() && Character.isISOControl(ch.charAt(0))) {
+                if(!ch.isEmpty() && !Character.isISOControl(ch.charAt(0))) {
                     charsModifiedSinceLastSave++;
                     if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
                         autosaveCurrentNote();
@@ -137,7 +137,7 @@ public class MarkdownCtrl{
         markdownTitle.addEventFilter(KeyEvent.KEY_TYPED,event -> {
             if(currentlyEditedNote != null){
                 String ch = event.getCharacter();
-                if(!ch.isEmpty() && Character.isISOControl(ch.charAt(0))) {
+                if(!ch.isEmpty() && !Character.isISOControl(ch.charAt(0))) {
                     charsModifiedSinceLastSave++;
                     if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
                         autosaveCurrentNote();

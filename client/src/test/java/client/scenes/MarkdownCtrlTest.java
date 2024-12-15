@@ -98,5 +98,5 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.enterPress();
         assertEquals("This is the content of a note", textArea.getText());
         assertEquals(10, textArea.getCaretPosition());
-        }
+    }
 }
