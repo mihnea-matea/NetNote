@@ -36,6 +36,8 @@ public class MarkdownCtrl{
     private String errorMessageTitle;
     private String errorMessageText;
 
+    private Note currentNote;
+
     @FXML
     private ListView<Note> noteNameList;
 
@@ -317,6 +319,7 @@ public class MarkdownCtrl{
         if(note != null){
             displayNoteTitle(note);
             displayNoteContent(note);
+            currentNote = note;
         }
     }
 

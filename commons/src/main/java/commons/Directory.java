@@ -1,7 +1,15 @@
 package commons;
 
+
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.GenericType;
+import org.glassfish.jersey.client.ClientConfig;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class Directory {
     private String title;
@@ -36,11 +44,11 @@ public class Directory {
     }
 
     public String getTitle() {
-        return Title;
+        return title;
     }
 
     public void setTitle(String Title) {
-        this.Title = Title;
+        this.title = Title;
     }
 
     public ArrayList<Note> getNotes() {

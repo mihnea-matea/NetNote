@@ -163,7 +163,7 @@ public class ServerUtils {
 			if (id < 0) {
 				throw new IllegalArgumentException("ID must be a positive number.");
 			}
-			String url = "http://localhost:8080/" + id;
+			String url = "http://localhost:8080/api/notes/" + id;
 			restTemplate.delete(url);
 			System.out.println("Note with ID " + id + " deleted successfully.");
 		} catch (HttpClientErrorException.NotFound e) {

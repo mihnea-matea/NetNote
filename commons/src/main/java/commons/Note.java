@@ -32,6 +32,8 @@ public class Note {
 
     private String content;
 
+    private String directory;
+
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 //    private final LocalDateTime creationTime = LocalDateTime.now();
 
@@ -45,9 +47,10 @@ public class Note {
      * @param content the content of the note
      * @param directory the directory of the note
      */
-    public Note(String title, String content) {
+    public Note(String title, String content, String directory) {
         this.title = title;
         this.content = content;
+        this.directory = directory;
     }
 
     /**
