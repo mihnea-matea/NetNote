@@ -56,4 +56,16 @@ public class NoteController {
         List<Note> notes = entityManager.createQuery(query, Note.class).setParameter("filter", filter.trim()).getResultList();
         return ResponseEntity.ok(notes);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(@PathVariable("id") long id) {
+        if (id < 0 || !repo.existsById(id)) {
+            return ResponseEntity.badRequest().build();
+
+        }
+        Note note = repo.findById(id).get();
+        repo.delete(note);
+        return ResponseEntity.ok().build();
+    }
+
 }
