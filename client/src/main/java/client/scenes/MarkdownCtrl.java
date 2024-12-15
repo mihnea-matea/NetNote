@@ -68,8 +68,9 @@ public class MarkdownCtrl{
      * @param p primary controller
      */
     @Inject
-    public MarkdownCtrl(MainNetNodeCtrl p) {
+    public MarkdownCtrl(MainNetNodeCtrl p, ServerUtils serverUtils) {
         this.pc = p;
+        this.serverUtils = serverUtils;
     }
 
     @FXML
@@ -388,5 +389,17 @@ public class MarkdownCtrl{
      */
     public void setMarkdownTitle(TextArea markdownTitle) {
         this.markdownTitle = markdownTitle;
+    }
+
+    /**
+     * setter method for the note that is currently being edited
+     * @param note
+     */
+    public void setCurrentlyEditedNote(Note note) {
+        this.currentlyEditedNote = note;
+    }
+
+    public void setServerUtils(ServerUtils serverUtils){
+        this.serverUtils = serverUtils;
     }
 }
