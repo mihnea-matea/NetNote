@@ -1,31 +1,30 @@
 package client.scenes;
 
-import client.utils.ServerUtils;
-import commons.Note;
-import javafx.collections.FXCollections;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.web.WebView;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.testfx.framework.junit5.ApplicationTest;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import client.utils.ServerUtils;
+import commons.Note;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.web.WebView;
 
 class MarkdownCtrlTest extends ApplicationTest {
 
     MainNetNodeCtrl mainNetNode;
-    private ListView<Note> noteNameList;
+    private Note mockNote;
     private MarkdownCtrl markdownCtrl;
     private TextArea markdownTitleArea;
     private TextArea markdownTextArea;
-    private AddNoteCtrl addNoteCtrl;
     private WebView html;
 
     @Mock
@@ -34,14 +33,16 @@ class MarkdownCtrlTest extends ApplicationTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        when(serverUtils.getNotes()).thenReturn(List.of(
-                new Note("Title 1", "Content 1"),
-                new Note("Title 2", "Content 2")
-        ));
+        mockNote = new Note();
+        mockNote.setTitle("Test Title");
+        mockNote.setContent("Test Content");
+        serverUtils = mock(ServerUtils.class);
+        mainNetNode = new MainNetNodeCtrl();
+        when(serverUtils.getNotes()).thenReturn(List.of(new Note(), new Note()));
+        markdownCtrl = new MarkdownCtrl(mainNetNode, serverUtils);
+        when(serverUtils.updateNote(any(Note.class))).thenReturn(mockNote);
         mainNetNode = new MainNetNodeCtrl();
         markdownCtrl = new MarkdownCtrl(mainNetNode, serverUtils);
-        addNoteCtrl = new AddNoteCtrl(mainNetNode, serverUtils);
-        noteNameList = new ListView<>();
     }
 
     @Test
@@ -101,40 +102,136 @@ class MarkdownCtrlTest extends ApplicationTest {
         assertEquals(10, textArea.getCaretPosition());
     }
 
-    @Test
-    void testListViewInitialization() {
-        noteNameList.setItems(FXCollections.observableArrayList(
-                new Note("Title 1", "Content 1"),
-                new Note("Title 2", "Content 2")
-        ));
-        assertEquals(2, noteNameList.getItems().size(), "ListView should have 2 notes");
-    }
-    @Test
-    void testListViewContainsCorrectNotes() {
-        noteNameList.setItems(FXCollections.observableArrayList(
-                new Note("Title 1", "Content 1"),
-                new Note("Title 2", "Content 2")
-        ));
-        assertTrue(noteNameList.getItems().stream().anyMatch(note -> note.getTitle().equals("Title 1")), "ListView should contain 'Title 1'");
-        assertTrue(noteNameList.getItems().stream().anyMatch(note -> note.getTitle().equals("Title 2")), "ListView should contain 'Title 2'");
+      @Test
+    void testAutoSaveAfterFiveOKCharsText() throws NoSuchFieldException, IllegalAccessException {
+        markdownTitleArea = new TextArea();
+        markdownTextArea = new TextArea();
+        markdownCtrl.setMarkdownText(markdownTextArea);
+        markdownCtrl.setMarkdownTitle(markdownTitleArea);
+        markdownCtrl.initialize();
+        markdownCtrl.setCurrentlyEditedNote(mockNote);
+
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTextArea, "a");
+        verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 
     @Test
-    void testListViewEmptyAfterClear() {
-        noteNameList.setItems(FXCollections.observableArrayList(
-                new Note("Title 1", "Content 1"),
-                new Note("Title 2", "Content 2")
-        ));
-        noteNameList.getItems().clear();
-        assertTrue(noteNameList.getItems().isEmpty(), "ListView should be empty after clearing");
-    }
-    @Test
-    void testListViewUpdateAfterNoteAdded() {
-        noteNameList.setItems(FXCollections.observableArrayList(
-                new Note("Title 1", "Content 1")
-        ));
-        noteNameList.getItems().add(new Note("Title 2", "Content 2"));
-        assertEquals(2, noteNameList.getItems().size(), "ListView should have 2 notes after adding a new one");
+    void testMultipleAutosavesText(){
+        markdownTitleArea = new TextArea();
+        markdownTextArea = new TextArea();
+        markdownCtrl.setMarkdownText(markdownTextArea);
+        markdownCtrl.setMarkdownTitle(markdownTitleArea);
+        markdownCtrl.initialize();
+        markdownCtrl.setCurrentlyEditedNote(mockNote);
+
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTextArea, "a");
+        verify(serverUtils, times(1)).updateNote(any(Note.class));
+
+        for (int i = 0; i < 5; i++) {
+            simulateKeyTypedEvent(markdownTextArea, "b");
+        }
+        verify(serverUtils, times(2)).updateNote(any(Note.class));
     }
 
+    @Test
+    void testAutoSaveAfterFiveControlCharsText(){
+        markdownTitleArea = new TextArea();
+        markdownTextArea = new TextArea();
+        markdownCtrl.setMarkdownText(markdownTextArea);
+        markdownCtrl.setMarkdownTitle(markdownTitleArea);
+        markdownCtrl.initialize();
+        markdownCtrl.setCurrentlyEditedNote(mockNote);
+
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTextArea, "\n");
+        verify(serverUtils, times(0)).updateNote(any(Note.class));
+    }
+
+    @Test
+    void testAfterLessThanFiveCharsText(){
+        markdownTitleArea = new TextArea();
+        markdownTextArea = new TextArea();
+        markdownCtrl.setMarkdownText(markdownTextArea);
+        markdownCtrl.setMarkdownTitle(markdownTitleArea);
+        markdownCtrl.initialize();
+        markdownCtrl.setCurrentlyEditedNote(mockNote);
+
+        for(int i=0;i<3;i++)
+            simulateKeyTypedEvent(markdownTextArea, "\n");
+        verify(serverUtils, times(0)).updateNote(any(Note.class));
+    }
+
+    @Test
+    void testAutoSaveAfterFiveOKCharsTitle() throws NoSuchFieldException, IllegalAccessException {
+        markdownTitleArea = new TextArea();
+        markdownTextArea = new TextArea();
+        markdownCtrl.setMarkdownText(markdownTextArea);
+        markdownCtrl.setMarkdownTitle(markdownTitleArea);
+        markdownCtrl.initialize();
+        markdownCtrl.setCurrentlyEditedNote(mockNote);
+
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTitleArea, "a");
+        verify(serverUtils, times(1)).updateNote(any(Note.class));
+    }
+
+    @Test
+    void testMultipleAutosavesTitle(){
+        markdownTitleArea = new TextArea();
+        markdownTextArea = new TextArea();
+        markdownCtrl.setMarkdownText(markdownTextArea);
+        markdownCtrl.setMarkdownTitle(markdownTitleArea);
+        markdownCtrl.initialize();
+        markdownCtrl.setCurrentlyEditedNote(mockNote);
+
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTitleArea, "a");
+        verify(serverUtils, times(1)).updateNote(any(Note.class));
+
+        for (int i = 0; i < 5; i++) {
+            simulateKeyTypedEvent(markdownTitleArea, "b");
+        }
+        verify(serverUtils, times(2)).updateNote(any(Note.class));
+    }
+
+    @Test
+    void testAutoSaveAfterFiveControlCharsTitle(){
+        markdownTitleArea = new TextArea();
+        markdownTextArea = new TextArea();
+        markdownCtrl.setMarkdownText(markdownTextArea);
+        markdownCtrl.setMarkdownTitle(markdownTitleArea);
+        markdownCtrl.initialize();
+        markdownCtrl.setCurrentlyEditedNote(mockNote);
+
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTitleArea, "\n");
+        verify(serverUtils, times(0)).updateNote(any(Note.class));
+    }
+
+    @Test
+    void testAfterLessThanFiveCharsTitle(){
+        markdownTitleArea = new TextArea();
+        markdownTextArea = new TextArea();
+        markdownCtrl.setMarkdownText(markdownTextArea);
+        markdownCtrl.setMarkdownTitle(markdownTitleArea);
+        markdownCtrl.initialize();
+        markdownCtrl.setCurrentlyEditedNote(mockNote);
+
+        for(int i=0;i<3;i++)
+            simulateKeyTypedEvent(markdownTitleArea, "\n");
+        verify(serverUtils, times(0)).updateNote(any(Note.class));
+    }
+
+    /**
+     * simulates a key typed event
+     * method generated with the help of ChatGPT
+     * @param textArea place of generation
+     * @param character character to be typed
+     */
+    private void simulateKeyTypedEvent(TextArea textArea, String character){
+        KeyEvent event = new KeyEvent(KeyEvent.KEY_TYPED, character, character, null, false, false, false, false);
+        textArea.fireEvent(event);
+    }
 }
