@@ -27,7 +27,6 @@ import org.commonmark.ext.gfm.tables.TablesExtension;
 import java.util.ArrayList;
 import java.util.List;
 public class MarkdownCtrl{
-
     private ObservableList<Note> notes = FXCollections.observableArrayList();
     private final MainNetNodeCtrl pc;
     private String errorMessageTitle;
@@ -65,7 +64,8 @@ public class MarkdownCtrl{
      * @param p primary controller
      */
     @Inject
-    public MarkdownCtrl(MainNetNodeCtrl p) {
+    public MarkdownCtrl(MainNetNodeCtrl p, ServerUtils serverUtils) {
+        this.serverUtils = serverUtils;
         this.pc = p;
     }
 
@@ -92,6 +92,7 @@ public class MarkdownCtrl{
         if(noteNameList==null){
             noteNameList=new ListView<>();
         }
+        refreshNoteList();
         noteNameList.setItems(notes);
 
         noteNameList.setCellFactory(param -> new ListCell<>() {
@@ -223,25 +224,17 @@ public class MarkdownCtrl{
         markdownText.positionCaret(position);
 
     }
-
-//    @FXML
-//    public void refreshNoteList(){
-//        List <Note> newNoteList = pc.getNoteOverviewCtrl().loadAndReturnNotes();
-//        notes.clear();
-//        notes.addAll(newNoteList);
-//    }
-//
-//    @FXML
-//    public void refreshNoteList() {
-//        List<Note> newNoteList = server.getNotes(); // Fetch notes directly from the server
-//        if (newNoteList == null) {
-//            System.out.println("No notes available or server error.");
-//            newNoteList = new ArrayList<>();
-//        }
-//        notes.clear();
-//        notes.addAll(newNoteList);
-//    }
-
+    @FXML
+    public void refreshNoteList() {
+        List<Note> newNotes = serverUtils.getNotes();
+        if (newNotes == null) {
+            System.out.println("No notes available or server error.");
+            newNotes = new ArrayList<>();
+        }
+        notes.clear();
+        notes.addAll(newNotes);
+        System.out.println("Notes in list: " + notes);
+    }
 
     /**
      * Sets the main window to show the contents of the selected note

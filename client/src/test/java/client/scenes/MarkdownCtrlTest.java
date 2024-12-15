@@ -33,7 +33,7 @@ class MarkdownCtrlTest extends ApplicationTest {
         mainNetNode = new MainNetNodeCtrl();
 //        NoteOverviewCtrl noteOverviewCtrl = new NoteOverviewCtrl(serverUtils);
 //        mainNetNode.setNoteOverviewCtrl(noteOverviewCtrl);
-        markdownCtrl = new MarkdownCtrl(mainNetNode);
+        markdownCtrl = new MarkdownCtrl(mainNetNode, serverUtils);
     }
 
     @Test

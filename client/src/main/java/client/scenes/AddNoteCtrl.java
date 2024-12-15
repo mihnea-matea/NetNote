@@ -38,6 +38,7 @@ public class AddNoteCtrl{
         //System.out.println("addNote method is being called"); just a testing statement
         try {
             server.addNote(newNote);
+            pc.getMarkdownCtrl().refreshNoteList();
             showAlert("Success", "Note added successfully!", Alert.AlertType.INFORMATION);
             pc.showMainScene();
             clearFields();

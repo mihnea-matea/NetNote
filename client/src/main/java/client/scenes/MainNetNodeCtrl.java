@@ -40,10 +40,8 @@ public class MainNetNodeCtrl{
         }
         primaryStage.setScene(AddScene);
     }
-//    public NoteOverviewCtrl getNoteOverviewCtrl() {
-//        return noteOverviewCtrl;
-//    }
-//    public void setNoteOverviewCtrl(NoteOverviewCtrl noteOverviewCtrl) {
-//        this.noteOverviewCtrl = noteOverviewCtrl;
-//    }
+
+    public MarkdownCtrl getMarkdownCtrl() {
+        return this.markdownCtrl;
+    }
 }
