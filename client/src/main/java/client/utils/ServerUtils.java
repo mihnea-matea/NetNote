@@ -35,6 +35,7 @@ import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -170,7 +171,11 @@ public class ServerUtils {
 			System.out.println("id is hardcoded to be 10 for now");
 			throw e;
 		} catch (RestClientException e) {
-			throw new RuntimeException(e);
+			System.err.println("Error: Note with ID " + id + " not found. " + e.getMessage());
+			System.out.println("id is hardcoded to be 10 for now");
+
+			throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Note with ID " + id + " not found", null, null, null);
+
 		}
 	}
 

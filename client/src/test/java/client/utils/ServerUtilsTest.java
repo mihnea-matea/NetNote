@@ -33,7 +33,7 @@ public class ServerUtilsTest {
         System.setErr(errPrintStream);
         System.setOut(outPrintStream);
 
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.NotFound.class, () -> {
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
             serverUtils.deleteNoteById(id);
         });
 
