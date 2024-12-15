@@ -68,8 +68,9 @@ public class MarkdownCtrl{
      * @param p primary controller
      */
     @Inject
-    public MarkdownCtrl(MainNetNodeCtrl p) {
+    public MarkdownCtrl(MainNetNodeCtrl p, ServerUtils serverUtils) {
         this.pc = p;
+        this.serverUtils = serverUtils;
     }
 
     @FXML
@@ -124,7 +125,7 @@ public class MarkdownCtrl{
         markdownText.addEventFilter(KeyEvent.KEY_TYPED,event -> {
             if(currentlyEditedNote != null){
                 String ch = event.getCharacter();
-                if(!ch.isEmpty() && Character.isISOControl(ch.charAt(0))) {
+                if(!ch.isEmpty() && !Character.isISOControl(ch.charAt(0))) {
                     charsModifiedSinceLastSave++;
                     if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
                         autosaveCurrentNote();
@@ -137,7 +138,7 @@ public class MarkdownCtrl{
         markdownTitle.addEventFilter(KeyEvent.KEY_TYPED,event -> {
             if(currentlyEditedNote != null){
                 String ch = event.getCharacter();
-                if(!ch.isEmpty() && Character.isISOControl(ch.charAt(0))) {
+                if(!ch.isEmpty() && !Character.isISOControl(ch.charAt(0))) {
                     charsModifiedSinceLastSave++;
                     if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
                         autosaveCurrentNote();
@@ -149,7 +150,7 @@ public class MarkdownCtrl{
     }
 
     private void autosaveCurrentNote(){
-        if(currentlyEditedNote != null)
+        if(currentlyEditedNote == null)
             return;
         currentlyEditedNote.setTitle(markdownTitle.getText());
         currentlyEditedNote.setContent(markdownText.getText());
@@ -199,13 +200,6 @@ public class MarkdownCtrl{
                         </html>
                         """;
                     html.getEngine().loadContent(htmlString);
-                    if(currentlyEditedNote != null){
-                        int currDifference = 0;
-                        if(oldValue == null)
-                            oldValue = "";
-                        if(newValue == null)
-                            newValue = "";
-                    }
                 }
             });
 
@@ -395,5 +389,17 @@ public class MarkdownCtrl{
      */
     public void setMarkdownTitle(TextArea markdownTitle) {
         this.markdownTitle = markdownTitle;
+    }
+
+    /**
+     * setter method for the note that is currently being edited
+     * @param note
+     */
+    public void setCurrentlyEditedNote(Note note) {
+        this.currentlyEditedNote = note;
+    }
+
+    public void setServerUtils(ServerUtils serverUtils){
+        this.serverUtils = serverUtils;
     }
 }
