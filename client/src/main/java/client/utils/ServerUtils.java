@@ -35,6 +35,10 @@ import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 public class ServerUtils {
 
@@ -151,4 +155,28 @@ public class ServerUtils {
 				.get(new GenericType<List<Note>>() {
 				});
 	}
+
+	private RestTemplate restTemplate = new RestTemplate();
+
+	public void deleteNoteById(long id) {
+		try {
+			if (id < 0) {
+				throw new IllegalArgumentException("ID must be a positive number.");
+			}
+			String url = "http://localhost:8080/" + id;
+			restTemplate.delete(url);
+			System.out.println("Note with ID " + id + " deleted successfully.");
+		} catch (HttpClientErrorException.NotFound e) {
+			System.err.println("Error: Note with ID " + id + " not found. " + e.getMessage());
+			System.out.println("id is hardcoded to be 10 for now");
+			throw e;
+		} catch (RestClientException e) {
+			System.err.println("Error: Note with ID " + id + " not found. " + e.getMessage());
+			System.out.println("id is hardcoded to be 10 for now");
+
+			throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Note with ID " + id + " not found", null, null, null);
+
+		}
+	}
+
 }
