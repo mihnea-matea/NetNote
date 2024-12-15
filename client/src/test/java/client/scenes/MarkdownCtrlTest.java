@@ -2,11 +2,14 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.Note;
+import javafx.collections.FXCollections;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.web.WebView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.testfx.framework.junit5.ApplicationTest;
 
@@ -18,9 +21,11 @@ import static org.mockito.Mockito.when;
 class MarkdownCtrlTest extends ApplicationTest {
 
     MainNetNodeCtrl mainNetNode;
+    private ListView<Note> noteNameList;
     private MarkdownCtrl markdownCtrl;
     private TextArea markdownTitleArea;
     private TextArea markdownTextArea;
+    private AddNoteCtrl addNoteCtrl;
     private WebView html;
 
     @Mock
@@ -29,11 +34,14 @@ class MarkdownCtrlTest extends ApplicationTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        when(serverUtils.getNotes()).thenReturn(List.of(new Note(), new Note()));
+        when(serverUtils.getNotes()).thenReturn(List.of(
+                new Note("Title 1", "Content 1"),
+                new Note("Title 2", "Content 2")
+        ));
         mainNetNode = new MainNetNodeCtrl();
-//        NoteOverviewCtrl noteOverviewCtrl = new NoteOverviewCtrl(serverUtils);
-//        mainNetNode.setNoteOverviewCtrl(noteOverviewCtrl);
         markdownCtrl = new MarkdownCtrl(mainNetNode, serverUtils);
+        addNoteCtrl = new AddNoteCtrl(mainNetNode, serverUtils);
+        noteNameList = new ListView<>();
     }
 
     @Test
@@ -82,15 +90,8 @@ class MarkdownCtrlTest extends ApplicationTest {
         assertEquals("MarkdownText is null", markdownCtrl.getErrorMessageText());
     }
 
-//    @Test
-//    void refreshNoteListTestNoChanges() {
-//        List<Note> oldNoteList = mainNetNode.getNoteOverviewCtrl().loadAndReturnNotes();
-//        markdownCtrl.refreshNoteList();
-//        List<Note> newNoteList = mainNetNode.getNoteOverviewCtrl().loadAndReturnNotes();
-//        assertEquals(oldNoteList, newNoteList);
-//    }
     @Test
-    void enterPressTest () {
+    void enterPressTest() {
         TextArea textArea = new TextArea();
         markdownCtrl.setMarkdownText(textArea);
         textArea.setText("This is the content of a note");
@@ -98,5 +99,42 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.enterPress();
         assertEquals("This is the content of a note", textArea.getText());
         assertEquals(10, textArea.getCaretPosition());
-        }
+    }
+
+    @Test
+    void testListViewInitialization() {
+        noteNameList.setItems(FXCollections.observableArrayList(
+                new Note("Title 1", "Content 1"),
+                new Note("Title 2", "Content 2")
+        ));
+        assertEquals(2, noteNameList.getItems().size(), "ListView should have 2 notes");
+    }
+    @Test
+    void testListViewContainsCorrectNotes() {
+        noteNameList.setItems(FXCollections.observableArrayList(
+                new Note("Title 1", "Content 1"),
+                new Note("Title 2", "Content 2")
+        ));
+        assertTrue(noteNameList.getItems().stream().anyMatch(note -> note.getTitle().equals("Title 1")), "ListView should contain 'Title 1'");
+        assertTrue(noteNameList.getItems().stream().anyMatch(note -> note.getTitle().equals("Title 2")), "ListView should contain 'Title 2'");
+    }
+
+    @Test
+    void testListViewEmptyAfterClear() {
+        noteNameList.setItems(FXCollections.observableArrayList(
+                new Note("Title 1", "Content 1"),
+                new Note("Title 2", "Content 2")
+        ));
+        noteNameList.getItems().clear();
+        assertTrue(noteNameList.getItems().isEmpty(), "ListView should be empty after clearing");
+    }
+    @Test
+    void testListViewUpdateAfterNoteAdded() {
+        noteNameList.setItems(FXCollections.observableArrayList(
+                new Note("Title 1", "Content 1")
+        ));
+        noteNameList.getItems().add(new Note("Title 2", "Content 2"));
+        assertEquals(2, noteNameList.getItems().size(), "ListView should have 2 notes after adding a new one");
+    }
+
 }

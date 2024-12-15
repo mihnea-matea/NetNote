@@ -53,7 +53,7 @@ public class MarkdownCtrl{
     @FXML
     private Button searchButton;
 
-    private ServerUtils serverUtils = new ServerUtils();
+    private ServerUtils serverUtils;
 
     private final List<Extension> extensions = List.of(TablesExtension.create());
     private final Parser parserM = Parser.builder().extensions(extensions).build();
@@ -235,7 +235,21 @@ public class MarkdownCtrl{
         notes.addAll(newNotes);
         System.out.println("Notes in list: " + notes);
     }
+//testing methods-------------------------------------------------
+    public ObservableList<Note> getNotes() {
+        return notes;
+    }
 
+    public void clearNoteList() {
+        notes.clear();
+        refreshNoteList();
+    }
+    public boolean isNoteDisplayed(Note expectedNote) {
+        return markdownTitle.getText().equals(expectedNote.getTitle()) &&
+                markdownText.getText().equals(expectedNote.getContent());
+    }
+
+//-------------------------------------------------------------------
     /**
      * Sets the main window to show the contents of the selected note
      * @param note - Selected note

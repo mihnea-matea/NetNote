@@ -41,6 +41,7 @@ public class AddNoteCtrl{
             pc.getMarkdownCtrl().refreshNoteList();
             showAlert("Success", "Note added successfully!", Alert.AlertType.INFORMATION);
             pc.showMainScene();
+            pc.getMarkdownCtrl().refreshNoteList();
             clearFields();
         } catch (Exception e) {
             showAlert("Error", "Failed to add note: " + e.getMessage(), Alert.AlertType.ERROR);
