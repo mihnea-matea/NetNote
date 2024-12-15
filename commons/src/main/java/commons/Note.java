@@ -1,5 +1,6 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -31,7 +32,9 @@ public class Note {
     private String title;
 
     private String content;
-    private final LocalDateTime creationTime = LocalDateTime.now();
+
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    private final LocalDateTime creationTime = LocalDateTime.now();
 
     public Note() {
         // for object mappers
@@ -95,7 +98,7 @@ public class Note {
         this.content = content;
     }
 
-    public LocalDateTime getCreationTime() {
-        return creationTime;
-    }
+//    public LocalDateTime getCreationTime() {
+//        return creationTime;
+//    }
 }
