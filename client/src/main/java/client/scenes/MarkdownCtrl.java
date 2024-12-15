@@ -16,6 +16,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import org.commonmark.Extension;
@@ -24,6 +26,8 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 import java.util.List;
+import java.util.Optional;
+
 public class MarkdownCtrl{
 
     private ObservableList<Note> notes = FXCollections.observableArrayList();
@@ -56,6 +60,10 @@ public class MarkdownCtrl{
 
     private int charsModifiedSinceLastSave;
     private static final int CHAR_NO_FOR_AUTOSAVE = 5;
+
+    @FXML
+    private Button removeButton;
+
 
     private ServerUtils serverUtils = new ServerUtils();
 
@@ -342,6 +350,71 @@ public class MarkdownCtrl{
     public void addButtonPress(){
         pc.showAddScene();
     }
+
+    @FXML
+    public void removalWarning(){
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Confirmation");
+        dialog.setHeaderText("Are you sure you want to delete this note?");
+
+        ButtonType deleteButtonType = new ButtonType("Delete", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(deleteButtonType, cancelButtonType);
+
+        dialog.getDialogPane().setStyle("-fx-background-color: #B23A48;");
+
+        Label headerLabel = (Label) dialog.getDialogPane().getHeader();
+        if (headerLabel != null) {
+            headerLabel.setFont(new Font("System", 18));
+            headerLabel.setTextFill(Color.DARKRED);
+        }
+        dialog.getDialogPane().lookupButton(deleteButtonType).setStyle(
+                "-fx-background-color: #4CAF50; -fx-text-fill: #fed0bb; -fx-font-size: 14px; -fx-font-weight: bold;");
+        dialog.getDialogPane().lookupButton(cancelButtonType).setStyle(
+                "-fx-background-color: #f44336; -fx-text-fill: #fed0bb; -fx-font-size: 14px; -fx-font-weight: bold;");
+
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        if (result.isPresent()) {
+            if (result.get() == deleteButtonType) {
+                System.out.println("Note deleted.");
+
+                long id = 10; // Temporary
+                serverUtils.deleteNoteById(id);
+
+                Alert deleted = new Alert(Alert.AlertType.CONFIRMATION);
+                deleted.setTitle("Deletion succesful");
+                deleted.setHeaderText("(Current note) deleted");
+                deleted.setContentText("This action cannot be undone.");
+
+                deleted.getDialogPane().setStyle("-fx-background-color: #B23A48;");
+                deleted.getDialogPane().lookup(".header-panel").setStyle("-fx-background-color:  #B23A48; -fx-text-fill: #fed0bb;");
+                deleted.getDialogPane().lookup(".content").setStyle("-fx-text-fill: #fed0bb; -fx-font-size: 14px; -fx-font-family: 'System';");
+
+                Button button = (Button) deleted.getDialogPane().lookupButton(deleted.getDialogPane().getButtonTypes().get(0));
+                button.setStyle("-fx-background-color: #ff3300; -fx-text-fill: white; -fx-font-size: 14px;");
+
+                Button deleteButton = (Button) dialog.getDialogPane().lookupButton(deleteButtonType);
+                Button cancelButton = (Button) dialog.getDialogPane().lookupButton(cancelButtonType);
+                if (deleteButton != null) {
+                    deleteButton.setFont(new Font("System", 14));  // Font for delete button
+                }
+                if (cancelButton != null) {
+                    cancelButton.setFont(new Font("System", 14));  // Font for cancel button
+                }
+
+                deleted.showAndWait();
+
+                refreshNoteList();
+                System.out.println("Notes refreshed");
+
+
+            } else if (result.get() == cancelButtonType) {
+                System.out.println("Delete action canceled.");
+            }
+        }
+    }
+
 
     /**
      * getter method for markdownText
