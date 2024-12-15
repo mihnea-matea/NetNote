@@ -70,19 +70,16 @@ public class DirectoryTest {
     @Test
     public void testToString(){
         String test  = "School\n" +
-                "[commons.Note@3c9d0b9d[\n" +
-                "  content=I know calculus\n" +
-                "  id=0\n" +
-                "  title=Calculus\n" +
-                "], commons.Note@7c469c48[\n" +
-                "  content=I dont know calculus\n" +
-                "  id=0\n" +
-                "  title=Calculus\n" +
-                "], commons.Note@12e61fe6[\n" +
-                "  content=I like CSEP\n" +
-                "  id=0\n" +
-                "  title=CSEP\n" +
-                "]]";
+                "[\n" +
+                "Calculus\n" +
+                "I know calculus\n" +
+                ", \n" +
+                "Calculus\n" +
+                "I dont know calculus\n" +
+                ", \n" +
+                "CSEP\n" +
+                "I like CSEP\n" +
+                "]";
         assertEquals(test, directory1.toString());
     }
 
