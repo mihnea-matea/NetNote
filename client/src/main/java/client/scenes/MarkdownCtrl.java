@@ -56,8 +56,14 @@ public class MarkdownCtrl{
     @FXML
     private Button searchButton;
 
+    private Note currentlyEditedNote;
+
+    private int charsModifiedSinceLastSave;
+    private static final int CHAR_NO_FOR_AUTOSAVE = 5;
+
     @FXML
     private Button removeButton;
+
 
     private ServerUtils serverUtils = new ServerUtils();
 
