@@ -114,6 +114,14 @@ public class Note {
         this.content = content;
     }
 
+    public String getDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(String directory) {
+        this.directory = directory;
+    }
+
 //    public LocalDateTime getCreationTime() {
 //        return creationTime;
 //    }

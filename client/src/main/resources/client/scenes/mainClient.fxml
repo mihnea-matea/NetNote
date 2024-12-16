@@ -18,10 +18,10 @@
             <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" style="-fx-background-color: #B23A48;" SplitPane.resizableWithParent="false">
                     <children>
-                        <HBox fillHeight="false" layoutX="108.0" layoutY="63.0" prefHeight="0.0" prefWidth="587.0" AnchorPane.leftAnchor="108.0" AnchorPane.rightAnchor="133.5999999999999">
+                        <HBox fillHeight="false" layoutX="36.0" layoutY="62.0" prefHeight="27.0" prefWidth="610.0" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="182.39999999999998">
                             <children>
                                 <TextField fx:id="searchField" prefHeight="26.0" prefWidth="518.0" promptText="Enter the word you are looking for" HBox.hgrow="ALWAYS" />
-                                <Button fx:id="searchButton" mnemonicParsing="false" onMouseClicked="#search" prefHeight="26.0" prefWidth="84.0" style="-fx-background-color: #fed0bb;" text="Search" textFill="#b23a48" HBox.hgrow="ALWAYS">
+                                <Button fx:id="searchButton" mnemonicParsing="false" onMouseClicked="#search" prefHeight="27.0" prefWidth="77.0" style="-fx-background-color: #fed0bb;" text="Search" textFill="#b23a48" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font name="Kristen ITC" size="12.0" />
                                     </font></Button>
@@ -32,7 +32,7 @@
                                 <Font name="Kristen ITC" size="36.0" />
                             </font>
                         </Label>
-                        <ChoiceBox fx:id="directoryDropDown" layoutX="664.0" layoutY="37.0" prefWidth="150.0" />
+                        <ChoiceBox fx:id="directoryDropDown" layoutX="656.0" layoutY="63.0" prefWidth="150.0" AnchorPane.leftAnchor="656.0" AnchorPane.rightAnchor="22.39999999999995" />
                     </children>
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" SplitPane.resizableWithParent="false">
@@ -42,7 +42,7 @@
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #8C2F39;" SplitPane.resizableWithParent="false">
                                     <children>
                                         <ListView fx:id="noteNameList" layoutY="-4.0" onMouseClicked="#handleNoteSelection" prefHeight="395.0" prefWidth="151.0" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-4.0" />
-                                        <Button layoutX="-3.0" layoutY="427.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="42.0" style="-fx-background-color: #fed0bb; -fx-font-family: Elephant; -fx-font-size: 20;" text="-" textFill="#b23a48" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
+                                        <Button layoutX="-3.0" layoutY="427.0" mnemonicParsing="false" onAction="#removalWarning" prefHeight="43.0" prefWidth="42.0" style="-fx-background-color: #fed0bb; -fx-font-family: Elephant; -fx-font-size: 20;" text="-" textFill="#b23a48" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
                                         <Button alignment="CENTER" layoutX="54.0" layoutY="412.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#addButtonPress" prefHeight="43.0" prefWidth="42.0" style="-fx-background-color: #fed0bb; -fx-font-family: Elephant;" text="Add a note" textFill="#b23a48" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="54.0" AnchorPane.rightAnchor="52.79999999999998">
                                             <font>
                                                 <Font size="20.0" />
