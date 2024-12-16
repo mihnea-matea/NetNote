@@ -141,12 +141,16 @@ public class MarkdownCtrl{
         markdownText.addEventFilter(KeyEvent.KEY_TYPED,event -> {
             if(currentlyEditedNote != null){
                 String ch = event.getCharacter();
-                if(!ch.isEmpty() && !Character.isISOControl(ch.charAt(0))) {
-                    charsModifiedSinceLastSave++;
-                    if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
-                        autosaveCurrentNote();
-                        charsModifiedSinceLastSave = 0;
+                if(!ch.isEmpty()) {
+                    char charTyped = ch.charAt(0);
+                    if(charTyped == '\b' || charTyped == '\t' || charTyped == '\n' || !Character.isISOControl(charTyped)){
+                        charsModifiedSinceLastSave++;
+                        if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
+                            autosaveCurrentNote();
+                            charsModifiedSinceLastSave = 0;
+                        }
                     }
+                    else event.consume();
                 }
             }
         });
@@ -154,12 +158,16 @@ public class MarkdownCtrl{
         markdownTitle.addEventFilter(KeyEvent.KEY_TYPED,event -> {
             if(currentlyEditedNote != null){
                 String ch = event.getCharacter();
-                if(!ch.isEmpty() && !Character.isISOControl(ch.charAt(0))) {
-                    charsModifiedSinceLastSave++;
-                    if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
-                        autosaveCurrentNote();
-                        charsModifiedSinceLastSave = 0;
+                if(!ch.isEmpty()) {
+                    char charTyped = ch.charAt(0);
+                    if(charTyped == '\b' || charTyped == '\t' || charTyped == '\n' || !Character.isISOControl(charTyped)){
+                        charsModifiedSinceLastSave++;
+                        if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
+                            autosaveCurrentNote();
+                            charsModifiedSinceLastSave = 0;
+                        }
                     }
+                    else event.consume();
                 }
             }
         });

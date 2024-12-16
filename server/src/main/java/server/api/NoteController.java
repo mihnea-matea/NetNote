@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import server.database.NoteRepository;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 //This is just the quote controller but with some small changes!!!!!!!!!!!!!!!!!
 @RestController
@@ -64,6 +65,26 @@ public class NoteController {
         Note note = repo.findById(id).get();
         repo.delete(note);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity updateNote(@PathVariable("id") long id, @RequestBody Note updatedNote){
+        if(id < 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        if(!repo.existsById(id))
+            return ResponseEntity.notFound().build();
+        Note existingNote = null;
+        Optional<Note> optionalNote = repo.findById(id);
+        if(optionalNote.isPresent())
+            existingNote = optionalNote.get();
+        if(existingNote == null)
+            return ResponseEntity.notFound().build();
+
+        existingNote.setContent(updatedNote.getContent());
+        existingNote.setTitle(updatedNote.getTitle());
+        Note newNote = repo.save(existingNote);
+        return ResponseEntity.ok(newNote);
     }
 
 }

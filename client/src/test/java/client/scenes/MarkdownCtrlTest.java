@@ -145,12 +145,12 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
         for(int i=0;i<5;i++)
-            simulateKeyTypedEvent(markdownTextArea, "\n");
+            simulateKeyTypedEvent(markdownTextArea, "\u001B"); /// escape character
         verify(serverUtils, times(0)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAfterLessThanFiveCharsText(){
+    void testAutosaveAfterLessThanFiveCharsText(){
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
@@ -161,6 +161,20 @@ class MarkdownCtrlTest extends ApplicationTest {
         for(int i=0;i<3;i++)
             simulateKeyTypedEvent(markdownTextArea, "\n");
         verify(serverUtils, times(0)).updateNote(any(Note.class));
+    }
+
+    @Test
+    void testAutosaveAfterFiveNewlineCharsText(){
+        markdownTitleArea = new TextArea();
+        markdownTextArea = new TextArea();
+        markdownCtrl.setMarkdownText(markdownTextArea);
+        markdownCtrl.setMarkdownTitle(markdownTitleArea);
+        markdownCtrl.initialize();
+        markdownCtrl.setCurrentlyEditedNote(mockNote);
+
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTextArea, "\n");
+        verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 
     @Test
@@ -206,12 +220,12 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
         for(int i=0;i<5;i++)
-            simulateKeyTypedEvent(markdownTitleArea, "\n");
+            simulateKeyTypedEvent(markdownTitleArea, "\u001B"); /// escape character
         verify(serverUtils, times(0)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAfterLessThanFiveCharsTitle(){
+    void testAutosaveAfterLessThanFiveCharsTitle(){
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
@@ -222,6 +236,20 @@ class MarkdownCtrlTest extends ApplicationTest {
         for(int i=0;i<3;i++)
             simulateKeyTypedEvent(markdownTitleArea, "\n");
         verify(serverUtils, times(0)).updateNote(any(Note.class));
+    }
+
+    @Test
+    void testAutosaveAfterFiveNewlineCharsTitle(){
+        markdownTitleArea = new TextArea();
+        markdownTextArea = new TextArea();
+        markdownCtrl.setMarkdownText(markdownTextArea);
+        markdownCtrl.setMarkdownTitle(markdownTitleArea);
+        markdownCtrl.initialize();
+        markdownCtrl.setCurrentlyEditedNote(mockNote);
+
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTitleArea, "\n");
+        verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 
     /**
