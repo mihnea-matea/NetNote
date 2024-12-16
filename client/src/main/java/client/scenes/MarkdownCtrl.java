@@ -25,11 +25,12 @@ import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class MarkdownCtrl{
-
     private ObservableList<Note> notes = FXCollections.observableArrayList();
     private final MainNetNodeCtrl pc;
     private String errorMessageTitle;
@@ -104,6 +105,7 @@ public class MarkdownCtrl{
         if(noteNameList==null){
             noteNameList=new ListView<>();
         }
+        refreshNoteList();
         noteNameList.setItems(notes);
 
         noteNameList.setCellFactory(param -> new ListCell<>() {
@@ -280,14 +282,32 @@ public class MarkdownCtrl{
         markdownText.positionCaret(position);
 
     }
-
     @FXML
-    public void refreshNoteList(){
-        List <Note> newNoteList = pc.getNoteOverviewCtrl().loadAndReturnNotes();
+    public void refreshNoteList() {
+        List<Note> newNotes = serverUtils.getNotes();
+        if (newNotes == null) {
+            System.out.println("No notes available or server error.");
+            newNotes = new ArrayList<>();
+        }
         notes.clear();
-        notes.addAll(newNoteList);
+        notes.addAll(newNotes);
+        System.out.println("Notes in list: " + notes);
+    }
+//testing methods-------------------------------------------------
+    public ObservableList<Note> getNotes() {
+        return notes;
     }
 
+    public void clearNoteList() {
+        notes.clear();
+        refreshNoteList();
+    }
+    public boolean isNoteDisplayed(Note expectedNote) {
+        return markdownTitle.getText().equals(expectedNote.getTitle()) &&
+                markdownText.getText().equals(expectedNote.getContent());
+    }
+
+//-------------------------------------------------------------------
     /**
      * Sets the main window to show the contents of the selected note
      * @param note - Selected note

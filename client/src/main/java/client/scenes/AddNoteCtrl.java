@@ -2,7 +2,6 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import client.scenes.MainNetNodeCtrl;
 import commons.Note;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -39,8 +38,10 @@ public class AddNoteCtrl{
         //System.out.println("addNote method is being called"); just a testing statement
         try {
             server.addNote(newNote);
+            pc.getMarkdownCtrl().refreshNoteList();
             showAlert("Success", "Note added successfully!", Alert.AlertType.INFORMATION);
             pc.showMainScene();
+            pc.getMarkdownCtrl().refreshNoteList();
             clearFields();
         } catch (Exception e) {
             showAlert("Error", "Failed to add note: " + e.getMessage(), Alert.AlertType.ERROR);
