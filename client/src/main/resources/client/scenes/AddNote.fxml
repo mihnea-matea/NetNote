@@ -15,13 +15,13 @@
                 <Font size="20.0" />
             </font>
         </Label>
-        <Label layoutX="39.0" layoutY="88.0" prefHeight="30.0" prefWidth="108.0" text="Contents">
+        <Label layoutX="39.0" layoutY="88.0" prefHeight="30.0" prefWidth="158.0" text="Choose Directory">
             <font>
                 <Font size="20.0" />
             </font>
         </Label>
         <Button layoutX="364.0" layoutY="175.0" mnemonicParsing="false" onAction="#reset" text="reset" />
-        <TextField fx:id="ContentsText" layoutX="200.0" layoutY="91.0" prefHeight="25.0" prefWidth="357.0" promptText="type your contents here" />
+        <TextField fx:id="DirectoryText" layoutX="248.0" layoutY="91.0" prefHeight="25.0" prefWidth="309.0" promptText="type your Directory name here" />
         <TextField fx:id="TitleText" layoutX="200.0" layoutY="41.0" prefHeight="25.0" prefWidth="357.0" promptText="type your title here" />
     </children>
 </Pane>

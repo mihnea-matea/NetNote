@@ -12,7 +12,7 @@ public class AddNoteCtrl{
     private TextField TitleText;
 
     @FXML
-    private TextField ContentsText;
+    private TextField DirectoryText;
 
     private final ServerUtils server;
     private final MainNetNodeCtrl pc;
@@ -25,16 +25,22 @@ public class AddNoteCtrl{
 
     public void apply() {
         String title = TitleText.getText();
-        String content = ContentsText.getText();
+        String directory = DirectoryText.getText();
 
         if (title == null || title.trim().isEmpty()) {
             showAlert("Error", "Title is required!", Alert.AlertType.ERROR);
             return;
         }
+        String defaultContent = """
+                # My Note
+                This is the content of a note
+                ## A Sub section
+                You can write **bold** and *italic*""";
 
         Note newNote = new Note();
         newNote.setTitle(title);
-        newNote.setContent(content);
+        newNote.setContent(defaultContent);
+        newNote.setDirectory(directory);
         //System.out.println("addNote method is being called"); just a testing statement
         try {
             server.addNote(newNote);
@@ -68,7 +74,7 @@ public class AddNoteCtrl{
     public void clearFields(){
         try {
             TitleText.clear();
-            ContentsText.clear();
+            DirectoryText.clear();
         }
         catch(Exception e){
             System.err.println("Fields could not be deleted");
