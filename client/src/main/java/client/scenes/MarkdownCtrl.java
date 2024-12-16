@@ -1,6 +1,7 @@
 package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Directory;
 import commons.Note;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -36,8 +37,13 @@ public class MarkdownCtrl{
     private String errorMessageTitle;
     private String errorMessageText;
 
+    private Note currentNote;
+
     @FXML
     private ListView<Note> noteNameList;
+
+    @FXML
+    private ChoiceBox<Directory> directoryDropDown;
 
     @FXML
     private TextArea markdownTitle;
@@ -333,6 +339,15 @@ public class MarkdownCtrl{
         if(note != null){
             displayNoteTitle(note);
             displayNoteContent(note);
+            currentNote = note;
+        }
+    }
+
+    @FXML
+    private void handleDirectorySelection() {
+        Directory directory = directoryDropDown.getSelectionModel().getSelectedItem();
+        if(directory != null){
+
         }
     }
 
@@ -389,7 +404,7 @@ public class MarkdownCtrl{
             headerLabel.setTextFill(Color.DARKRED);
         }
         dialog.getDialogPane().lookupButton(deleteButtonType).setStyle(
-                "-fx-background-color: #4CAF50; -fx-text-fill: #fed0bb; -fx-font-size: 14px; -fx-font-weight: bold;");
+                "-fx-background-color: #2fc436; -fx-text-fill: #fed0bb; -fx-font-size: 14px; -fx-font-weight: bold;");
         dialog.getDialogPane().lookupButton(cancelButtonType).setStyle(
                 "-fx-background-color: #f44336; -fx-text-fill: #fed0bb; -fx-font-size: 14px; -fx-font-weight: bold;");
 
@@ -399,7 +414,7 @@ public class MarkdownCtrl{
             if (result.get() == deleteButtonType) {
                 System.out.println("Note deleted.");
 
-                long id = 10; // Temporary
+                long id = currentNote.getId();
                 serverUtils.deleteNoteById(id);
 
                 Alert deleted = new Alert(Alert.AlertType.CONFIRMATION);
