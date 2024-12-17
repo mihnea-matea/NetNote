@@ -8,6 +8,7 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
@@ -17,15 +18,13 @@
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.2" orientation="VERTICAL" prefHeight="392.0" prefWidth="604.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="897.0" style="-fx-background-color: #B23A48;" SplitPane.resizableWithParent="false">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="897.0" style="-fx-background-color: #B23A48;" stylesheets="@/client/styles/Upper.css" SplitPane.resizableWithParent="false">
                     <children>
-                        <HBox fillHeight="false" layoutX="144.0" layoutY="62.0" prefHeight="27.0" prefWidth="479.0" AnchorPane.leftAnchor="144.0" AnchorPane.rightAnchor="205.0">
+                        <HBox fillHeight="false" layoutX="152.0" layoutY="61.0" prefHeight="27.0" prefWidth="479.0" AnchorPane.leftAnchor="152.0" AnchorPane.rightAnchor="197.0">
                             <children>
-                                <TextField fx:id="searchField" prefHeight="27.0" prefWidth="372.0" promptText="Enter the note you are looking for:" HBox.hgrow="ALWAYS" />
-                                <Button fx:id="searchButton" mnemonicParsing="false" onMouseClicked="#search" prefHeight="27.0" prefWidth="77.0" style="-fx-background-color: #fed0bb;" text="Search 🔍" textFill="#b23a48" HBox.hgrow="ALWAYS">
-                                    <font>
-                                        <Font name="Kristen ITC" size="12.0" />
-                                    </font></Button>
+                                <TextField fx:id="searchField" prefHeight="27.0" prefWidth="369.0" promptText="Enter the note you are looking for:" HBox.hgrow="ALWAYS" />
+                                <Button fx:id="searchButton" mnemonicParsing="false" onMouseClicked="#search" prefHeight="25.0" prefWidth="78.0" styleClass="upper-button" text="Search 🔍" textFill="#b23a48" HBox.hgrow="ALWAYS" >
+                                </Button>
                             </children>
                         </HBox>
                         <Label alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="-2.0" prefHeight="64.0" prefWidth="830.0" text=" ∘₊✧────✧₊∘  NetNote 📜   ∘₊✧────✧₊∘ " textAlignment="CENTER" textFill="#fed0bb" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-3.0" AnchorPane.topAnchor="-2.0">
@@ -33,18 +32,8 @@
                                 <Font name="Kristen ITC" size="36.0" />
                             </font>
                         </Label>
-                        <ChoiceBox fx:id="directoryDropDown" layoutX="634.0" layoutY="63.0" prefHeight="25.0" prefWidth="173.0" style="-fx-background-color: #fed0bb;" AnchorPane.rightAnchor="21.0" />
-                  <ComboBox layoutX="22.0" layoutY="63.0" prefHeight="25.0" prefWidth="111.0" style="-fx-background-color: #fed0bb;" />
-                  <Label alignment="CENTER_RIGHT" layoutX="21.0" layoutY="59.0" prefHeight="33.0" prefWidth="87.0" text="Language ✈" textAlignment="RIGHT" textFill="#b23a48" wrapText="true">
-                     <font>
-                        <Font name="Kristen ITC" size="12.0" />
-                     </font>
-                  </Label>
-                  <Label alignment="CENTER" layoutX="647.0" layoutY="59.0" prefHeight="33.0" prefWidth="139.0" text="Collections 🗁" textAlignment="CENTER" textFill="#b23a48" AnchorPane.rightAnchor="42.0">
-                     <font>
-                        <Font name="Kristen ITC" size="12.0" />
-                     </font>
-                  </Label>
+                        <ChoiceBox fx:id="directoryDropDown" layoutX="640.0" layoutY="61.0" prefHeight="29.0" prefWidth="170.0" styleClass="upper-choice-box" value="Collections 🗁" AnchorPane.rightAnchor="18.0" />
+                        <ComboBox layoutX="20.0" layoutY="61.0" prefHeight="29.0" prefWidth="121.0" styleClass="upper-combo-box" value="Language ✈" />
                     </children>
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="429.0" prefWidth="831.0" SplitPane.resizableWithParent="false">
@@ -54,14 +43,26 @@
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #8C2F39;" SplitPane.resizableWithParent="false">
                                     <children>
                                         <ListView fx:id="noteNameList" layoutY="-4.0" onMouseClicked="#handleNoteSelection" prefHeight="395.0" prefWidth="159.0" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-4.0" />
-                                        <Button layoutX="-3.0" layoutY="427.0" mnemonicParsing="false" onAction="#removalWarning" prefHeight="43.0" prefWidth="42.0" style="-fx-background-color: #fed0bb; -fx-font-family: Elephant; -fx-font-size: 20;" text="🗑" textFill="#b23a48" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
-                                        <Button alignment="CENTER" ellipsisString="✎" layoutX="54.0" layoutY="412.0" mnemonicParsing="false" mouseTransparent="true" nodeOrientation="LEFT_TO_RIGHT" onAction="#addButtonPress" prefHeight="43.0" prefWidth="42.0" style="-fx-background-color: #fed0bb; -fx-font-family: Elephant;" text="✎Add a new note✎" textAlignment="CENTER" textFill="#b23a48" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="54.0" AnchorPane.rightAnchor="54.0">
-                                 <font>
-                                    <Font name="Agency FB" size="20.0" />
+                                        <Button layoutX="-3.0" layoutY="427.0" mnemonicParsing="false" onAction="#removalWarning" prefHeight="43.0" prefWidth="42.0" stylesheets="@/client/styles/Button.css" text="🗑" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+                                            <tooltip>
+                                                <Tooltip text="Delete a note" />
+                                            </tooltip>
+                                            <font>
+                                    <Font name="Kristen ITC" size="20.0" />
                                  </font></Button>
-                                        <Button ellipsisString="" layoutX="108.0" layoutY="412.0" mnemonicParsing="false" onAction="#refreshNoteList" prefHeight="43.0" prefWidth="42.0" style="-fx-background-color: #fed0bb; -fx-font-family: Elephant; -fx-font-size: 17;" text="🔄" textAlignment="CENTER" textFill="#b23a48" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                                 <font>
-                                    <Font name="Agency FB" size="20.0" />
+                                        <Button alignment="CENTER" ellipsisString="" layoutX="54.0" layoutY="412.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#addButtonPress" prefHeight="43.0" prefWidth="42.0" stylesheets="@/client/styles/Button.css" text="✎Add a new note✎" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="54.0" AnchorPane.rightAnchor="54.0">
+                                            <tooltip>
+                                                <Tooltip text="Add a note" />
+                                            </tooltip>
+                                            <font>
+                                    <Font name="Kristen ITC" size="20.0" />
+                                 </font></Button>
+                                        <Button layoutX="108.0" layoutY="412.0" mnemonicParsing="false" onAction="#refreshNoteList" prefHeight="43.0" prefWidth="42.0" stylesheets="@/client/styles/Button.css" text="⟲" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                            <tooltip>
+                                                <Tooltip text="Refresh" />
+                                            </tooltip>
+                                            <font>
+                                    <Font name="Kristen ITC" size="23.0" />
                                  </font></Button>
                                     </children>
                                 </AnchorPane>
