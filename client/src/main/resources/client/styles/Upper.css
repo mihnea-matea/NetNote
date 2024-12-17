@@ -1,0 +1,81 @@
+
+.upper-button {
+    -fx-background-color: #fed0bb;
+    -fx-text-fill: #b23a48;
+    -fx-border-width: 1.5px;
+    -fx-border-color: #b23a48;
+    -fx-font-family: "Kristen ITC";
+    -fx-font-size: 12px;
+}
+
+.upper-button:hover {
+    -fx-background-color: #fed0bb;
+    -fx-text-fill: #b23a48;
+    -fx-border-width: 1px;
+    -fx-border-color: #d78a84;
+    -fx-font-size: 12px;
+}
+
+.upper-button:pressed {
+    -fx-background-color: #fed0bb;
+    -fx-text-fill: #d78a84;
+    -fx-translate-y: 1px;
+    -fx-font-size: 12px;
+     -fx-pref-height: 25px;
+}
+.upper-combo-box, .upper-choice-box {
+    -fx-font-family: "Kristen ITC";
+    -fx-font-size: 12px;
+    -fx-pref-height: 25px;
+    -fx-border-color: #b23a48;
+    -fx-border-width: 1px;
+    -fx-background-color: #fed0bb;
+}
+
+.upper-combo-box .text, .upper-choice-box .text {
+    -fx-fill: #b23a48;
+    -fx-border-color: #b23a48;
+    -fx-border-width: 1px;
+}
+
+.upper-choice-box .text:pressed{
+    -fx-fill: #d78a84;
+}
+
+.combo-box-popup .list-view .label, .choice-box-popup .list-view .label {
+    -fx-text-fill: #b23a48;
+}
+
+.combo-box-popup .list-view .label:focused, .choice-box-popup .list-view .label:focused {
+    -fx-text-fill: #d78a84;
+}
+
+.upper-combo-box:pressed .text {
+    -fx-fill: #d78a84;
+}
+
+.upper-combo-box:hover {
+    -fx-background-color: #fed0bb;
+    -fx-font-size: 12px;
+    -fx-border-width: 1.5px;
+    -fx-border-color: #d78a84;
+}
+
+.upper-combo-box:pressed {
+    -fx-background-color: #fed0bb;
+    -fx-font-size: 12px;
+    -fx-translate-y: 1px;
+}
+
+.upper-choice-box:hover {
+    -fx-background-color: #fed0bb;
+    -fx-border-width: 1.5px;
+    -fx-border-color: #d78a84;
+    -fx-font-size: 12px;
+}
+
+.upper-choice-box:pressed {
+    -fx-background-color: #fed0bb;
+    -fx-font-size: 12px;
+    -fx-translate-y: 1px;
+}
