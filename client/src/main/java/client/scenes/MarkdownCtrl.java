@@ -27,6 +27,7 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -169,6 +170,17 @@ public class MarkdownCtrl{
                     }
                     else event.consume();
                 }
+            }
+        });
+
+        searchField.setOnKeyPressed(event -> {
+            switch(event.getCode()){
+                case ENTER:
+                    search();
+                    event.consume();
+                    break;
+                default:
+                    break;
             }
         });
     }
@@ -371,11 +383,12 @@ public class MarkdownCtrl{
             }
 
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("client/scenes/noteSearch.fxml"));
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(getClass().getResource("/client/scenes/noteSearch.fxml"));
                 Parent parent = loader.load();
                 NoteSearchCtrl noteSearchCtrl = loader.getController();
 
-                noteSearchCtrl.setResult(filteredNotes, this);
+                noteSearchCtrl.setResult(FXCollections.observableArrayList(filteredNotes), this);
 
                 Stage stage = new Stage();
                 stage.setTitle("Search Results");
@@ -386,6 +399,7 @@ public class MarkdownCtrl{
                 e.printStackTrace();
             }
         }
+        searchField.setText("");
     }
     /**
      * Sets the scene to the addNote scene when bottom left button is pressed
