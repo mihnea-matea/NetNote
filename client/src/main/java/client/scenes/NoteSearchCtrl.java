@@ -12,7 +12,7 @@ import java.util.List;
 public class NoteSearchCtrl {
 
     @FXML
-    private ListView<String> resultingListView;
+    ListView<String> resultingListView;
 
     private MarkdownCtrl markdownCtrl;
 

@@ -30,6 +30,7 @@ import org.commonmark.ext.gfm.tables.TablesExtension;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class MarkdownCtrl{
@@ -174,13 +175,9 @@ public class MarkdownCtrl{
         });
 
         searchField.setOnKeyPressed(event -> {
-            switch(event.getCode()){
-                case ENTER:
-                    search();
-                    event.consume();
-                    break;
-                default:
-                    break;
+            if (Objects.requireNonNull(event.getCode()) == KeyCode.ENTER) {
+                search();
+                event.consume();
             }
         });
     }
@@ -531,5 +528,13 @@ public class MarkdownCtrl{
 
     public void setServerUtils(ServerUtils serverUtils){
         this.serverUtils = serverUtils;
+    }
+
+    public TextField getSearchField() {
+        return searchField;
+    }
+
+    public void setSearchField(TextField searchField) {
+        this.searchField = searchField;
     }
 }
