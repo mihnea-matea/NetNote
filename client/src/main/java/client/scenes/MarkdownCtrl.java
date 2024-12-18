@@ -90,6 +90,16 @@ public class MarkdownCtrl{
 
     @FXML
     public void initialize(){
+        markdownTitle.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(currentlyEditedNote != null){
+                currentlyEditedNote.setTitle(newValue);
+                serverUtils.updateNote(currentlyEditedNote);
+                notes.set(notes.indexOf(currentlyEditedNote), currentlyEditedNote);
+                noteNameList.refresh();
+                autosaveCurrentNote();
+            }
+        }
+        );
         markdownText.scrollTopProperty().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable observable) {
@@ -176,6 +186,7 @@ public class MarkdownCtrl{
     private void autosaveCurrentNote(){
         if(currentlyEditedNote == null)
             return;
+        System.out.println("Saving note with title: " + markdownTitle.getText());
         currentlyEditedNote.setTitle(markdownTitle.getText());
         currentlyEditedNote.setContent(markdownText.getText());
 
@@ -183,10 +194,8 @@ public class MarkdownCtrl{
         if(updatedNote == null)
             System.out.println("Can't autosave note.");
         else {
-            currentlyEditedNote = updatedNote;
             System.out.println("Note autosaved.");
         }
-
     }
 
     /**
@@ -305,6 +314,7 @@ public class MarkdownCtrl{
         }
         notes.clear();
         notes.addAll(newNotes);
+        noteNameList.refresh();
         System.out.println("Notes in list: " + notes);
     }
 //testing methods-------------------------------------------------
