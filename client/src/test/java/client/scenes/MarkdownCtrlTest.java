@@ -3,6 +3,9 @@ package client.scenes;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,6 +29,7 @@ class MarkdownCtrlTest extends ApplicationTest {
     private TextArea markdownTitleArea;
     private TextArea markdownTextArea;
     private WebView html;
+    private TextField searchField;
 
     @Mock
     private ServerUtils serverUtils;
@@ -43,6 +47,8 @@ class MarkdownCtrlTest extends ApplicationTest {
         when(serverUtils.updateNote(any(Note.class))).thenReturn(mockNote);
         mainNetNode = new MainNetNodeCtrl();
         markdownCtrl = new MarkdownCtrl(mainNetNode, serverUtils);
+        searchField = new TextField();
+        markdownCtrl.setSearchField(searchField);
     }
 
     @Test
@@ -240,6 +246,7 @@ class MarkdownCtrlTest extends ApplicationTest {
 
     @Test
     void testAutosaveAfterFiveNewlineCharsTitle(){
+        searchField = new TextField("Hi");
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
