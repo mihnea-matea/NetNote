@@ -3,6 +3,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Directory;
 import commons.Note;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
@@ -140,36 +141,23 @@ public class MarkdownCtrl{
         /*
             The check for control chars was with the help of GPT
          */
-        markdownText.addEventFilter(KeyEvent.KEY_TYPED,event -> {
+        markdownText.textProperty().addListener((observable, oldValue, newValue) -> {
             if(currentlyEditedNote != null){
-                String ch = event.getCharacter();
-                if(!ch.isEmpty()) {
-                    char charTyped = ch.charAt(0);
-                    if(charTyped == '\b' || charTyped == '\t' || charTyped == '\n' || !Character.isISOControl(charTyped)){
-                        charsModifiedSinceLastSave++;
-                        if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
-                            autosaveCurrentNote();
-                            charsModifiedSinceLastSave = 0;
-                        }
-                    }
-                    else event.consume();
+                charsModifiedSinceLastSave++;
+                if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
+                    autosaveCurrentNote();
+                    charsModifiedSinceLastSave = 0;
                 }
             }
         });
 
-        markdownTitle.addEventFilter(KeyEvent.KEY_TYPED,event -> {
+        markdownTitle.textProperty().addListener((observable, oldValue, newValue) -> {
             if(currentlyEditedNote != null){
-                String ch = event.getCharacter();
-                if(!ch.isEmpty()) {
-                    char charTyped = ch.charAt(0);
-                    if(charTyped == '\b' || charTyped == '\t' || charTyped == '\n' || !Character.isISOControl(charTyped)){
-                        charsModifiedSinceLastSave++;
-                        if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
-                            autosaveCurrentNote();
-                            charsModifiedSinceLastSave = 0;
-                        }
-                    }
-                    else event.consume();
+                charsModifiedSinceLastSave++;
+                if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
+                    autosaveCurrentNote();
+                    charsModifiedSinceLastSave = 0;
+                    refreshNoteList();
                 }
             }
         });
