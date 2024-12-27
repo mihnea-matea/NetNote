@@ -30,6 +30,7 @@ class MarkdownCtrlTest extends ApplicationTest {
     private TextArea markdownTextArea;
     private WebView html;
     private TextField searchField;
+    private int charLimit = MarkdownCtrl.CHAR_NO_FOR_AUTOSAVE;
 
     @Mock
     private ServerUtils serverUtils;
@@ -109,7 +110,7 @@ class MarkdownCtrlTest extends ApplicationTest {
     }
 
       @Test
-    void testAutoSaveAfterFiveOKCharsText() throws NoSuchFieldException, IllegalAccessException {
+    void testAutoSaveAfterDesiredOKCharsText() throws NoSuchFieldException, IllegalAccessException {
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
@@ -117,8 +118,8 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.initialize();
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<5;i++)
-            simulateKeyTypedEvent(markdownTextArea, "a");
+        for(int i=0;i<charLimit;i++)
+            markdownTextArea.setText(markdownTextArea.getText() + 'a');
         verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 
@@ -131,18 +132,18 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.initialize();
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<5;i++)
-            simulateKeyTypedEvent(markdownTextArea, "a");
+        for(int i=0;i<charLimit;i++)
+            markdownTextArea.setText(markdownTextArea.getText() + 'a');
         verify(serverUtils, times(1)).updateNote(any(Note.class));
 
-        for (int i = 0; i < 5; i++) {
-            simulateKeyTypedEvent(markdownTextArea, "b");
+        for (int i=0;i<charLimit;i++) {
+            markdownTextArea.setText(markdownTextArea.getText() + 'b');
         }
         verify(serverUtils, times(2)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAutoSaveAfterFiveControlCharsText(){
+    void testAutoSaveAfterDesiredControlCharsText(){
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
@@ -150,13 +151,13 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.initialize();
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<5;i++)
+        for(int i=0;i<charLimit;i++)
             simulateKeyTypedEvent(markdownTextArea, "\u001B"); /// escape character
         verify(serverUtils, times(0)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAutosaveAfterLessThanFiveCharsText(){
+    void testAutosaveAfterLessThanDesiredCharsText(){
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
@@ -164,13 +165,13 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.initialize();
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<3;i++)
-            simulateKeyTypedEvent(markdownTextArea, "\n");
+        for(int i=0;i<charLimit-1;i++)
+            markdownTextArea.setText(markdownTextArea.getText() + 'a');
         verify(serverUtils, times(0)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAutosaveAfterFiveNewlineCharsText(){
+    void testAutosaveAfterDesiredNewlineCharsText(){
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
@@ -178,13 +179,13 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.initialize();
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<5;i++)
-            simulateKeyTypedEvent(markdownTextArea, "\n");
+        for(int i=0;i<charLimit;i++)
+            markdownTextArea.setText(markdownTextArea.getText() + '\n');
         verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAutoSaveAfterFiveOKCharsTitle() throws NoSuchFieldException, IllegalAccessException {
+    void testAutoSaveAfterDesiredOKCharsTitle() throws NoSuchFieldException, IllegalAccessException {
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
@@ -192,8 +193,8 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.initialize();
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<5;i++)
-            simulateKeyTypedEvent(markdownTitleArea, "a");
+        for(int i=0;i<charLimit;i++)
+            markdownTitleArea.setText(markdownTitleArea.getText() + '\n');
         verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 
@@ -206,18 +207,18 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.initialize();
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<5;i++)
-            simulateKeyTypedEvent(markdownTitleArea, "a");
+        for(int i=0;i<charLimit;i++)
+            markdownTitleArea.setText(markdownTitleArea.getText() + 'a');
         verify(serverUtils, times(1)).updateNote(any(Note.class));
 
-        for (int i = 0; i < 5; i++) {
-            simulateKeyTypedEvent(markdownTitleArea, "b");
+        for (int i=0;i<charLimit;i++) {
+            markdownTitleArea.setText(markdownTitleArea.getText() + 'b');
         }
         verify(serverUtils, times(2)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAutoSaveAfterFiveControlCharsTitle(){
+    void testAutoSaveAfterDesiredControlCharsTitle(){
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
@@ -225,13 +226,13 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.initialize();
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<5;i++)
+        for(int i=0;i<charLimit;i++)
             simulateKeyTypedEvent(markdownTitleArea, "\u001B"); /// escape character
         verify(serverUtils, times(0)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAutosaveAfterLessThanFiveCharsTitle(){
+    void testAutosaveAfterLessThanDesiredCharsTitle(){
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
@@ -239,8 +240,8 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.initialize();
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<3;i++)
-            simulateKeyTypedEvent(markdownTitleArea, "\n");
+        for(int i=0;i<charLimit-1;i++)
+            markdownTitleArea.setText(markdownTitleArea.getText() + 'a');
         verify(serverUtils, times(0)).updateNote(any(Note.class));
     }
 
@@ -254,8 +255,8 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.initialize();
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<5;i++)
-            simulateKeyTypedEvent(markdownTitleArea, "\n");
+        for(int i=0;i<charLimit;i++)
+            markdownTitleArea.setText(markdownTitleArea.getText() + '\n');
         verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 

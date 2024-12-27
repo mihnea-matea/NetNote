@@ -69,7 +69,7 @@ public class MarkdownCtrl{
     private Note currentlyEditedNote;
 
     private int charsModifiedSinceLastSave;
-    private static final int CHAR_NO_FOR_AUTOSAVE = 5;
+    public static final int CHAR_NO_FOR_AUTOSAVE = 5;
 
     @FXML
     private Button removeButton;
