@@ -1,9 +1,9 @@
 package client.scenes;
 
 import commons.Note;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,19 @@ public class NoteSearchCtrl {
 
     @FXML
     public void initialize() {
-
+        resultingListView.setFocusTraversable(true);
+        resultingListView.setOnKeyPressed(event -> {
+            int selectedIndex = resultingListView.getSelectionModel().getSelectedIndex();
+            if (event.getCode() == KeyCode.UP) {
+                if (selectedIndex > 0) {
+                    resultingListView.getSelectionModel().select(selectedIndex - 1);
+                }
+            } else if (event.getCode() == KeyCode.DOWN) {
+                if (selectedIndex < resultingListView.getItems().size() - 1) {
+                    resultingListView.getSelectionModel().select(selectedIndex + 1);
+                }
+            }
+        });
     }
 
     public void setResult(@NotNull List<Note> searchResults, MarkdownCtrl markdownCtrl) {
