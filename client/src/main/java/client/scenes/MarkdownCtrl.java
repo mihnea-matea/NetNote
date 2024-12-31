@@ -21,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.commonmark.Extension;
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
@@ -180,6 +181,19 @@ public class MarkdownCtrl{
                 event.consume();
             }
         });
+
+        // Directory initialisation to be done in another merge
+//
+//        List<Directory> directories = serverUtils.getAllDirectories();
+//        directoryDropDown.getItems().addAll(directories);
+//
+//
+//        directoryDropDown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+//            List<Note> notes = serverUtils.getDirectoryNotes(newValue);
+//            noteNameList.getItems().clear();
+//            noteNameList.getItems().addAll(notes);
+//        });
+
     }
 
     private void autosaveCurrentNote(){

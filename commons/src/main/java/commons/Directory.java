@@ -1,6 +1,7 @@
 package commons;
 
 
+import jakarta.persistence.*;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.GenericType;
 import org.glassfish.jersey.client.ClientConfig;
@@ -11,10 +12,20 @@ import java.util.Objects;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
+@Entity
 public class Directory {
+
+    @Column(nullable = false)
     private String title;
-    private ArrayList<Note> notes;
-    private static final String SERVER = "http://localhost:8080/";
+
+    @OneToMany(cascade = CascadeType.PERSIST)
+    private List<Note> notes;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    public Directory() {}
 
     /**
      * creates an instance of a Directory
@@ -23,15 +34,6 @@ public class Directory {
     public Directory(String title) {
         this.title = title;
         this.notes = new ArrayList<>();
-        List<Note> allNotes = ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/notes")
-                .request(APPLICATION_JSON)
-                .get(new GenericType<List<Note>>() {});
-        for(int i = 0; i < allNotes.size(); i++){
-            if(allNotes.get(i).getTitle().equals(this.title)){
-                this.notes.add(allNotes.get(i));
-            }
-        }
     }
 
     /**
@@ -51,11 +53,11 @@ public class Directory {
         this.title = Title;
     }
 
-    public ArrayList<Note> getNotes() {
+    public List<Note> getNotes() {
         return notes;
     }
 
-    public void setNotes(ArrayList<Note> Notes) {
+    public void setNotes(List<Note> Notes) {
         this.notes = Notes;
     }
 

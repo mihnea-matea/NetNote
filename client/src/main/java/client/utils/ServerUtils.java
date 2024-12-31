@@ -25,9 +25,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
+import commons.Directory;
 import commons.Note;
+import jakarta.ws.rs.core.StreamingOutput;
 import org.glassfish.jersey.client.ClientConfig;
 
 import commons.Quote;
@@ -178,5 +181,40 @@ public class ServerUtils {
 
 		}
 	}
+
+	public List<Directory> getAllDirectories() {
+		List<Directory> allDirectories = new ArrayList<>();
+		Directory allDirectory = new Directory("All");
+		allDirectory.setNotes(getNotes());
+		try {
+			allDirectories = ClientBuilder.newClient(new ClientConfig())
+					.target(SERVER)
+					.path("api/directories")
+					.request(APPLICATION_JSON)
+					.get(new GenericType<List<Directory>>() {
+					});
+			allDirectories.addFirst(allDirectory);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return List.of();
+		}
+		return allDirectories;
+	}
+
+	public List<Note> getDirectoryNotes(Directory directory) {
+		try {
+			return ClientBuilder.newClient(new ClientConfig())
+					.target(SERVER)
+					.path("api/notes/directorySearch?directory=" + directory)
+					.request(APPLICATION_JSON)
+					.get(new GenericType<List<Note>>() {
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+			return List.of();
+		}
+	}
+
+
 
 }
