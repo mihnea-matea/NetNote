@@ -240,7 +240,62 @@ public class MarkdownCtrl{
                 event.consume();
             }
         });
-
+        markdownText.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                autosaveCurrentNote();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.N) {
+                addButtonPress();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.D) {
+                removalWarning();
+                event.consume();
+            }
+        });
+        markdownTitle.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                autosaveCurrentNote();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.N) {
+                addButtonPress();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.D) {
+                removalWarning();
+                event.consume();
+            }
+        });
+        noteNameList.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                autosaveCurrentNote();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.N) {
+                addButtonPress();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.D) {
+                removalWarning();
+                event.consume();
+            }
+        });
+        searchField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                autosaveCurrentNote();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.N) {
+                addButtonPress();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.D) {
+                removalWarning();
+                event.consume();
+            }
+        });
     }
     private boolean isCaretAtTopLine(TextArea textArea) {
         int cursorPosition = textArea.getCaretPosition();
