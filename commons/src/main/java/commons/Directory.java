@@ -40,7 +40,7 @@ public class Directory {
      * creates an instance of a Directory
      * @return
      */
-    public Directory(String title, ArrayList<Note> notes) {
+    public Directory(String title, List<Note> notes) {
         this.title = title;
         this.notes = notes;
     }
@@ -75,6 +75,14 @@ public class Directory {
 
     public String toString() {
         return title + "\n" + notes.toString();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override

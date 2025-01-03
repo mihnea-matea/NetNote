@@ -182,8 +182,12 @@ public class ServerUtils {
 		}
 	}
 
+	/**
+	 * Fetches all directories in the repository and creates an all directory
+	 * @return - List of all directories
+	 */
 	public List<Directory> getAllDirectories() {
-		List<Directory> allDirectories = new ArrayList<>();
+		List<Directory> allDirectories = new ArrayList<Directory>();
 		Directory allDirectory = new Directory("All");
 		allDirectory.setNotes(getNotes());
 		try {
@@ -193,19 +197,24 @@ public class ServerUtils {
 					.request(APPLICATION_JSON)
 					.get(new GenericType<List<Directory>>() {
 					});
-			allDirectories.addFirst(allDirectory);
+			allDirectories.add(0,allDirectory);
+			return allDirectories;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return List.of();
 		}
-		return allDirectories;
 	}
 
+	/**
+	 * Gets the notes of each directory
+	 * @param directory - directory to get notes of
+	 * @return - list of notes in the directory
+	 */
 	public List<Note> getDirectoryNotes(Directory directory) {
 		try {
 			return ClientBuilder.newClient(new ClientConfig())
 					.target(SERVER)
-					.path("api/notes/directorySearch?directory=" + directory)
+					.path("api/directories/search?filter=" + directory.getId())
 					.request(APPLICATION_JSON)
 					.get(new GenericType<List<Note>>() {
 					});

@@ -46,7 +46,7 @@ public class MarkdownCtrl{
     private ListView<Note> noteNameList;
 
     @FXML
-    private ChoiceBox<Directory> directoryDropDown;
+    private ComboBox<Directory> directoryDropDown;
 
     @FXML
     private TextArea markdownTitle;
@@ -182,17 +182,38 @@ public class MarkdownCtrl{
             }
         });
 
-        // Directory initialisation to be done in another merge
-//
-//        List<Directory> directories = serverUtils.getAllDirectories();
-//        directoryDropDown.getItems().addAll(directories);
-//
-//
-//        directoryDropDown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-//            List<Note> notes = serverUtils.getDirectoryNotes(newValue);
-//            noteNameList.getItems().clear();
-//            noteNameList.getItems().addAll(notes);
-//        });
+
+            ObservableList<Directory> directories = FXCollections.observableArrayList(serverUtils.getAllDirectories());
+            directoryDropDown.setItems(directories);
+
+            directoryDropDown.setCellFactory(comboBox -> new ListCell<Directory>() {
+                @Override
+                protected void updateItem(Directory directory, boolean empty) {
+                    super.updateItem(directory, empty);
+                    if(empty || directory == null){
+                        setText(null);
+                    } else {
+                        setText(directory.getTitle());
+                    }
+                }
+            });
+
+        directoryDropDown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+//            if (newValue != null) {
+//                try {
+//                    List<Note> notes = serverUtils.getDirectoryNotes(newValue);
+//                    noteNameList.getItems().clear();
+//                    if (notes != null) {
+//                        noteNameList.getItems().addAll(notes);
+//                    } else {
+//                        System.out.println("Error fetching notes for directories");
+//                    }
+//                } catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+            System.out.println("Directory selected");
+        });
 
     }
 
