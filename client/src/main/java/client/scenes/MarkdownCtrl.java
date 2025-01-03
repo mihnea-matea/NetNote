@@ -29,10 +29,7 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class MarkdownCtrl{
     private ObservableList<Note> notes = FXCollections.observableArrayList();
@@ -69,7 +66,10 @@ public class MarkdownCtrl{
     private Note currentlyEditedNote;
 
     private int charsModifiedSinceLastSave;
-    public static final int CHAR_NO_FOR_AUTOSAVE = 5;
+    public static final int CHAR_NO_FOR_AUTOSAVE = 3;
+    public static final int SECONDS_FOR_AUTOSAVE = 5;
+
+    private Timer autosaveTimer;
 
     @FXML
     private Button removeButton;
@@ -157,7 +157,6 @@ public class MarkdownCtrl{
                 if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
                     autosaveCurrentNote();
                     charsModifiedSinceLastSave = 0;
-                    refreshNoteList();
                 }
             }
         });
@@ -168,6 +167,23 @@ public class MarkdownCtrl{
                 event.consume();
             }
         });
+
+        startAutosaveTimer();
+    }
+
+    private void startAutosaveTimer(){
+        Timer autosaveTimer = new Timer(true);
+        autosaveTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> autosaveCurrentNote());
+            }
+        }, SECONDS_FOR_AUTOSAVE * 1000, SECONDS_FOR_AUTOSAVE * 1000);
+    }
+
+    private void stopAutosaveTimer(){
+        if(autosaveTimer != null)
+            autosaveTimer.cancel();
     }
 
     private void autosaveCurrentNote(){
@@ -181,6 +197,7 @@ public class MarkdownCtrl{
             System.out.println("Can't autosave note.");
         else {
             currentlyEditedNote = updatedNote;
+            refreshNoteList();
             System.out.println("Note autosaved.");
         }
 
@@ -300,9 +317,11 @@ public class MarkdownCtrl{
             System.out.println("No notes available or server error.");
             newNotes = new ArrayList<>();
         }
-        notes.clear();
-        notes.addAll(newNotes);
-        System.out.println("Notes in list: " + notes);
+        List<Note> finalNewNotes = newNotes;
+        Platform.runLater(() -> {
+            noteNameList.getSelectionModel().clearSelection();
+            notes.setAll(finalNewNotes);
+        });
     }
 //testing methods-------------------------------------------------
     public ObservableList<Note> getNotes() {
@@ -423,7 +442,8 @@ public class MarkdownCtrl{
 
                 long id = currentNote.getId();
                 serverUtils.deleteNoteById(id);
-
+                currentNote = null;
+                currentlyEditedNote = null;
                 Alert deleted = new Alert(Alert.AlertType.CONFIRMATION);
                 deleted.setTitle("Deletion succesful");
                 deleted.setHeaderText("(Current note) deleted");
