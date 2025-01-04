@@ -58,11 +58,20 @@ public class DirectoryController {
      */
     @PostMapping(path = {"", "/"})
         public ResponseEntity<Directory> createDirectory(@RequestBody Directory directory) {
+        System.out.println("Directory created: " + directory.getTitle());
+        try {
             if (directory.getTitle() == null || directory.getTitle().trim().isEmpty()) {
+                System.out.println("Directory title is empty");
                 return ResponseEntity.badRequest().build();
             }
             Directory saved = directoryRepository.save(directory);
+            System.out.println("Succesfully saved: " + saved.getTitle());
             return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            System.out.println("Error creating directory: " + directory.getTitle());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     /**

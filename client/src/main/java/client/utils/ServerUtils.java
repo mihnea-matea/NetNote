@@ -30,6 +30,7 @@ import java.util.List;
 
 import commons.Directory;
 import commons.Note;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.StreamingOutput;
 import org.glassfish.jersey.client.ClientConfig;
 
@@ -189,20 +190,25 @@ public class ServerUtils {
 	public List<Directory> getAllDirectories() {
 		List<Directory> allDirectories = new ArrayList<Directory>();
 		Directory allDirectory = new Directory("All");
-		allDirectory.setNotes(getNotes());
-		try {
-			allDirectories = ClientBuilder.newClient(new ClientConfig())
-					.target(SERVER)
-					.path("api/directories")
-					.request(APPLICATION_JSON)
-					.get(new GenericType<List<Directory>>() {
-					});
-			allDirectories.add(0,allDirectory);
-			return allDirectories;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return List.of();
+		//Directory savedDirectory = addDirectory(allDirectory);
+		if(allDirectory != null) {
+			allDirectory.setNotes(getNotes());
+
+			try {
+				allDirectories = ClientBuilder.newClient(new ClientConfig())
+						.target(SERVER)
+						.path("api/directories")
+						.request(APPLICATION_JSON)
+						.get(new GenericType<List<Directory>>() {
+						});
+				allDirectories.addFirst(allDirectory);
+				return allDirectories;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return List.of();
+			}
 		}
+		return List.of();
 	}
 
 	/**
@@ -224,6 +230,18 @@ public class ServerUtils {
 		}
 	}
 
-
+	public Directory addDirectory(Directory directory) {
+		try {
+			String url = SERVER + "api/directories";
+			return ClientBuilder.newClient(new ClientConfig())
+					.target(url)
+					.request(APPLICATION_JSON)
+					.accept(APPLICATION_JSON)
+					.post(Entity.entity(directory, APPLICATION_JSON), Directory.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 }

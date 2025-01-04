@@ -212,7 +212,12 @@ public class MarkdownCtrl{
 //                    e.printStackTrace();
 //                }
 //            }
-            System.out.println("Directory selected");
+            if (newValue == oldValue) {
+                System.out.println("Already selected!");
+            }
+            if(newValue != null) {
+                System.out.println("Directory selected");
+            }
         });
 
     }
