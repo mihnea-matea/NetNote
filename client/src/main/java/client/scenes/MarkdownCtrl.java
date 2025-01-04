@@ -577,4 +577,12 @@ public class MarkdownCtrl{
     public void setSearchField(TextField searchField) {
         this.searchField = searchField;
     }
+
+    public ComboBox<Directory> getDirectoryDropDown() {
+        return directoryDropDown;
+    }
+
+    public void setDirectoryDropDown(ComboBox<Directory> directoryDropDown) {
+        this.directoryDropDown = directoryDropDown;
+    }
 }
