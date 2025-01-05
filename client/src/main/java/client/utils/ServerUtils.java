@@ -25,9 +25,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
+import commons.Directory;
 import commons.Note;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.StreamingOutput;
 import org.glassfish.jersey.client.ClientConfig;
 
 import commons.Quote;
@@ -176,6 +180,67 @@ public class ServerUtils {
 
 			throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Note with ID " + id + " not found", null, null, null);
 
+		}
+	}
+
+	/**
+	 * Fetches all directories in the repository and creates an all directory
+	 * @return - List of all directories
+	 */
+	public List<Directory> getAllDirectories() {
+		List<Directory> allDirectories = new ArrayList<Directory>();
+		Directory allDirectory = new Directory("All");
+		//Directory savedDirectory = addDirectory(allDirectory);
+		if(allDirectory != null) {
+			allDirectory.setNotes(getNotes());
+
+			try {
+				allDirectories = ClientBuilder.newClient(new ClientConfig())
+						.target(SERVER)
+						.path("api/directories")
+						.request(APPLICATION_JSON)
+						.get(new GenericType<List<Directory>>() {
+						});
+				allDirectories.addFirst(allDirectory);
+				return allDirectories;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return List.of();
+			}
+		}
+		return List.of();
+	}
+
+	/**
+	 * Gets the notes of each directory
+	 * @param directory - directory to get notes of
+	 * @return - list of notes in the directory
+	 */
+	public List<Note> getDirectoryNotes(Directory directory) {
+		try {
+			return ClientBuilder.newClient(new ClientConfig())
+					.target(SERVER)
+					.path("api/directories/search?filter=" + directory.getId())
+					.request(APPLICATION_JSON)
+					.get(new GenericType<List<Note>>() {
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+			return List.of();
+		}
+	}
+
+	public Directory addDirectory(Directory directory) {
+		try {
+			String url = SERVER + "api/directories";
+			return ClientBuilder.newClient(new ClientConfig())
+					.target(url)
+					.request(APPLICATION_JSON)
+					.accept(APPLICATION_JSON)
+					.post(Entity.entity(directory, APPLICATION_JSON), Directory.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 

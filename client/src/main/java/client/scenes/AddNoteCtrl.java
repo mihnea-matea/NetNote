@@ -6,26 +6,88 @@ import commons.Note;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class AddNoteCtrl{
     @FXML
-    private TextField TitleText;
+    private TextField titleText;
 
     @FXML
-    private TextField DirectoryText;
+    private TextField directoryText;
 
     private final ServerUtils server;
     private final MainNetNodeCtrl pc;
 
+    /**
+     * Constructor for the scene
+     * @param pc the main scene
+     * @param server the means of connecting to the server
+     */
     @Inject
     public AddNoteCtrl(MainNetNodeCtrl pc, ServerUtils server){
         this.server= server;
         this.pc = pc;
     }
 
+    /**
+     * A method that sets the focus on the title field on opening the scene and handles the keyboard shortcuts of the scene
+     */
+    @FXML
+    public void initialize() {
+        javafx.application.Platform.runLater(() -> titleText.requestFocus());
+
+        titleText.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.DOWN) {
+                directoryText.requestFocus();
+                event.consume();
+            }
+        });
+
+        directoryText.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.UP) {
+                titleText.requestFocus();
+                event.consume();
+            }
+        });
+
+        titleText.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.A) {
+                apply();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.C) {
+                cancel();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.R) {
+                reset();
+                event.consume();
+            }
+        });
+
+        directoryText.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.A) {
+                apply();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.C) {
+                cancel();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.R) {
+                reset();
+                event.consume();
+            }
+        });
+    }
+
+    /**
+     * The method creates a new note with the specified title and directory and gives it a standard content
+     */
     public void apply() {
-        String title = TitleText.getText();
-        String directory = DirectoryText.getText();
+        String title = titleText.getText();
+        String directory = directoryText.getText();
 
         if (title == null || title.trim().isEmpty()) {
             showAlert("Error", "Title is required!", Alert.AlertType.ERROR);
@@ -54,27 +116,49 @@ public class AddNoteCtrl{
         }
     }
 
+    /**
+     * A model of an alert that can be customized for different purposes
+     * @param title a general statement like success or error
+     * @param message detailed description of the action or problem
+     * @param type it can be simply informative, show an error, etc.
+     */
     private void showAlert(String title, String message, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+
+        alert.getDialogPane().addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.SPACE) {
+                alert.close();
+                event.consume();
+            }
+        });
         alert.showAndWait();
     }
 
+    /**
+     * return tot the main scene and abandon the action
+     */
     public void cancel(){
         clearFields();
         pc.showMainScene();
     }
 
+    /**
+     * I don't even know who made this a two part business
+     */
     public void reset(){
         clearFields();
     }
 
+    /**
+     * Clear everything written in title or directory
+     */
     public void clearFields(){
         try {
-            TitleText.clear();
-            DirectoryText.clear();
+            titleText.clear();
+            directoryText.clear();
         }
         catch(Exception e){
             System.err.println("Fields could not be deleted");
