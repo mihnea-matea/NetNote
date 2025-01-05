@@ -21,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.commonmark.Extension;
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
@@ -43,7 +44,7 @@ public class MarkdownCtrl{
     private ListView<Note> noteNameList;
 
     @FXML
-    private ChoiceBox<Directory> directoryDropDown;
+    private ComboBox<Directory> directoryDropDown;
 
     @FXML
     private TextArea markdownTitle;
@@ -181,6 +182,45 @@ public class MarkdownCtrl{
             }
         });
 
+
+            ObservableList<Directory> directories = FXCollections.observableArrayList(serverUtils.getAllDirectories());
+            directoryDropDown.setItems(directories);
+
+            directoryDropDown.setCellFactory(comboBox -> new ListCell<Directory>() {
+                @Override
+                protected void updateItem(Directory directory, boolean empty) {
+                    super.updateItem(directory, empty);
+                    if(empty || directory == null){
+                        setText(null);
+                    } else {
+                        setText(directory.getTitle());
+                    }
+                }
+            });
+
+        directoryDropDown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+//            if (newValue != null) {
+//                try {
+//                    List<Note> notes = serverUtils.getDirectoryNotes(newValue);
+//                    noteNameList.getItems().clear();
+//                    if (notes != null) {
+//                        noteNameList.getItems().addAll(notes);
+//                    } else {
+//                        System.out.println("Error fetching notes for directories");
+//                    }
+//                } catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+            if (newValue == oldValue) {
+                System.out.println("Already selected!");
+            }
+            if(newValue != null) {
+                System.out.println("Directory selected");
+            }
+        });
+
+
         searchField.sceneProperty().addListener((observable, oldScene, newScene) -> {
             if (newScene != null) {
                 newScene.setOnKeyPressed(event -> {
@@ -306,6 +346,8 @@ public class MarkdownCtrl{
     private boolean isCaretAtStart(TextInputControl inputControl) {
         return inputControl.getCaretPosition() == 0;
     }
+
+
 
     private void autosaveCurrentNote(){
         if(currentlyEditedNote == null)
@@ -661,5 +703,13 @@ public class MarkdownCtrl{
 
     public void setSearchField(TextField searchField) {
         this.searchField = searchField;
+    }
+
+    public ComboBox<Directory> getDirectoryDropDown() {
+        return directoryDropDown;
+    }
+
+    public void setDirectoryDropDown(ComboBox<Directory> directoryDropDown) {
+        this.directoryDropDown = directoryDropDown;
     }
 }
