@@ -5,20 +5,21 @@ import javafx.scene.Scene ;
 import javafx.stage.Stage ;
 import javafx.util.Pair ;
 
-public class MainNetNodeCtrl{
+public class MainNetNodeCtrl {
 
     @Inject
     private Stage primaryStage;
 
-    private Scene MainScene ;
+    private Scene MainScene;
     public Scene AddScene;
     //private NoteOverviewCtrl noteOverviewCtrl;
     private MarkdownCtrl markdownCtrl;
 
-    public void init(Stage primaryStage , Pair <MarkdownCtrl, Parent > mainScene , Pair <AddNoteCtrl, Parent > addNoteScene, MarkdownCtrl markdownCtrl ){
+    public void init(Stage primaryStage, Pair<MarkdownCtrl, Parent> mainScene, Pair<AddNoteCtrl, Parent> addNoteScene, MarkdownCtrl markdownCtrl) {
         this.primaryStage = primaryStage;
         this.MainScene = new Scene(mainScene.getValue());
         this.AddScene = new Scene(addNoteScene.getValue());
+        this.markdownCtrl = markdownCtrl;
         showMainScene();
         primaryStage.show();
         //this.noteOverviewCtrl= noteOverviewCtrl;
