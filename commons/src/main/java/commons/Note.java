@@ -9,6 +9,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -25,6 +27,8 @@ public class Note {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @OneToMany(mappedBy = "note",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<File> files=new ArrayList<>();
     /**
      * Title of the note. Cannot be null
      */

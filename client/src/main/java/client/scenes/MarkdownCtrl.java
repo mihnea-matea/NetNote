@@ -20,6 +20,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.commonmark.Extension;
 import org.commonmark.node.*;
@@ -27,6 +28,7 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +74,9 @@ public class MarkdownCtrl{
 
     @FXML
     private Button removeButton;
+
+    @FXML
+    private Button addFile;
 
 
     private ServerUtils serverUtils = new ServerUtils();
@@ -546,5 +551,20 @@ public class MarkdownCtrl{
 
     public void setSearchField(TextField searchField) {
         this.searchField = searchField;
+    }
+
+    @FXML
+    public void upload(){
+        FileChooser fileChooser=new FileChooser();
+        fileChooser.setTitle("Select a file");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+
+        File file=fileChooser.showOpenDialog(addFile.getScene().getWindow());
+        if(file!=null){
+            String imgURL=file.toURI().toString();
+            String imgMarkdownFormat= "![Image](" + imgURL+")";
+            int caretPosition=markdownText.getCaretPosition();
+            markdownText.insertText(caretPosition,imgMarkdownFormat);
+        }
     }
 }

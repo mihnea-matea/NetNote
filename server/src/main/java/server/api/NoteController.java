@@ -84,25 +84,10 @@ public class NoteController {
             return ResponseEntity.notFound().build();
 
         existingNote.setContent(updatedNote.getContent());
-       // existingNote.setTitle(updatedNote.getTitle());
+        existingNote.setTitle(updatedNote.getTitle());
         Note newNote = repo.save(existingNote);
         return ResponseEntity.ok(newNote);
     }
 
-    @PutMapping("/{id}/title")
-    public ResponseEntity updateNoteTitle(@PathVariable("id") long id, @RequestBody Note updatedNoteTitle){
-        if(id < 0) {
-            return ResponseEntity.badRequest().build();
-        }
-        Optional<Note> optionalNote = repo.findById(id);
-        if(optionalNote.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        Note existingNote = optionalNote.get();
-        existingNote.setTitle(updatedNoteTitle.getTitle());
-        Note newNote = repo.save(existingNote);
-        return ResponseEntity.ok(newNote);
-
-    }
 
 }
