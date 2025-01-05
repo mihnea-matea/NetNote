@@ -21,6 +21,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.commonmark.Extension;
 import org.commonmark.node.*;
@@ -30,6 +31,11 @@ import org.commonmark.ext.gfm.tables.TablesExtension;
 
 import java.nio.file.Path;
 import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class MarkdownCtrl{
     private ObservableList<Note> notes = FXCollections.observableArrayList();
@@ -43,7 +49,7 @@ public class MarkdownCtrl{
     private ListView<Note> noteNameList;
 
     @FXML
-    private ChoiceBox<Directory> directoryDropDown;
+    private ComboBox<Directory> directoryDropDown;
 
     @FXML
     private TextArea markdownTitle;
@@ -74,6 +80,9 @@ public class MarkdownCtrl{
     @FXML
     private Button removeButton;
 
+    @FXML
+    private Button addFile;
+
 
     private ServerUtils serverUtils = new ServerUtils();
 
@@ -93,6 +102,16 @@ public class MarkdownCtrl{
 
     @FXML
     public void initialize(){
+        markdownTitle.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(currentlyEditedNote != null){
+                currentlyEditedNote.setTitle(newValue);
+                serverUtils.updateNote(currentlyEditedNote);
+                notes.set(notes.indexOf(currentlyEditedNote), currentlyEditedNote);
+                noteNameList.refresh();
+                autosaveCurrentNote();
+            }
+        }
+        );
         markdownText.scrollTopProperty().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable observable) {
@@ -184,11 +203,178 @@ public class MarkdownCtrl{
     private void stopAutosaveTimer(){
         if(autosaveTimer != null)
             autosaveTimer.cancel();
+
+
+            ObservableList<Directory> directories = FXCollections.observableArrayList(serverUtils.getAllDirectories());
+            directoryDropDown.setItems(directories);
+
+            directoryDropDown.setCellFactory(comboBox -> new ListCell<Directory>() {
+                @Override
+                protected void updateItem(Directory directory, boolean empty) {
+                    super.updateItem(directory, empty);
+                    if(empty || directory == null){
+                        setText(null);
+                    } else {
+                        setText(directory.getTitle());
+                    }
+                }
+            });
+
+        directoryDropDown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+//            if (newValue != null) {
+//                try {
+//                    List<Note> notes = serverUtils.getDirectoryNotes(newValue);
+//                    noteNameList.getItems().clear();
+//                    if (notes != null) {
+//                        noteNameList.getItems().addAll(notes);
+//                    } else {
+//                        System.out.println("Error fetching notes for directories");
+//                    }
+//                } catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+            if (newValue == oldValue) {
+                System.out.println("Already selected!");
+            }
+            if(newValue != null) {
+                System.out.println("Directory selected");
+            }
+        });
+
+
+        searchField.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.setOnKeyPressed(event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        searchField.requestFocus();
+                        event.consume();
+                    }
+                });
+            }
+        });
+
+        noteNameList.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                searchField.requestFocus();
+                event.consume();
+            }
+        });
+
+        markdownTitle.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.DOWN) {
+                markdownText.requestFocus();
+                event.consume();
+            }
+        });
+
+        markdownText.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.UP && isCaretAtTopLine(markdownText)) {
+                markdownTitle.requestFocus();
+                event.consume();
+            }
+
+        });
+        markdownTitle.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.LEFT && isCaretAtStart(markdownTitle)) {
+                noteNameList.requestFocus();
+                event.consume();
+            }
+        });
+
+        markdownText.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.LEFT && isCaretAtStart(markdownText)) {
+                noteNameList.requestFocus();
+                event.consume();
+            }
+        });
+
+        searchField.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.DOWN) {
+                markdownTitle.requestFocus();
+                event.consume();
+            }
+        });
+
+        markdownTitle.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.UP) {
+                searchField.requestFocus();
+                event.consume();
+            }
+        });
+        markdownText.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                autosaveCurrentNote();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.N) {
+                addButtonPress();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.D) {
+                removalWarning();
+                event.consume();
+            }
+        });
+        markdownTitle.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                autosaveCurrentNote();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.N) {
+                addButtonPress();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.D) {
+                removalWarning();
+                event.consume();
+            }
+        });
+        noteNameList.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                autosaveCurrentNote();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.N) {
+                addButtonPress();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.D) {
+                removalWarning();
+                event.consume();
+            }
+        });
+        searchField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                autosaveCurrentNote();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.N) {
+                addButtonPress();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.D) {
+                removalWarning();
+                event.consume();
+            }
+        });
     }
+    private boolean isCaretAtTopLine(TextArea textArea) {
+        int cursorPosition = textArea.getCaretPosition();
+        String textBeforeCaret = textArea.getText(0, cursorPosition);
+        return !textBeforeCaret.contains("\n");
+    }
+
+    private boolean isCaretAtStart(TextInputControl inputControl) {
+        return inputControl.getCaretPosition() == 0;
+    }
+
+
 
     private void autosaveCurrentNote(){
         if(currentlyEditedNote == null)
             return;
+        System.out.println("Saving note with title: " + markdownTitle.getText());
         currentlyEditedNote.setTitle(markdownTitle.getText());
         currentlyEditedNote.setContent(markdownText.getText());
 
@@ -296,6 +482,10 @@ public class MarkdownCtrl{
         else{
             errorMessageText="MarkdownText is null";
         }
+    }
+
+    public void setDirectoryDropDown(ComboBox<Directory> directoryDropDown) {
+        this.directoryDropDown = directoryDropDown;
     }
 
     /**
@@ -544,5 +734,20 @@ public class MarkdownCtrl{
 
     public void setSearchField(TextField searchField) {
         this.searchField = searchField;
+    }
+
+    @FXML
+    public void upload(){
+        FileChooser fileChooser=new FileChooser();
+        fileChooser.setTitle("Select a file");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+
+        File file=fileChooser.showOpenDialog(addFile.getScene().getWindow());
+        if(file!=null){
+            String imgURL=file.toURI().toString();
+            String imgMarkdownFormat= "![Image](" + imgURL+")";
+            int caretPosition=markdownText.getCaretPosition();
+            markdownText.insertText(caretPosition,imgMarkdownFormat);
+        }
     }
 }

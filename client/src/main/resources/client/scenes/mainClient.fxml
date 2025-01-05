@@ -23,7 +23,7 @@
                         <HBox fillHeight="false" layoutX="152.0" layoutY="61.0" prefHeight="27.0" prefWidth="479.0" AnchorPane.leftAnchor="152.0" AnchorPane.rightAnchor="197.0">
                             <children>
                                 <TextField fx:id="searchField" prefHeight="27.0" prefWidth="369.0" promptText="Enter the note you are looking for:" HBox.hgrow="ALWAYS" />
-                                <Button fx:id="searchButton" mnemonicParsing="false" onMouseClicked="#search" prefHeight="25.0" prefWidth="78.0" styleClass="upper-button" text="Search 🔍" textFill="#b23a48" HBox.hgrow="ALWAYS" >
+                                <Button fx:id="searchButton" mnemonicParsing="false" onMouseClicked="#search" prefHeight="25.0" prefWidth="78.0" styleClass="upper-button" text="Search 🔍" textFill="#b23a48" HBox.hgrow="ALWAYS">
                                 </Button>
                             </children>
                         </HBox>
@@ -32,7 +32,7 @@
                                 <Font name="Kristen ITC" size="36.0" />
                             </font>
                         </Label>
-                        <ChoiceBox fx:id="directoryDropDown" layoutX="640.0" layoutY="61.0" prefHeight="29.0" prefWidth="170.0" styleClass="upper-choice-box" value="Collections 🗁" AnchorPane.rightAnchor="18.0" />
+                        <ComboBox fx:id="directoryDropDown" layoutX="640.0" layoutY="61.0" prefHeight="29.0" prefWidth="170.0" styleClass="upper-choice-box" value="Collections 🗁" AnchorPane.rightAnchor="18.0" />
                         <ComboBox layoutX="20.0" layoutY="61.0" prefHeight="29.0" prefWidth="121.0" styleClass="upper-combo-box" value="Language ✈" />
                     </children>
                 </AnchorPane>
@@ -81,6 +81,11 @@
                                                             <font>
                                                                 <Font name="Calibri" size="14.0" />
                                                             </font></TextArea>
+                                          <HBox layoutX="-5.0" layoutY="382.0" prefHeight="43.0" prefWidth="454.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                             <children>
+                                                <Button fx:id="addFile" mnemonicParsing="false" onAction="#upload" prefHeight="26.0" prefWidth="90.0" text="AddFile" />
+                                             </children>
+                                          </HBox>
                                                     </children></AnchorPane>
                                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="434.0" prefWidth="186.0" style="-fx-background-color: #fed0bb;" SplitPane.resizableWithParent="false">
                                                     <children>

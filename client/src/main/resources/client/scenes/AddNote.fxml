@@ -21,7 +21,7 @@
             </font>
         </Label>
         <Button layoutX="364.0" layoutY="175.0" mnemonicParsing="false" onAction="#reset" text="reset" />
-        <TextField fx:id="DirectoryText" layoutX="248.0" layoutY="91.0" prefHeight="25.0" prefWidth="309.0" promptText="type your Directory name here" />
-        <TextField fx:id="TitleText" layoutX="200.0" layoutY="41.0" prefHeight="25.0" prefWidth="357.0" promptText="type your title here" />
+        <TextField fx:id="directoryText" layoutX="248.0" layoutY="91.0" prefHeight="25.0" prefWidth="309.0" promptText="type your Directory name here" />
+        <TextField fx:id="titleText" layoutX="200.0" layoutY="41.0" prefHeight="25.0" prefWidth="357.0" promptText="type your title here" />
     </children>
 </Pane>

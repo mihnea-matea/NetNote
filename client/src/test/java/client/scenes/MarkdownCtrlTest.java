@@ -4,6 +4,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import commons.Directory;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +33,7 @@ class MarkdownCtrlTest extends ApplicationTest {
     private WebView html;
     private TextField searchField;
     private int charLimit = MarkdownCtrl.CHAR_NO_FOR_AUTOSAVE;
+    private ComboBox<Directory> directoryDropDown;
 
     @Mock
     private ServerUtils serverUtils;
@@ -50,6 +53,8 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl = new MarkdownCtrl(mainNetNode, serverUtils);
         searchField = new TextField();
         markdownCtrl.setSearchField(searchField);
+        directoryDropDown = new ComboBox<>();
+        markdownCtrl.setDirectoryDropDown(directoryDropDown);
     }
 
     @Test
