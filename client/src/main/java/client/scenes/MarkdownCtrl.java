@@ -22,7 +22,6 @@ import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import org.commonmark.Extension;
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
@@ -30,7 +29,6 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -474,6 +472,10 @@ public class MarkdownCtrl{
         else{
             errorMessageText="MarkdownText is null";
         }
+    }
+
+    public void setDirectoryDropDown(ComboBox<Directory> directoryDropDown) {
+        this.directoryDropDown = directoryDropDown;
     }
 
     /**
