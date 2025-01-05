@@ -138,7 +138,9 @@ public class MarkdownCtrl{
             }
         });
 
-        /*
+
+//KEYBOARD SHORTCUTS AND CHECKS-------------------------------------------------------------------------------
+        /**
             The check for control chars was with the help of GPT
          */
         markdownText.addEventFilter(KeyEvent.KEY_TYPED,event -> {
@@ -220,7 +222,134 @@ public class MarkdownCtrl{
             }
         });
 
+
+        searchField.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.setOnKeyPressed(event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        searchField.requestFocus();
+                        event.consume();
+                    }
+                });
+            }
+        });
+
+        noteNameList.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                searchField.requestFocus();
+                event.consume();
+            }
+        });
+
+        markdownTitle.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.DOWN) {
+                markdownText.requestFocus();
+                event.consume();
+            }
+        });
+
+        markdownText.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.UP && isCaretAtTopLine(markdownText)) {
+                markdownTitle.requestFocus();
+                event.consume();
+            }
+
+        });
+        markdownTitle.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.LEFT && isCaretAtStart(markdownTitle)) {
+                noteNameList.requestFocus();
+                event.consume();
+            }
+        });
+
+        markdownText.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.LEFT && isCaretAtStart(markdownText)) {
+                noteNameList.requestFocus();
+                event.consume();
+            }
+        });
+
+        searchField.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.DOWN) {
+                markdownTitle.requestFocus();
+                event.consume();
+            }
+        });
+
+        markdownTitle.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.UP) {
+                searchField.requestFocus();
+                event.consume();
+            }
+        });
+        markdownText.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                autosaveCurrentNote();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.N) {
+                addButtonPress();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.D) {
+                removalWarning();
+                event.consume();
+            }
+        });
+        markdownTitle.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                autosaveCurrentNote();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.N) {
+                addButtonPress();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.D) {
+                removalWarning();
+                event.consume();
+            }
+        });
+        noteNameList.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                autosaveCurrentNote();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.N) {
+                addButtonPress();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.D) {
+                removalWarning();
+                event.consume();
+            }
+        });
+        searchField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                autosaveCurrentNote();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.N) {
+                addButtonPress();
+                event.consume();
+            }
+            if (event.isControlDown() && event.getCode() == KeyCode.D) {
+                removalWarning();
+                event.consume();
+            }
+        });
     }
+    private boolean isCaretAtTopLine(TextArea textArea) {
+        int cursorPosition = textArea.getCaretPosition();
+        String textBeforeCaret = textArea.getText(0, cursorPosition);
+        return !textBeforeCaret.contains("\n");
+    }
+
+    private boolean isCaretAtStart(TextInputControl inputControl) {
+        return inputControl.getCaretPosition() == 0;
+    }
+
+
 
     private void autosaveCurrentNote(){
         if(currentlyEditedNote == null)
