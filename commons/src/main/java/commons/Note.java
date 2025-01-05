@@ -128,7 +128,15 @@ public class Note {
         this.directory = directory;
     }
 
-//    public LocalDateTime getCreationTime() {
+    public List<File> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<File> files) {
+        this.files = files;
+    }
+
+    //    public LocalDateTime getCreationTime() {
 //        return creationTime;
 //    }
 
