@@ -20,13 +20,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import org.commonmark.Extension;
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -72,6 +74,9 @@ public class MarkdownCtrl{
     @FXML
     private Button removeButton;
 
+    @FXML
+    private Button addFile;
+
 
     private ServerUtils serverUtils = new ServerUtils();
 
@@ -91,6 +96,16 @@ public class MarkdownCtrl{
 
     @FXML
     public void initialize(){
+        markdownTitle.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(currentlyEditedNote != null){
+                currentlyEditedNote.setTitle(newValue);
+                serverUtils.updateNote(currentlyEditedNote);
+                notes.set(notes.indexOf(currentlyEditedNote), currentlyEditedNote);
+                noteNameList.refresh();
+                autosaveCurrentNote();
+            }
+        }
+        );
         markdownText.scrollTopProperty().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable observable) {
@@ -352,6 +367,7 @@ public class MarkdownCtrl{
     private void autosaveCurrentNote(){
         if(currentlyEditedNote == null)
             return;
+        System.out.println("Saving note with title: " + markdownTitle.getText());
         currentlyEditedNote.setTitle(markdownTitle.getText());
         currentlyEditedNote.setContent(markdownText.getText());
 
@@ -359,10 +375,8 @@ public class MarkdownCtrl{
         if(updatedNote == null)
             System.out.println("Can't autosave note.");
         else {
-            currentlyEditedNote = updatedNote;
             System.out.println("Note autosaved.");
         }
-
     }
 
     /**
@@ -460,6 +474,10 @@ public class MarkdownCtrl{
         }
     }
 
+    public void setDirectoryDropDown(ComboBox<Directory> directoryDropDown) {
+        this.directoryDropDown = directoryDropDown;
+    }
+
     /**
      * sets the caret position after the new text was added
      */
@@ -481,6 +499,7 @@ public class MarkdownCtrl{
         }
         notes.clear();
         notes.addAll(newNotes);
+        noteNameList.refresh();
         System.out.println("Notes in list: " + notes);
     }
 //testing methods-------------------------------------------------
@@ -705,11 +724,18 @@ public class MarkdownCtrl{
         this.searchField = searchField;
     }
 
-    public ComboBox<Directory> getDirectoryDropDown() {
-        return directoryDropDown;
-    }
+    @FXML
+    public void upload(){
+        FileChooser fileChooser=new FileChooser();
+        fileChooser.setTitle("Select a file");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
 
-    public void setDirectoryDropDown(ComboBox<Directory> directoryDropDown) {
-        this.directoryDropDown = directoryDropDown;
+        File file=fileChooser.showOpenDialog(addFile.getScene().getWindow());
+        if(file!=null){
+            String imgURL=file.toURI().toString();
+            String imgMarkdownFormat= "![Image](" + imgURL+")";
+            int caretPosition=markdownText.getCaretPosition();
+            markdownText.insertText(caretPosition,imgMarkdownFormat);
+        }
     }
 }

@@ -1,12 +1,16 @@
 package commons;
 
 import jakarta.persistence.*;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -23,6 +27,8 @@ public class Note {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @OneToMany(mappedBy = "note",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<File> files=new ArrayList<>();
     /**
      * Title of the note. Cannot be null
      */
@@ -122,7 +128,16 @@ public class Note {
         this.directory = directory;
     }
 
-//    public LocalDateTime getCreationTime() {
+    public List<File> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<File> files) {
+        this.files = files;
+    }
+
+    //    public LocalDateTime getCreationTime() {
 //        return creationTime;
 //    }
+
 }
