@@ -55,7 +55,7 @@ class MarkdownCtrlTest extends ApplicationTest {
         searchField = new TextField();
         markdownCtrl.setSearchField(searchField);
         directoryDropDown = new ComboBox<>();
-        ///markdownCtrl.setDirectoryDropDown(directoryDropDown);
+        markdownCtrl.setDirectoryDropDown(directoryDropDown);
     }
 
     @Test

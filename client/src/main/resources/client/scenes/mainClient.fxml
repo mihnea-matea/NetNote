@@ -23,8 +23,7 @@
                         <HBox fillHeight="false" layoutX="152.0" layoutY="61.0" prefHeight="27.0" prefWidth="479.0" AnchorPane.leftAnchor="152.0" AnchorPane.rightAnchor="197.0">
                             <children>
                                 <TextField fx:id="searchField" prefHeight="27.0" prefWidth="369.0" promptText="Enter the note you are looking for:" HBox.hgrow="ALWAYS" />
-                                <Button fx:id="searchButton" mnemonicParsing="false" onMouseClicked="#search" prefHeight="25.0" prefWidth="78.0" styleClass="upper-button" text="Search 🔍" textFill="#b23a48" HBox.hgrow="ALWAYS" >
-                                </Button>
+                                <Button fx:id="searchButton" mnemonicParsing="false" onMouseClicked="#search" prefHeight="25.0" prefWidth="78.0" styleClass="upper-button" text="Search 🔍" textFill="#b23a48" HBox.hgrow="ALWAYS"> </Button>
                             </children>
                         </HBox>
                         <Label alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="-2.0" prefHeight="64.0" prefWidth="830.0" text=" ∘₊✧────✧₊∘  NetNote 📜   ∘₊✧────✧₊∘ " textAlignment="CENTER" textFill="#fed0bb" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-3.0" AnchorPane.topAnchor="-2.0">
@@ -32,7 +31,7 @@
                                 <Font name="Kristen ITC" size="36.0" />
                             </font>
                         </Label>
-                        <ChoiceBox fx:id="directoryDropDown" layoutX="640.0" layoutY="61.0" prefHeight="29.0" prefWidth="170.0" styleClass="upper-choice-box" value="Collections 🗁" AnchorPane.rightAnchor="18.0" />
+                        <ComboBox fx:id="directoryDropDown" layoutX="640.0" layoutY="61.0" prefHeight="29.0" prefWidth="170.0" styleClass="upper-choice-box" value="Collections 🗁" AnchorPane.rightAnchor="18.0" />
                         <ComboBox layoutX="20.0" layoutY="61.0" prefHeight="29.0" prefWidth="121.0" styleClass="upper-combo-box" value="Language ✈" />
                     </children>
                 </AnchorPane>
