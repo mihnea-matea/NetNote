@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import commons.Directory;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +55,7 @@ class MarkdownCtrlTest extends ApplicationTest {
         searchField = new TextField();
         markdownCtrl.setSearchField(searchField);
         directoryDropDown = new ComboBox<>();
-        markdownCtrl.setDirectoryDropDown(directoryDropDown);
+        ///markdownCtrl.setDirectoryDropDown(directoryDropDown);
     }
 
     @Test
@@ -114,15 +115,17 @@ class MarkdownCtrlTest extends ApplicationTest {
         assertEquals(10, textArea.getCaretPosition());
     }
 
-      @Test
+    @Test
     void testAutoSaveAfterDesiredOKCharsText() throws NoSuchFieldException, IllegalAccessException {
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
+        ListView<Note> noteNameList = new ListView<>();
+        markdownCtrl.setNoteNameList(noteNameList);
+        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
-
         for(int i=0;i<charLimit;i++)
             markdownTextArea.setText(markdownTextArea.getText() + 'a');
         verify(serverUtils, times(1)).updateNote(any(Note.class));
@@ -135,8 +138,10 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
+        ListView<Note> noteNameList = new ListView<>();
+        markdownCtrl.setNoteNameList(noteNameList);
+        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
-
         for(int i=0;i<charLimit;i++)
             markdownTextArea.setText(markdownTextArea.getText() + 'a');
         verify(serverUtils, times(1)).updateNote(any(Note.class));
@@ -154,6 +159,9 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
+        ListView<Note> noteNameList = new ListView<>();
+        markdownCtrl.setNoteNameList(noteNameList);
+        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
         for(int i=0;i<charLimit;i++)
@@ -168,6 +176,9 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
+        ListView<Note> noteNameList = new ListView<>();
+        markdownCtrl.setNoteNameList(noteNameList);
+        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
         for(int i=0;i<charLimit-1;i++)
@@ -182,6 +193,9 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
+        ListView<Note> noteNameList = new ListView<>();
+        markdownCtrl.setNoteNameList(noteNameList);
+        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
         for(int i=0;i<charLimit;i++)
@@ -196,6 +210,9 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
+        ListView<Note> noteNameList = new ListView<>();
+        markdownCtrl.setNoteNameList(noteNameList);
+        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
         for(int i=0;i<charLimit;i++)
@@ -210,6 +227,9 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
+        ListView<Note> noteNameList = new ListView<>();
+        markdownCtrl.setNoteNameList(noteNameList);
+        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
         for(int i=0;i<charLimit;i++)
@@ -258,6 +278,9 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
+        ListView<Note> noteNameList = new ListView<>();
+        markdownCtrl.setNoteNameList(noteNameList);
+        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
         for(int i=0;i<charLimit;i++)

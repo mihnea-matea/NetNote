@@ -564,4 +564,12 @@ public class MarkdownCtrl{
     public void setSearchField(TextField searchField) {
         this.searchField = searchField;
     }
+
+    public ListView<Note> getNoteNameList() {
+        return noteNameList;
+    }
+
+    public void setNoteNameList(ListView<Note> noteNameList) {
+        this.noteNameList = noteNameList;
+    }
 }
