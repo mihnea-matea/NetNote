@@ -3,6 +3,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Directory;
 import commons.Note;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
@@ -29,10 +30,8 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.nio.file.Path;
+import java.util.*;
 
 public class MarkdownCtrl{
     private ObservableList<Note> notes = FXCollections.observableArrayList();
@@ -69,7 +68,10 @@ public class MarkdownCtrl{
     private Note currentlyEditedNote;
 
     private int charsModifiedSinceLastSave;
-    private static final int CHAR_NO_FOR_AUTOSAVE = 5;
+    public static final int CHAR_NO_FOR_AUTOSAVE = 3;
+    public static final int SECONDS_FOR_AUTOSAVE = 5;
+
+    private Timer autosaveTimer;
 
     @FXML
     private Button removeButton;
@@ -77,8 +79,9 @@ public class MarkdownCtrl{
     @FXML
     private Button addFile;
 
-
     private ServerUtils serverUtils = new ServerUtils();
+
+    private boolean autosaveInProgress = false;
 
     private final List<Extension> extensions = List.of(TablesExtension.create());
     private final Parser parserM = Parser.builder().extensions(extensions).build();
@@ -96,17 +99,6 @@ public class MarkdownCtrl{
 
     @FXML
     public void initialize(){
-
-        markdownTitle.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(currentlyEditedNote != null){
-                currentlyEditedNote.setTitle(newValue);
-                serverUtils.updateNote(currentlyEditedNote);
-                notes.set(notes.indexOf(currentlyEditedNote), currentlyEditedNote);
-                noteNameList.refresh();
-                autosaveCurrentNote();
-            }
-        }
-        );
         markdownText.scrollTopProperty().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable observable) {
@@ -144,7 +136,9 @@ public class MarkdownCtrl{
         });
 
         noteNameList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue != null){
+            if(oldValue != null)
+                autosaveCertainNote(oldValue);
+            if(newValue != null && !autosaveInProgress){
                 currentlyEditedNote = newValue;
                 displayNoteTitle(newValue);
                 displayNoteContent(newValue);
@@ -152,41 +146,25 @@ public class MarkdownCtrl{
             }
         });
 
-
-//KEYBOARD SHORTCUTS AND CHECKS-------------------------------------------------------------------------------
-        /**
+        /*
             The check for control chars was with the help of GPT
-         **/
-        markdownText.addEventFilter(KeyEvent.KEY_TYPED,event -> {
+         */
+        markdownText.textProperty().addListener((observable, oldValue, newValue) -> {
             if(currentlyEditedNote != null){
-                String ch = event.getCharacter();
-                if(!ch.isEmpty()) {
-                    char charTyped = ch.charAt(0);
-                    if(charTyped == '\b' || charTyped == '\t' || charTyped == '\n' || !Character.isISOControl(charTyped)){
-                        charsModifiedSinceLastSave++;
-                        if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
-                            autosaveCurrentNote();
-                            charsModifiedSinceLastSave = 0;
-                        }
-                    }
-                    else event.consume();
+                charsModifiedSinceLastSave++;
+                if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
+                    autosaveCurrentNote();
+                    charsModifiedSinceLastSave = 0;
                 }
             }
         });
 
-        markdownTitle.addEventFilter(KeyEvent.KEY_TYPED,event -> {
+        markdownTitle.textProperty().addListener((observable, oldValue, newValue) -> {
             if(currentlyEditedNote != null){
-                String ch = event.getCharacter();
-                if(!ch.isEmpty()) {
-                    char charTyped = ch.charAt(0);
-                    if(charTyped == '\b' || charTyped == '\t' || charTyped == '\n' || !Character.isISOControl(charTyped)){
-                        charsModifiedSinceLastSave++;
-                        if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE){
-                            autosaveCurrentNote();
-                            charsModifiedSinceLastSave = 0;
-                        }
-                    }
-                    else event.consume();
+                charsModifiedSinceLastSave++;
+                if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
+                    autosaveCurrentNote();
+                    charsModifiedSinceLastSave = 0;
                 }
             }
         });
@@ -198,9 +176,11 @@ public class MarkdownCtrl{
             }
         });
 
-        setDirectoryDropDown(directoryDropDown);
+        startAutosaveTimer();
+
         ObservableList<Directory> directories = FXCollections.observableArrayList(serverUtils.getAllDirectories());
         directoryDropDown.setItems(directories);
+
         directoryDropDown.setCellFactory(comboBox -> new ListCell<Directory>() {
             @Override
             protected void updateItem(Directory directory, boolean empty) {
@@ -354,6 +334,7 @@ public class MarkdownCtrl{
             }
         });
     }
+
     private boolean isCaretAtTopLine(TextArea textArea) {
         int cursorPosition = textArea.getCaretPosition();
         String textBeforeCaret = textArea.getText(0, cursorPosition);
@@ -364,12 +345,29 @@ public class MarkdownCtrl{
         return inputControl.getCaretPosition() == 0;
     }
 
+    private void startAutosaveTimer(){
+        Timer autosaveTimer = new Timer(true);
+        autosaveTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> autosaveCurrentNote());
+            }
+        }, SECONDS_FOR_AUTOSAVE * 1000, SECONDS_FOR_AUTOSAVE * 1000);
+    }
+
+    private void stopAutosaveTimer(){
+        if(autosaveTimer != null)
+            autosaveTimer.cancel();
+    }
+
 
 
     private void autosaveCurrentNote(){
-        if(currentlyEditedNote == null)
+        if(autosaveInProgress || currentlyEditedNote == null || noteNameList.getSelectionModel().getSelectedItem() == null)
             return;
-        System.out.println("Saving note with title: " + markdownTitle.getText());
+        if (!currentlyEditedNote.equals(noteNameList.getSelectionModel().getSelectedItem()))
+            return;
+        autosaveInProgress = true;
         currentlyEditedNote.setTitle(markdownTitle.getText());
         currentlyEditedNote.setContent(markdownText.getText());
 
@@ -377,8 +375,38 @@ public class MarkdownCtrl{
         if(updatedNote == null)
             System.out.println("Can't autosave note.");
         else {
-            System.out.println("Note autosaved.");
+            int index = notes.indexOf(currentlyEditedNote);
+            if (index != -1)
+                notes.set(index, updatedNote);
+            if (!Objects.equals(currentlyEditedNote.getTitle(), markdownTitle.getText()))
+                noteNameList.refresh();
+            currentlyEditedNote = updatedNote;
+            System.out.println("Note with title" + currentlyEditedNote.getTitle() + "autosaved locally.");
         }
+        autosaveInProgress = false;
+
+    }
+
+    private void autosaveCertainNote(Note note){
+        if(autosaveInProgress || note == null)
+            return;
+        autosaveInProgress = true;
+        note.setTitle(markdownTitle.getText());
+        note.setContent(markdownText.getText());
+
+        Note updatedNote = serverUtils.updateNote(note);
+        if(updatedNote == null)
+            System.out.println("Can't autosave note.");
+        else {
+            int index = notes.indexOf(currentlyEditedNote);
+            if (index != -1)
+                notes.set(index, updatedNote);
+            if (!Objects.equals(currentlyEditedNote.getTitle(), markdownTitle.getText()))
+                noteNameList.refresh();
+            currentlyEditedNote = updatedNote;
+            System.out.println("Note with title" + currentlyEditedNote.getTitle() + "autosaved locally.");
+        }
+        autosaveInProgress = false;
     }
 
     /**
@@ -476,10 +504,6 @@ public class MarkdownCtrl{
         }
     }
 
-    public void setDirectoryDropDown(ComboBox<Directory> directoryDropDown) {
-        this.directoryDropDown = directoryDropDown;
-    }
-
     /**
      * sets the caret position after the new text was added
      */
@@ -499,12 +523,22 @@ public class MarkdownCtrl{
             System.out.println("No notes available or server error.");
             newNotes = new ArrayList<>();
         }
-        notes.clear();
-        notes.addAll(newNotes);
-        noteNameList.refresh();
-        System.out.println("Notes in list: " + notes);
+        Note selectedNote = noteNameList.getSelectionModel().getSelectedItem();
+        List<Note> finalNewNotes = newNotes;
+        Platform.runLater(() -> {
+            notes.setAll(finalNewNotes);
+            if(selectedNote == null)
+                return;
+            long selectedId = selectedNote.getId();
+            Note newNote = serverUtils.getNoteById(selectedId);
+            if (finalNewNotes.contains(newNote)){
+                displayNoteContent(newNote);
+                displayNoteTitle(newNote);
+                noteNameList.getSelectionModel().select(newNote);
+            }
+        });
     }
-//testing methods-------------------------------------------------
+    //testing methods-------------------------------------------------
     public ObservableList<Note> getNotes() {
         return notes;
     }
@@ -623,7 +657,9 @@ public class MarkdownCtrl{
 
                 long id = currentNote.getId();
                 serverUtils.deleteNoteById(id);
-
+                noteNameList.getSelectionModel().clearSelection();
+                currentNote = null;
+                currentlyEditedNote = null;
                 Alert deleted = new Alert(Alert.AlertType.CONFIRMATION);
                 deleted.setTitle("Deletion succesful");
                 deleted.setHeaderText("(Current note) deleted");
@@ -657,6 +693,20 @@ public class MarkdownCtrl{
         }
     }
 
+    @FXML
+    public void upload(){
+        FileChooser fileChooser=new FileChooser();
+        fileChooser.setTitle("Select a file");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+
+        File file=fileChooser.showOpenDialog(addFile.getScene().getWindow());
+        if(file!=null){
+            String imgURL=file.toURI().toString();
+            String imgMarkdownFormat= "![Image](" + imgURL+")";
+            int caretPosition=markdownText.getCaretPosition();
+            markdownText.insertText(caretPosition,imgMarkdownFormat);
+        }
+    }
 
     /**
      * getter method for markdownText
@@ -726,18 +776,15 @@ public class MarkdownCtrl{
         this.searchField = searchField;
     }
 
-    @FXML
-    public void upload(){
-        FileChooser fileChooser=new FileChooser();
-        fileChooser.setTitle("Select a file");
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+    public ListView<Note> getNoteNameList() {
+        return noteNameList;
+    }
 
-        File file=fileChooser.showOpenDialog(addFile.getScene().getWindow());
-        if(file!=null){
-            String imgURL=file.toURI().toString();
-            String imgMarkdownFormat= "![Image](" + imgURL+")";
-            int caretPosition=markdownText.getCaretPosition();
-            markdownText.insertText(caretPosition,imgMarkdownFormat);
-        }
+    public void setNoteNameList(ListView<Note> noteNameList) {
+        this.noteNameList = noteNameList;
+    }
+
+    public void setDirectoryDropDown(ComboBox<Directory> directoryDropDown) {
+        this.directoryDropDown = directoryDropDown;
     }
 }
