@@ -188,27 +188,17 @@ public class ServerUtils {
 	 * @return - List of all directories
 	 */
 	public List<Directory> getAllDirectories() {
-		List<Directory> allDirectories = new ArrayList<Directory>();
-		Directory allDirectory = new Directory("All");
-		//Directory savedDirectory = addDirectory(allDirectory);
-		if(allDirectory != null) {
-			allDirectory.setNotes(getNotes());
-
-			try {
-				allDirectories = ClientBuilder.newClient(new ClientConfig())
-						.target(SERVER)
-						.path("api/directories")
-						.request(APPLICATION_JSON)
-						.get(new GenericType<List<Directory>>() {
-						});
-				allDirectories.addFirst(allDirectory);
-				return allDirectories;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return List.of();
-			}
+		try {
+			return ClientBuilder.newClient(new ClientConfig())
+					.target(SERVER)
+					.path("api/directories")
+					.request(APPLICATION_JSON)
+					.get(new GenericType<List<Directory>>() {
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+			return List.of();
 		}
-		return List.of();
 	}
 
 	/**
@@ -217,14 +207,18 @@ public class ServerUtils {
 	 * @return - list of notes in the directory
 	 */
 	public List<Note> getDirectoryNotes(Directory directory) {
+		System.out.println("filter is SU:" + directory.getId());
+		String encodedFilter =  URLEncoder.encode(String.valueOf(directory.getId()), StandardCharsets.UTF_8);
 		try {
 			return ClientBuilder.newClient(new ClientConfig())
 					.target(SERVER)
-					.path("api/directories/search?filter=" + directory.getId())
+					.path("api/directories/search")
+					.queryParam("filter", encodedFilter)
 					.request(APPLICATION_JSON)
 					.get(new GenericType<List<Note>>() {
 					});
 		} catch (Exception e) {
+			System.out.println("Error getting notes");
 			e.printStackTrace();
 			return List.of();
 		}

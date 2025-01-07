@@ -96,6 +96,7 @@ public class MarkdownCtrl{
 
     @FXML
     public void initialize(){
+
         markdownTitle.textProperty().addListener((observable, oldValue, newValue) -> {
             if(currentlyEditedNote != null){
                 currentlyEditedNote.setTitle(newValue);
@@ -197,42 +198,43 @@ public class MarkdownCtrl{
             }
         });
 
-
-            ObservableList<Directory> directories = FXCollections.observableArrayList(serverUtils.getAllDirectories());
-            directoryDropDown.setItems(directories);
-
-            directoryDropDown.setCellFactory(comboBox -> new ListCell<Directory>() {
-                @Override
-                protected void updateItem(Directory directory, boolean empty) {
-                    super.updateItem(directory, empty);
-                    if(empty || directory == null){
-                        setText(null);
-                    } else {
-                        setText(directory.getTitle());
-                    }
+        setDirectoryDropDown(directoryDropDown);
+        ObservableList<Directory> directories = FXCollections.observableArrayList(serverUtils.getAllDirectories());
+        directoryDropDown.setItems(directories);
+        directoryDropDown.setCellFactory(comboBox -> new ListCell<Directory>() {
+            @Override
+            protected void updateItem(Directory directory, boolean empty) {
+                super.updateItem(directory, empty);
+                if(empty || directory == null){
+                    setText(null);
+                } else {
+                    setText(directory.getTitle());
                 }
-            });
+            }
+        });
+
+        directoryDropDown.setValue(directories.getFirst());
 
         directoryDropDown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-//            if (newValue != null) {
-//                try {
-//                    List<Note> notes = serverUtils.getDirectoryNotes(newValue);
-//                    noteNameList.getItems().clear();
-//                    if (notes != null) {
-//                        noteNameList.getItems().addAll(notes);
-//                    } else {
-//                        System.out.println("Error fetching notes for directories");
-//                    }
-//                } catch (Exception e){
-//                    e.printStackTrace();
-//                }
+            if (newValue != null) {
+                try {
+                    List<Note> notes = serverUtils.getDirectoryNotes(newValue);
+                    noteNameList.getItems().clear();
+                    if (notes != null) {
+                        noteNameList.getItems().addAll(notes);
+                    } else {
+                        System.out.println("Error fetching notes for directories");
+                    }
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+//            if (newValue == oldValue) {
+//                System.out.println("Already selected!");
 //            }
-            if (newValue == oldValue) {
-                System.out.println("Already selected!");
-            }
-            if(newValue != null) {
-                System.out.println("Directory selected");
-            }
+//            if(newValue != null) {
+//                System.out.println("Directory selected");
+//            }
         });
 
 

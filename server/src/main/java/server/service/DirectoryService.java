@@ -35,6 +35,9 @@ public class DirectoryService {
      * @return - List of notes of directory
      */
     public List<Note> fetchNotesByDirectory(long filter) {
+        if (filter == -1) {
+            return noteRepository.findAll();
+        }
         Optional<Directory> directory = directoryRepository.findById(filter);
         if (directory.isPresent()) {
         List<Note> notes = new ArrayList<>();

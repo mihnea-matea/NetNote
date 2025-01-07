@@ -27,6 +27,8 @@ public class DirectoryController {
 
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private NoteRepository noteRepository;
 
     /**
      * Fetches all directories in repository
@@ -34,7 +36,13 @@ public class DirectoryController {
      */
     @GetMapping(path = {"", "/"})
     public ResponseEntity<List<Directory>> getAllDirectories() {
+        Directory allDirectory = new Directory();
+        allDirectory.setTitle("All");
+        allDirectory.setNotes(noteRepository.findAll());
+        allDirectory.setId(-1);
+
         List<Directory> directories = directoryRepository.findAll();
+        directories.addFirst(allDirectory);
         return ResponseEntity.ok(directories);
     }
 
@@ -80,9 +88,9 @@ public class DirectoryController {
      * @return - list of notes of the directory
      */
     @GetMapping("/search")
-    public ResponseEntity<List<Note>> getNotesOfDirectory(@RequestParam("filter") long filter) {
+    public ResponseEntity<List<Note>> getNotesOfDirectory(@RequestParam("filter") String filter) {
         try{
-            List<Note> notes = directoryService.fetchNotesByDirectory(filter);
+            List<Note> notes = directoryService.fetchNotesByDirectory(Long.parseLong(filter));
             return ResponseEntity.ok(notes);
         } catch (Exception e) {
             e.printStackTrace();
