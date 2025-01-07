@@ -1,10 +1,13 @@
 package client.scenes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import commons.Directory;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -33,6 +36,8 @@ class MarkdownCtrlTest extends ApplicationTest {
     private WebView html;
     private TextField searchField;
     private ComboBox<Directory> directoryDropDown;
+    private Directory mockDirectory;
+    private ObservableList<Directory> mockDirectories;
 
     @Mock
     private ServerUtils serverUtils;
@@ -54,6 +59,11 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setSearchField(searchField);
         directoryDropDown = new ComboBox<>();
         markdownCtrl.setDirectoryDropDown(directoryDropDown);
+        mockDirectory = new Directory();
+        mockDirectory.setTitle("Test Directory");
+        mockDirectories = FXCollections.observableArrayList(mockDirectory);
+        when(serverUtils.getAllDirectories() ).thenReturn(mockDirectories);
+
     }
 
     @Test
