@@ -80,6 +80,11 @@
                                                             <font>
                                                                 <Font name="Calibri" size="14.0" />
                                                             </font></TextArea>
+                                                        <HBox layoutX="-5.0" layoutY="382.0" prefHeight="43.0" prefWidth="454.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                                            <children>
+                                                                <Button fx:id="addFile" mnemonicParsing="false" onAction="#upload" prefHeight="26.0" prefWidth="90.0" text="AddFile" />
+                                                            </children>
+                                                        </HBox>
                                                     </children></AnchorPane>
                                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="434.0" prefWidth="186.0" style="-fx-background-color: #fed0bb;" SplitPane.resizableWithParent="false">
                                                     <children>
