@@ -193,26 +193,28 @@ public class MarkdownCtrl{
             }
         });
 
+        directoryDropDown.setValue(directories.getFirst());
+
         directoryDropDown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-//            if (newValue != null) {
-//                try {
-//                    List<Note> notes = serverUtils.getDirectoryNotes(newValue);
-//                    noteNameList.getItems().clear();
-//                    if (notes != null) {
-//                        noteNameList.getItems().addAll(notes);
-//                    } else {
-//                        System.out.println("Error fetching notes for directories");
-//                    }
-//                } catch (Exception e){
-//                    e.printStackTrace();
-//                }
+            if (newValue != null) {
+                try {
+                    List<Note> notes = serverUtils.getDirectoryNotes(newValue);
+                    noteNameList.getItems().clear();
+                    if (notes != null) {
+                        noteNameList.getItems().addAll(notes);
+                    } else {
+                        System.out.println("Error fetching notes for directories");
+                    }
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+//            if (newValue == oldValue) {
+//                System.out.println("Already selected!");
 //            }
-            if (newValue == oldValue) {
-                System.out.println("Already selected!");
-            }
-            if(newValue != null) {
-                System.out.println("Directory selected");
-            }
+//            if(newValue != null) {
+//                System.out.println("Directory selected");
+//            }
         });
 
 
