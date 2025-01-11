@@ -74,7 +74,7 @@ public class MarkdownCtrl {
     private Note currentlyEditedNote;
 
     private int charsModifiedSinceLastSave;
-    private static final int CHAR_NO_FOR_AUTOSAVE = 3;
+    public static final int CHAR_NO_FOR_AUTOSAVE = 3;
     public static final int SECONDS_FOR_AUTOSAVE = 5;
 
     private Timer autosaveTimer;
