@@ -46,196 +46,204 @@ import org.springframework.web.client.RestTemplate;
 
 public class ServerUtils {
 
-	private static final String SERVER = "http://localhost:8080/";
+    private static final String SERVER = "http://localhost:8080/";
 
-	public void getQuotesTheHardWay() throws IOException, URISyntaxException {
-		var url = new URI("http://localhost:8080/api/quotes").toURL();
-		var is = url.openConnection().getInputStream();
-		var br = new BufferedReader(new InputStreamReader(is));
-		String line;
-		while ((line = br.readLine()) != null) {
-			System.out.println(line);
-		}
-	}
+    public void getQuotesTheHardWay() throws IOException, URISyntaxException {
+        var url = new URI("http://localhost:8080/api/quotes").toURL();
+        var is = url.openConnection().getInputStream();
+        var br = new BufferedReader(new InputStreamReader(is));
+        String line;
+        while ((line = br.readLine()) != null) {
+            System.out.println(line);
+        }
+    }
 
-	public List<Quote> getQuotes() {
-		return ClientBuilder.newClient(new ClientConfig()) //
-				.target(SERVER).path("api/quotes") //
-				.request(APPLICATION_JSON) //
-				.get(new GenericType<List<Quote>>() {
-				});
-	}
+    public List<Quote> getQuotes() {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(SERVER).path("api/quotes") //
+                .request(APPLICATION_JSON) //
+                .get(new GenericType<List<Quote>>() {
+                });
+    }
 
-	public Quote addQuote(Quote quote) {
-		return ClientBuilder.newClient(new ClientConfig()) //
-				.target(SERVER).path("api/quotes") //
-				.request(APPLICATION_JSON) //
-				.post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
-	}
+    public Quote addQuote(Quote quote) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(SERVER).path("api/quotes") //
+                .request(APPLICATION_JSON) //
+                .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
+    }
 
 
-//this is from the quote setup but i think we should keep it
-	public boolean isServerAvailable() {
-		try {
-			ClientBuilder.newClient(new ClientConfig()) //
-					.target(SERVER) //
-					.request(APPLICATION_JSON) //
-					.get();
-		} catch (ProcessingException e) {
-			if (e.getCause() instanceof ConnectException) {
-				return false;
-			}
-		}
-		return true;
-	}
+    //this is from the quote setup but i think we should keep it
+    public boolean isServerAvailable() {
+        try {
+            ClientBuilder.newClient(new ClientConfig()) //
+                    .target(SERVER) //
+                    .request(APPLICATION_JSON) //
+                    .get();
+        } catch (ProcessingException e) {
+            if (e.getCause() instanceof ConnectException) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	// NOTES SECTION -------------------------------------------------------
-	/**
-	 * Get all notes saved on the server
-	 * @return A list of all notes
-	 */
-	public List<Note> getNotes() {
-		return ClientBuilder.newClient(new ClientConfig())
-				.target(SERVER).path("api/notes")
-				.request(APPLICATION_JSON)
-				.get(new GenericType<List<Note>>() {});
-	}
+    // NOTES SECTION -------------------------------------------------------
 
-	/**
-	 * Get a single note by its id
-	 * @param id The id of the note
-	 * @return The specific note
-	 */
-	public Note getNoteById(long id) {
-		return ClientBuilder.newClient(new ClientConfig())
-				.target(SERVER).path("api/notes/" + id)
-				.request(APPLICATION_JSON)
-				.get(Note.class);
-	}
+    /**
+     * Get all notes saved on the server
+     *
+     * @return A list of all notes
+     */
+    public List<Note> getNotes() {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/notes")
+                .request(APPLICATION_JSON)
+                .get(new GenericType<List<Note>>() {
+                });
+    }
 
-	/**
-	 * Add a new note to the server
-	 * @param note The note object to add.
-	 * @return The added note from the server
-	 */
-	public Note addNote(Note note) {
-		String url = SERVER + "api/notes";
-		//System.out.println("POST request to URL: " + url); just a testing statement
-		return ClientBuilder.newClient(new ClientConfig())
-				.target(SERVER).path("api/notes")
-				.request(APPLICATION_JSON)
-				.post(Entity.entity(note, APPLICATION_JSON), Note.class);
-	}
+    /**
+     * Get a single note by its id
+     *
+     * @param id The id of the note
+     * @return The specific note
+     */
+    public Note getNoteById(long id) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/notes/" + id)
+                .request(APPLICATION_JSON)
+                .get(Note.class);
+    }
 
-	/**
-	 * Update an existing note on the server
-	 * @param note The updated note
-	 * @return The updated note from the server
-	 */
-	public Note updateNote(Note note) {
-		return ClientBuilder.newClient(new ClientConfig())
-				.target(SERVER).path("api/notes/" + note.getId())
-				.request(APPLICATION_JSON)
-				.put(Entity.entity(note, APPLICATION_JSON), Note.class);
-	}
+    /**
+     * Add a new note to the server
+     *
+     * @param note The note object to add.
+     * @return The added note from the server
+     */
+    public Note addNote(Note note) {
+        String url = SERVER + "api/notes";
+        //System.out.println("POST request to URL: " + url); just a testing statement
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/notes")
+                .request(APPLICATION_JSON)
+                .post(Entity.entity(note, APPLICATION_JSON), Note.class);
+    }
 
-	/**
-	 * Delete a note by its id
-	 * @param id The id of the note to delete.
-	 */
-	public void deleteNote(long id) {
-		ClientBuilder.newClient(new ClientConfig())
-				.target(SERVER).path("api/notes/" + id)
-				.request(APPLICATION_JSON)
-				.delete();
-	}
-	//we can add error messages and try catch blocks for operations, but we should at least have a label that can display the message first
+    /**
+     * Update an existing note on the server
+     *
+     * @param note The updated note
+     * @return The updated note from the server
+     */
+    public Note updateNote(Note note) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/notes/" + note.getId())
+                .request(APPLICATION_JSON)
+                .put(Entity.entity(note, APPLICATION_JSON), Note.class);
+    }
 
-	public List<Note> getFilteredNotes(String filter) {
-		//Generative AI used for figuring out encoding
-		String encodedFilter = URLEncoder.encode(filter, StandardCharsets.UTF_8);
-		return ClientBuilder.newClient(new ClientConfig()).target(SERVER + "api/notes/search?filter=" + encodedFilter)
-				.request(APPLICATION_JSON)
-				.get(new GenericType<List<Note>>() {
-				});
-	}
+    /**
+     * Delete a note by its id
+     *
+     * @param id The id of the note to delete.
+     */
+    public void deleteNote(long id) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/notes/" + id)
+                .request(APPLICATION_JSON)
+                .delete();
+    }
+    //we can add error messages and try catch blocks for operations, but we should at least have a label that can display the message first
 
-	private RestTemplate restTemplate = new RestTemplate();
+    public List<Note> getFilteredNotes(String filter) {
+        //Generative AI used for figuring out encoding
+        String encodedFilter = URLEncoder.encode(filter, StandardCharsets.UTF_8);
+        return ClientBuilder.newClient(new ClientConfig()).target(SERVER + "api/notes/search?filter=" + encodedFilter)
+                .request(APPLICATION_JSON)
+                .get(new GenericType<List<Note>>() {
+                });
+    }
 
-	public void deleteNoteById(long id) {
-		try {
-			if (id < 0) {
-				throw new IllegalArgumentException("ID must be a positive number.");
-			}
-			String url = "http://localhost:8080/api/notes/" + id;
-			restTemplate.delete(url);
-			System.out.println("Note with ID " + id + " deleted successfully.");
-		} catch (HttpClientErrorException.NotFound e) {
-			System.err.println("Error: Note with ID " + id + " not found. " + e.getMessage());
-			System.out.println("id is hardcoded to be 10 for now");
-			throw e;
-		} catch (RestClientException e) {
-			System.err.println("Error: Note with ID " + id + " not found. " + e.getMessage());
-			System.out.println("id is hardcoded to be 10 for now");
+    private RestTemplate restTemplate = new RestTemplate();
 
-			throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Note with ID " + id + " not found", null, null, null);
+    public void deleteNoteById(long id) {
+        try {
+            if (id < 0) {
+                throw new IllegalArgumentException("ID must be a positive number.");
+            }
+            String url = "http://localhost:8080/api/notes/" + id;
+            restTemplate.delete(url);
+            System.out.println("Note with ID " + id + " deleted successfully.");
+        } catch (HttpClientErrorException.NotFound e) {
+            System.err.println("Error: Note with ID " + id + " not found. " + e.getMessage());
+            System.out.println("id is hardcoded to be 10 for now");
+            throw e;
+        } catch (RestClientException e) {
+            System.err.println("Error: Note with ID " + id + " not found. " + e.getMessage());
+            System.out.println("id is hardcoded to be 10 for now");
 
-		}
-	}
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Note with ID " + id + " not found", null, null, null);
 
-	/**
-	 * Fetches all directories in the repository and creates an all directory
-	 * @return - List of all directories
-	 */
-	public List<Directory> getAllDirectories() {
-		try {
-			return ClientBuilder.newClient(new ClientConfig())
-					.target(SERVER)
-					.path("api/directories")
-					.request(APPLICATION_JSON)
-					.get(new GenericType<List<Directory>>() {
-					});
-		} catch (Exception e) {
-			e.printStackTrace();
-			return List.of();
-		}
-	}
+        }
+    }
 
-	/**
-	 * Gets the notes of each directory
-	 * @param directory - directory to get notes of
-	 * @return - list of notes in the directory
-	 */
-	public List<Note> getDirectoryNotes(Directory directory) {
-		System.out.println("filter is SU:" + directory.getId());
-		String encodedFilter =  URLEncoder.encode(String.valueOf(directory.getId()), StandardCharsets.UTF_8);
-		try {
-			return ClientBuilder.newClient(new ClientConfig())
-					.target(SERVER)
-					.path("api/directories/search")
-					.queryParam("filter", encodedFilter)
-					.request(APPLICATION_JSON)
-					.get(new GenericType<List<Note>>() {
-					});
-		} catch (Exception e) {
-			System.out.println("Error getting notes");
-			e.printStackTrace();
-			return List.of();
-		}
-	}
+    /**
+     * Fetches all directories in the repository and creates an all directory
+     *
+     * @return - List of all directories
+     */
+    public List<Directory> getAllDirectories() {
+        try {
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(SERVER)
+                    .path("api/directories")
+                    .request(APPLICATION_JSON)
+                    .get(new GenericType<List<Directory>>() {
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
+    }
 
-	public Directory addDirectory(Directory directory) {
-		try {
-			String url = SERVER + "api/directories";
-			return ClientBuilder.newClient(new ClientConfig())
-					.target(url)
-					.request(APPLICATION_JSON)
-					.accept(APPLICATION_JSON)
-					.post(Entity.entity(directory, APPLICATION_JSON), Directory.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+    /**
+     * Gets the notes of each directory
+     *
+     * @param directory - directory to get notes of
+     * @return - list of notes in the directory
+     */
+    public List<Note> getDirectoryNotes(Directory directory) {
+        System.out.println("filter is SU:" + directory.getId());
+        String encodedFilter = URLEncoder.encode(String.valueOf(directory.getId()), StandardCharsets.UTF_8);
+        try {
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(SERVER)
+                    .path("api/directories/search")
+                    .queryParam("filter", encodedFilter)
+                    .request(APPLICATION_JSON)
+                    .get(new GenericType<List<Note>>() {
+                    });
+        } catch (Exception e) {
+            System.out.println("Error getting notes");
+            e.printStackTrace();
+            return List.of();
+        }
+    }
 
+    public Directory addDirectory(Directory directory) {
+        try {
+            String url = SERVER + "api/directories";
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(url)
+                    .request(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .post(Entity.entity(directory, APPLICATION_JSON), Directory.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
