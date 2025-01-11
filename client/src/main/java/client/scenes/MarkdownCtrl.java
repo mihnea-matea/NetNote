@@ -29,6 +29,8 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -728,14 +730,33 @@ public class MarkdownCtrl{
     public void upload(){
         FileChooser fileChooser=new FileChooser();
         fileChooser.setTitle("Select a file");
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"),
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+        );
 
         File file=fileChooser.showOpenDialog(addFile.getScene().getWindow());
-        if(file!=null){
-            String imgURL=file.toURI().toString();
-            String imgMarkdownFormat= "![Image](" + imgURL+")";
-            int caretPosition=markdownText.getCaretPosition();
-            markdownText.insertText(caretPosition,imgMarkdownFormat);
+        if(file==null){
+            errorMessage("Select a file");
+            return;
         }
+        if(currentNote==null){
+            errorMessage("Select a note before uploading a file");
+            return;
+        }
+        try{
+            byte[] fileBytes= Files.readAllBytes(file.toPath());
+            Long noteId= currentNote.getId();;
+            String fileUrl=serverUtils.uploadFile(noteId,file.getName(),fileBytes);
+            String img="![Image]("+fileUrl+")";
+            int caretPosition=markdownText.getCaretPosition();
+            markdownText.insertText(caretPosition,img);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void errorMessage(String message){
+        Alert alert=new Alert(Alert.AlertType.ERROR);
+        alert.setContentText(message);
     }
 }
