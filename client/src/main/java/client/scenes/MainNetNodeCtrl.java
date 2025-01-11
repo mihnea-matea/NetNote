@@ -23,7 +23,6 @@ public class MainNetNodeCtrl {
         showMainScene();
         primaryStage.show();
         //this.noteOverviewCtrl= noteOverviewCtrl;
-        this.markdownCtrl = markdownCtrl;
     }
     public void showMainScene(){
         primaryStage.setTitle("NetNode");
