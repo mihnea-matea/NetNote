@@ -18,7 +18,6 @@ public class File {
     private Long fileSize;
 
     public File(){
-
     }
 
     public File(Note note, String fileName, String fileUrl, String fileType, Long fileSize) {

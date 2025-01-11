@@ -17,9 +17,7 @@ package client.utils;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,10 +26,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.multipart.file.StreamDataBodyPart;
 import commons.Directory;
 import commons.Note;
+import jakarta.ws.rs.client.Client;
+import javax.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.StreamingOutput;
 import org.glassfish.jersey.client.ClientConfig;
 
 import commons.Quote;
@@ -74,7 +77,7 @@ public class ServerUtils {
 	}
 
 
-//this is from the quote setup but i think we should keep it
+	//this is from the quote setup, but I think we should keep it
 	public boolean isServerAvailable() {
 		try {
 			ClientBuilder.newClient(new ClientConfig()) //
@@ -90,19 +93,23 @@ public class ServerUtils {
 	}
 
 	// NOTES SECTION -------------------------------------------------------
+
 	/**
 	 * Get all notes saved on the server
+	 *
 	 * @return A list of all notes
 	 */
 	public List<Note> getNotes() {
 		return ClientBuilder.newClient(new ClientConfig())
 				.target(SERVER).path("api/notes")
 				.request(APPLICATION_JSON)
-				.get(new GenericType<List<Note>>() {});
+				.get(new GenericType<List<Note>>() {
+				});
 	}
 
 	/**
 	 * Get a single note by its id
+	 *
 	 * @param id The id of the note
 	 * @return The specific note
 	 */
@@ -115,6 +122,7 @@ public class ServerUtils {
 
 	/**
 	 * Add a new note to the server
+	 *
 	 * @param note The note object to add.
 	 * @return The added note from the server
 	 */
@@ -129,6 +137,7 @@ public class ServerUtils {
 
 	/**
 	 * Update an existing note on the server
+	 *
 	 * @param note The updated note
 	 * @return The updated note from the server
 	 */
@@ -141,6 +150,7 @@ public class ServerUtils {
 
 	/**
 	 * Delete a note by its id
+	 *
 	 * @param id The id of the note to delete.
 	 */
 	public void deleteNote(long id) {
@@ -185,40 +195,48 @@ public class ServerUtils {
 
 	/**
 	 * Fetches all directories in the repository and creates an all directory
+	 *
 	 * @return - List of all directories
 	 */
 	public List<Directory> getAllDirectories() {
-		try {
-			return ClientBuilder.newClient(new ClientConfig())
-					.target(SERVER)
-					.path("api/directories")
-					.request(APPLICATION_JSON)
-					.get(new GenericType<List<Directory>>() {
-					});
-		} catch (Exception e) {
-			e.printStackTrace();
-			return List.of();
+		List<Directory> allDirectories = new ArrayList<Directory>();
+		Directory allDirectory = new Directory("All");
+		//Directory savedDirectory = addDirectory(allDirectory);
+		if (allDirectory != null) {
+			allDirectory.setNotes(getNotes());
+
+			try {
+				allDirectories = ClientBuilder.newClient(new ClientConfig())
+						.target(SERVER)
+						.path("api/directories")
+						.request(APPLICATION_JSON)
+						.get(new GenericType<List<Directory>>() {
+						});
+				allDirectories.addFirst(allDirectory);
+				return allDirectories;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return List.of();
+			}
 		}
+		return List.of();
 	}
 
 	/**
 	 * Gets the notes of each directory
+	 *
 	 * @param directory - directory to get notes of
 	 * @return - list of notes in the directory
 	 */
 	public List<Note> getDirectoryNotes(Directory directory) {
-		System.out.println("filter is SU:" + directory.getId());
-		String encodedFilter =  URLEncoder.encode(String.valueOf(directory.getId()), StandardCharsets.UTF_8);
 		try {
 			return ClientBuilder.newClient(new ClientConfig())
 					.target(SERVER)
-					.path("api/directories/search")
-					.queryParam("filter", encodedFilter)
+					.path("api/directories/search?filter=" + directory.getId())
 					.request(APPLICATION_JSON)
 					.get(new GenericType<List<Note>>() {
 					});
 		} catch (Exception e) {
-			System.out.println("Error getting notes");
 			e.printStackTrace();
 			return List.of();
 		}
@@ -238,4 +256,35 @@ public class ServerUtils {
 		}
 	}
 
+	public String uploadFile(Long noteId, String fileName, byte[] fileBytes){
+		try{
+			String url="http://localhost:8080/api/files"+noteId+"/upload";
+			Client client=ClientBuilder.newBuilder()
+				//	.register(MultiPartFeature.class)  // Register the MultiPartFeature
+					.build();
+			FormDataMultiPart multiPart = new FormDataMultiPart();
+			FormDataContentDisposition contentDisposition = FormDataContentDisposition
+					.name("file")
+					.fileName(fileName)
+					.build();
+			FormDataBodyPart filePart = new StreamDataBodyPart(
+					"file",
+					new ByteArrayInputStream(fileBytes),
+					fileName,
+					MediaType.APPLICATION_OCTET_STREAM_TYPE
+			);
+			filePart.setContentDisposition(contentDisposition);
+			multiPart.bodyPart(filePart);
+			Response response=client.target(url)
+					.request(MediaType.MULTIPART_FORM_DATA)
+					.post(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA));
+			if(response.getStatus()==200){
+				return response.readEntity(String.class);
+			} else{
+				throw new RuntimeException("Failed to upload file"+response.getStatus());
+			}
+		} catch (Exception e){
+			throw new RuntimeException();
+		}
+	}
 }
