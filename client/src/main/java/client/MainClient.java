@@ -26,6 +26,9 @@ public class MainClient extends Application {
         var pc = INJECTOR.getInstance(MainNetNodeCtrl.class);
         var markdownCtrl = mainScene.getKey();
         pc.init(stage, mainScene, addScene, markdownCtrl);
+        stage.setOnCloseRequest(event -> {
+            markdownCtrl.autosaveCurrentNote();
+        });
         stage.show();
     }
 
