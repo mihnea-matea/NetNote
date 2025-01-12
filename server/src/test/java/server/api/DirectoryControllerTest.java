@@ -2,24 +2,13 @@ package server.api;
 
 import commons.Directory;
 import commons.Note;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.http.ResponseEntity;
-import server.database.DirectoryRepository;
-import server.database.FileRepository;
-import server.database.NoteRepository;
 import server.service.DirectoryService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
