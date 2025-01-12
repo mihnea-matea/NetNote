@@ -82,7 +82,7 @@
                                                             </font></TextArea>
                                                         <HBox layoutX="-5.0" layoutY="382.0" prefHeight="43.0" prefWidth="454.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                                             <children>
-                                                                <Button fx:id="addFile" mnemonicParsing="false" onAction="#upload" prefHeight="26.0" prefWidth="90.0" text="AddFile" />
+                                                                <Button fx:id="addFile2" mnemonicParsing="false" onAction="#upload" prefHeight="26.0" prefWidth="90.0" text="AddFile" />
                                                             </children>
                                                         </HBox>
                                                     </children></AnchorPane>
