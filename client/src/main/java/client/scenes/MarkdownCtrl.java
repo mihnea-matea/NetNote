@@ -752,6 +752,13 @@ public class MarkdownCtrl {
         pc.showAddScene();
     }
 
+    /**
+     * Sets the scene to the EditCollection scene when the button is pressed
+     */
+    public void editCollectionButtonPress() {
+        pc.showEditCollectionScene();
+    }
+
     @FXML
     public void removalWarning() {
         Dialog<ButtonType> dialog = new Dialog<>();

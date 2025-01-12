@@ -18,6 +18,9 @@ public class Directory {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
+    private Boolean isDefault;
+
     @OneToMany(cascade = CascadeType.PERSIST)
     private List<Note> notes;
 
@@ -34,6 +37,7 @@ public class Directory {
     public Directory(String title) {
         this.title = title;
         this.notes = new ArrayList<>();
+        this.isDefault = false;
     }
 
     /**
@@ -44,6 +48,10 @@ public class Directory {
         this.title = title;
         this.notes = notes;
     }
+
+    public void setDefault(){this.isDefault = true;}
+
+    public void setNotDefault(){this.isDefault = false;}
 
     public String getTitle() {
         return title;
