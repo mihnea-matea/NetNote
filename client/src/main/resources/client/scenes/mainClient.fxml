@@ -31,7 +31,7 @@
                             </font>
                         </Label>
                         <ComboBox fx:id="directoryDropDown" layoutX="640.0" layoutY="61.0" prefHeight="29.0" prefWidth="170.0" styleClass="upper-choice-box" value="Collections 🗁" AnchorPane.rightAnchor="18.0" />
-                        <ComboBox layoutX="20.0" layoutY="61.0" prefHeight="29.0" prefWidth="121.0" styleClass="upper-combo-box" value="Language ✈" />
+                        <ComboBox fx:id="languageButton" layoutX="20.0" layoutY="61.0" onAction="#languagePressed" prefHeight="29.0" prefWidth="121.0" styleClass="upper-combo-box" value="Language ✈" />
                     </children>
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="429.0" prefWidth="831.0" SplitPane.resizableWithParent="false">
@@ -82,7 +82,7 @@
                                                             </font></TextArea>
                                                         <HBox layoutX="-5.0" layoutY="382.0" prefHeight="43.0" prefWidth="454.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                                             <children>
-                                                                <Button fx:id="addFile" mnemonicParsing="false" onAction="#upload" prefHeight="26.0" prefWidth="90.0" text="AddFile" />
+                                                                <Button fx:id="addFile2" mnemonicParsing="false" onAction="#upload" prefHeight="26.0" prefWidth="90.0" text="AddFile" />
                                                             </children>
                                                         </HBox>
                                                     </children></AnchorPane>
@@ -103,4 +103,3 @@
         </SplitPane>
     </children>
 </AnchorPane>
-
