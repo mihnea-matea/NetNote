@@ -60,14 +60,9 @@
                                                 <Tooltip text="Refresh" />
                                             </tooltip>
                                             <font>
-<<<<<<< HEAD
                                     <Font name="Kristen ITC" size="23.0" />
                                  </font></Button>
                               <Button fx:id="addFile" layoutY="356.0" mnemonicParsing="false" onAction="#upload" prefHeight="26.0" prefWidth="151.0" text="AddFile" AnchorPane.bottomAnchor="45.6" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-=======
-                                                <Font name="Kristen ITC" size="23.0" />
-                                            </font></Button>
->>>>>>> 125b5c033a5e42868b50c9a0bed6f4ec8ffd1b8b
                                     </children>
                                 </AnchorPane>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
@@ -85,14 +80,11 @@
                                                             <font>
                                                                 <Font name="Calibri" size="14.0" />
                                                             </font></TextArea>
-<<<<<<< HEAD
-=======
                                                         <HBox layoutX="-5.0" layoutY="382.0" prefHeight="43.0" prefWidth="454.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                                             <children>
                                                                 <Button fx:id="addFile" mnemonicParsing="false" onAction="#upload" prefHeight="26.0" prefWidth="90.0" text="AddFile" />
                                                             </children>
                                                         </HBox>
->>>>>>> 125b5c033a5e42868b50c9a0bed6f4ec8ffd1b8b
                                                     </children></AnchorPane>
                                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="434.0" prefWidth="186.0" style="-fx-background-color: #fed0bb;" SplitPane.resizableWithParent="false">
                                                     <children>

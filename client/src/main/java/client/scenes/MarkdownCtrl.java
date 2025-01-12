@@ -144,8 +144,18 @@ public class MarkdownCtrl {
         });
 
         noteNameList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != null)
-                autosaveCertainNote(oldValue);
+            /*if (oldValue != null)
+                autosaveCertainNote(oldValue);*/
+            if (oldValue != null) {
+                oldValue.setTitle(markdownTitle.getText());
+                oldValue.setContent(markdownText.getText());
+                Note updatedOld = serverUtils.updateNote(oldValue);
+                if (updatedOld != null) {
+                    int index = notes.indexOf(oldValue);
+                    if (index != -1)
+                        notes.set(index, updatedOld);
+                }
+            }
             if (newValue != null && !autosaveInProgress) {
                 currentlyEditedNote = newValue;
                 displayNoteTitle(newValue);
@@ -369,7 +379,7 @@ public class MarkdownCtrl {
     }
 
 
-    private void autosaveCurrentNote() {
+    public void autosaveCurrentNote() {
         if (autosaveInProgress || currentlyEditedNote == null || noteNameList.getSelectionModel().getSelectedItem() == null)
             return;
         if (!currentlyEditedNote.equals(noteNameList.getSelectionModel().getSelectedItem()))
@@ -667,10 +677,9 @@ public class MarkdownCtrl {
         if (result.isPresent()) {
             if (result.get() == deleteButtonType) {
                 System.out.println("Note deleted.");
-
+                noteNameList.getSelectionModel().clearSelection();
                 long id = currentNote.getId();
                 serverUtils.deleteNoteById(id);
-                noteNameList.getSelectionModel().clearSelection();
                 currentNote = null;
                 currentlyEditedNote = null;
                 Alert deleted = new Alert(Alert.AlertType.CONFIRMATION);
