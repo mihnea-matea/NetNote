@@ -2,13 +2,15 @@ package server.api;
 
 import commons.File;
 import commons.Note;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import server.database.FileRepository;
 import server.database.NoteRepository;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -53,6 +55,26 @@ public class FileService {
             Files.deleteIfExists(filePath);
             fileRepository.delete(file);
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Resource loadAsResource(String fileName){
+        try{
+            Path filePath=Paths.get(uploadDir).resolve(fileName).normalize();
+            Resource resource=new UrlResource(filePath.toUri());
+            if(resource.exists()){
+                if(resource.isReadable()){
+                    return resource;
+                }
+                else{
+                    throw new RuntimeException("File not readable"+fileName);
+                }
+            }
+            else{
+                throw new RuntimeException("File not found"+fileName);
+            }
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
