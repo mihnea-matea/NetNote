@@ -136,6 +136,10 @@ public class Note {
         this.files = files;
     }
 
+    public void setId(int i) {
+        this.id = i;
+    }
+
     //    public LocalDateTime getCreationTime() {
 //        return creationTime;
 //    }
