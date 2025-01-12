@@ -1,4 +1,5 @@
 package client.scenes;
+import client.LanguageChange;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Directory;
@@ -85,6 +86,11 @@ public class MarkdownCtrl {
     @FXML
     private Button addFile;
 
+    @FXML
+    private ComboBox<String> languageButton;
+
+    @FXML
+    private Button addNoteButton;
 
     private ServerUtils serverUtils = new ServerUtils();
 
@@ -351,7 +357,103 @@ public class MarkdownCtrl {
                 event.consume();
             }
         });
+
+        if (languageButton == null) {
+            languageButton = new ComboBox<>();
+        }
+
+        languageButton.getItems().clear();
+        languageButton.getItems().addAll("English", "Dutch", "Romanian");
+        languageButton.getSelectionModel().select("English");
     }
+
+    @FXML
+    public void onLanguageSwitch(String newLanguage) {
+        LanguageChange.getInstance().changeLanguage(newLanguage);
+        searchField.setPromptText(LanguageChange.getInstance().getText("searchBar"));
+        searchButton.setText(LanguageChange.getInstance().getText("searchButton"));
+        markdownText.setPromptText(LanguageChange.getInstance().getText("noteContent"));
+        markdownTitle.setPromptText(LanguageChange.getInstance().getText("noteTitle"));
+
+        languageButton.setOnAction(null);
+        languageButton.getItems().clear();
+        String english = LanguageChange.getInstance().getText("englishButton");
+        String dutch = LanguageChange.getInstance().getText("dutchButton");
+        String romanian = LanguageChange.getInstance().getText("romanianButton");
+        languageButton.getItems().addAll(english, dutch, romanian);
+        if(LanguageChange.getInstance().getCurrentLanguage().equals("en")) {
+            languageButton.getSelectionModel().select(english);
+        }
+        if(LanguageChange.getInstance().getCurrentLanguage().equals("nl")) {
+            languageButton.getSelectionModel().select(dutch);
+        }
+        if(LanguageChange.getInstance().getCurrentLanguage().equals("ro")) {
+            languageButton.getSelectionModel().select(romanian);
+        }
+        languageButton.setOnAction(event -> languagePressed());
+    }
+
+    @FXML
+    private void languagePressed() {
+        String selectedOption = languageButton.getSelectionModel().getSelectedItem();
+        System.out.println(selectedOption + "test");
+        String language = "en";
+
+        if(LanguageChange.getInstance().getCurrentLanguage().equals("en")) {
+            switch (selectedOption) {
+                case "English":
+                    language = languageEnglish();
+                    break;
+                case "Dutch":
+                    language = languageDutch();
+                    break;
+                case "Romanian":
+                    language = languageRomanian();
+                    break;
+            }
+        }
+        if(LanguageChange.getInstance().getCurrentLanguage().equals("nl")) {
+            switch (selectedOption) {
+                case "Engels":
+                    language = languageEnglish();
+                    break;
+                case "Nederlands":
+                    language = languageDutch();
+                    break;
+                case "Roemeens":
+                    language = languageRomanian();
+                    break;
+            }
+        }
+        if(LanguageChange.getInstance().getCurrentLanguage().equals("ro")) {
+            switch (selectedOption) {
+                case "English":
+                    language = languageEnglish();
+                    break;
+                case "Dutch":
+                    language = languageDutch();
+                    break;
+                case "Romanian":
+                    language = languageRomanian();
+                    break;
+            }
+        }
+        System.out.println(language);
+        onLanguageSwitch(language);
+    }
+
+    public String languageEnglish() {
+        return "en";
+    }
+
+    public String languageDutch() {
+        return "nl";
+    }
+
+    public String languageRomanian() {
+        return "ro";
+    }
+
 
     private boolean isCaretAtTopLine(TextArea textArea) {
         int cursorPosition = textArea.getCaretPosition();
