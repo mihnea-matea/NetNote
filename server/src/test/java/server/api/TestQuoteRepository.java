@@ -223,3 +223,4 @@ public class TestQuoteRepository implements QuoteRepository {
         return null;
     }
 }
+
