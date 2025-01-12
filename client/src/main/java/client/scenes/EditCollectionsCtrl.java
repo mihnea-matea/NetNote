@@ -58,6 +58,7 @@ public class EditCollectionsCtrl {
      * return tot the main scene and abandon the action
      */
     public void cancel(){
+        System.out.println("You have pressed cancel");
         clearFields();
         pc.showMainScene();
     }
@@ -66,6 +67,7 @@ public class EditCollectionsCtrl {
      * Clears all textFields
      */
     public void clearFields(){
+        System.out.println("Clearing fields");
         try {
             titleText.clear();
             serverText.clear();
@@ -74,23 +76,20 @@ public class EditCollectionsCtrl {
         catch(Exception e){
             System.err.println("Fields could not be cleared");
         }
+        System.out.println("Fields cleared");
     }
 
     /**
      * saves the changes to the currently edited Collection
      */
     public void save(){
+        System.out.println("Saving collections");
         System.out.println("Save needs to be implemented");
-
+        System.out.println("Save needs to be implemented");
+        System.out.println("Save needs to be implemented");
         clearFields();
         pc.showMainScene();
-    }
-
-    /**
-     * Sets the currently edited Collection to default, and all other not to default
-     */
-    public void makeDefault(){
-        System.out.println("Make default needs to be implemented");
+        System.out.println("Saved collections");
     }
 
 
