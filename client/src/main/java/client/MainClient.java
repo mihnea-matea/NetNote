@@ -24,8 +24,11 @@ public class MainClient extends Application {
         var mainScene = FXML.load(MarkdownCtrl.class, "client", "scenes", "mainClient.fxml");
         var addScene = FXML.load(AddNoteCtrl.class, "client","scenes", "AddNote.fxml");
         var pc = INJECTOR.getInstance(MainNetNodeCtrl.class);
-        var markdownCtrl = INJECTOR. getInstance(MarkdownCtrl.class);
+        var markdownCtrl = mainScene.getKey();
         pc.init(stage, mainScene, addScene, markdownCtrl);
+        stage.setOnCloseRequest(event -> {
+            markdownCtrl.autosaveCurrentNote();
+        });
         stage.show();
     }
 

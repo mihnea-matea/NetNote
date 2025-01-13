@@ -3,20 +3,38 @@ package client.scenes;
 import commons.Note;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class NoteSearchCtrl {
 
     @FXML
-    private ListView<String> resultingListView;
+    ListView<String> resultingListView;
 
-    private List<Note> searchResults;
     private MarkdownCtrl markdownCtrl;
 
-    public void setResult(List<Note> searchResults, MarkdownCtrl markdownCtrl) {
-        this.searchResults = searchResults;
-        this.markdownCtrl = markdownCtrl;
+    @FXML
+    public void initialize() {
+        resultingListView.setFocusTraversable(true);
+        resultingListView.setOnKeyPressed(event -> {
+            int selectedIndex = resultingListView.getSelectionModel().getSelectedIndex();
+            if (event.getCode() == KeyCode.UP) {
+                if (selectedIndex > 0) {
+                    resultingListView.getSelectionModel().select(selectedIndex - 1);
+                }
+            } else if (event.getCode() == KeyCode.DOWN) {
+                if (selectedIndex < resultingListView.getItems().size() - 1) {
+                    resultingListView.getSelectionModel().select(selectedIndex + 1);
+                }
+            }
+        });
+    }
+
+    public void setResult(@NotNull List<Note> searchResults, MarkdownCtrl markdownCtrl) {
+          this.markdownCtrl = markdownCtrl;
 
         resultingListView.getItems().clear();
         for (int i = 0; i < searchResults.size(); i++) {

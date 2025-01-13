@@ -1,6 +1,5 @@
 package client.scenes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,11 +34,6 @@ class MarkdownCtrlTest extends ApplicationTest {
     private TextArea markdownTitleArea;
     private TextArea markdownTextArea;
     private WebView html;
-    private TextField searchField;
-    private int charLimit = MarkdownCtrl.CHAR_NO_FOR_AUTOSAVE;
-    private ComboBox<Directory> directoryDropDown;
-    private Directory mockDirectory;
-    private ObservableList<Directory> mockDirectories;
 
     @Mock
     private ServerUtils serverUtils;
@@ -56,15 +51,6 @@ class MarkdownCtrlTest extends ApplicationTest {
         when(serverUtils.updateNote(any(Note.class))).thenReturn(mockNote);
         mainNetNode = new MainNetNodeCtrl();
         markdownCtrl = new MarkdownCtrl(mainNetNode, serverUtils);
-        searchField = new TextField();
-        markdownCtrl.setSearchField(searchField);
-        directoryDropDown = new ComboBox<>();
-        markdownCtrl.setDirectoryDropDown(directoryDropDown);
-        mockDirectory = new Directory();
-        mockDirectory.setTitle("Test Directory");
-        mockDirectories = FXCollections.observableArrayList(mockDirectory);
-        when(serverUtils.getAllDirectories() ).thenReturn(mockDirectories);
-
     }
 
     @Test
@@ -124,19 +110,17 @@ class MarkdownCtrlTest extends ApplicationTest {
         assertEquals(10, textArea.getCaretPosition());
     }
 
-    @Test
-    void testAutoSaveAfterDesiredOKCharsText() throws NoSuchFieldException, IllegalAccessException {
+      @Test
+    void testAutoSaveAfterFiveOKCharsText() throws NoSuchFieldException, IllegalAccessException {
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
-        ListView<Note> noteNameList = new ListView<>();
-        markdownCtrl.setNoteNameList(noteNameList);
-        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
-        for(int i=0;i<charLimit;i++)
-            markdownTextArea.setText(markdownTextArea.getText() + 'a');
+
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTextArea, "a");
         verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 
@@ -147,85 +131,71 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
-        ListView<Note> noteNameList = new ListView<>();
-        markdownCtrl.setNoteNameList(noteNameList);
-        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
-        for(int i=0;i<charLimit;i++)
-            markdownTextArea.setText(markdownTextArea.getText() + 'a');
+
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTextArea, "a");
         verify(serverUtils, times(1)).updateNote(any(Note.class));
 
-        for (int i=0;i<charLimit;i++) {
-            markdownTextArea.setText(markdownTextArea.getText() + 'b');
+        for (int i = 0; i < 5; i++) {
+            simulateKeyTypedEvent(markdownTextArea, "b");
         }
         verify(serverUtils, times(2)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAutoSaveAfterDesiredControlCharsText(){
+    void testAutoSaveAfterFiveControlCharsText(){
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
-        ListView<Note> noteNameList = new ListView<>();
-        markdownCtrl.setNoteNameList(noteNameList);
-        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<charLimit;i++)
+        for(int i=0;i<5;i++)
             simulateKeyTypedEvent(markdownTextArea, "\u001B"); /// escape character
         verify(serverUtils, times(0)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAutosaveAfterLessThanDesiredCharsText(){
+    void testAutosaveAfterLessThanFiveCharsText(){
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
-        ListView<Note> noteNameList = new ListView<>();
-        markdownCtrl.setNoteNameList(noteNameList);
-        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<charLimit-1;i++)
-            markdownTextArea.setText(markdownTextArea.getText() + 'a');
+        for(int i=0;i<3;i++)
+            simulateKeyTypedEvent(markdownTextArea, "\n");
         verify(serverUtils, times(0)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAutosaveAfterDesiredNewlineCharsText(){
+    void testAutosaveAfterFiveNewlineCharsText(){
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
-        ListView<Note> noteNameList = new ListView<>();
-        markdownCtrl.setNoteNameList(noteNameList);
-        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<charLimit;i++)
-            markdownTextArea.setText(markdownTextArea.getText() + '\n');
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTextArea, "\n");
         verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAutoSaveAfterDesiredOKCharsTitle() throws NoSuchFieldException, IllegalAccessException {
+    void testAutoSaveAfterFiveOKCharsTitle() throws NoSuchFieldException, IllegalAccessException {
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
-        ListView<Note> noteNameList = new ListView<>();
-        markdownCtrl.setNoteNameList(noteNameList);
-        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<charLimit;i++)
-            markdownTitleArea.setText(markdownTitleArea.getText() + '\n');
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTitleArea, "a");
         verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 
@@ -236,23 +206,20 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
-        ListView<Note> noteNameList = new ListView<>();
-        markdownCtrl.setNoteNameList(noteNameList);
-        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<charLimit;i++)
-            markdownTitleArea.setText(markdownTitleArea.getText() + 'a');
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTitleArea, "a");
         verify(serverUtils, times(1)).updateNote(any(Note.class));
 
-        for (int i=0;i<charLimit;i++) {
-            markdownTitleArea.setText(markdownTitleArea.getText() + 'b');
+        for (int i = 0; i < 5; i++) {
+            simulateKeyTypedEvent(markdownTitleArea, "b");
         }
         verify(serverUtils, times(2)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAutoSaveAfterDesiredControlCharsTitle(){
+    void testAutoSaveAfterFiveControlCharsTitle(){
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
@@ -260,13 +227,13 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.initialize();
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<charLimit;i++)
+        for(int i=0;i<5;i++)
             simulateKeyTypedEvent(markdownTitleArea, "\u001B"); /// escape character
         verify(serverUtils, times(0)).updateNote(any(Note.class));
     }
 
     @Test
-    void testAutosaveAfterLessThanDesiredCharsTitle(){
+    void testAutosaveAfterLessThanFiveCharsTitle(){
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
@@ -274,26 +241,22 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.initialize();
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<charLimit-1;i++)
-            markdownTitleArea.setText(markdownTitleArea.getText() + 'a');
+        for(int i=0;i<3;i++)
+            simulateKeyTypedEvent(markdownTitleArea, "\n");
         verify(serverUtils, times(0)).updateNote(any(Note.class));
     }
 
     @Test
     void testAutosaveAfterFiveNewlineCharsTitle(){
-        searchField = new TextField("Hi");
         markdownTitleArea = new TextArea();
         markdownTextArea = new TextArea();
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
-        ListView<Note> noteNameList = new ListView<>();
-        markdownCtrl.setNoteNameList(noteNameList);
-        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
         markdownCtrl.setCurrentlyEditedNote(mockNote);
 
-        for(int i=0;i<charLimit;i++)
-            markdownTitleArea.setText(markdownTitleArea.getText() + '\n');
+        for(int i=0;i<5;i++)
+            simulateKeyTypedEvent(markdownTitleArea, "\n");
         verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 

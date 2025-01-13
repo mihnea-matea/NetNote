@@ -49,10 +49,12 @@ public class NoteController {
     @GetMapping("/search")
     public ResponseEntity<List<Note>> noteSearcher(@RequestParam("filter") String filter) {
         System.out.println(filter);
-        if (filter == null || filter.trim().isEmpty()) {return ResponseEntity.badRequest().body(Collections.emptyList());}
+        if (filter == null || filter.trim().isEmpty()) {return ResponseEntity.ok(Collections.emptyList());}
 
-        String query = "SELECT n FROM Note n WHERE LOWER(n.content) LIKE LOWER(CONCAT('%', :filter, '%'))";
-        List<Note> notes = entityManager.createQuery(query, Note.class).setParameter("filter", filter.trim()).getResultList();
+        String query = "SELECT n FROM Note n WHERE (LOWER(n.content) LIKE LOWER(CONCAT('%', :filter, '%'))) OR (LOWER(n.title) LIKE LOWER(CONCAT('%', :filter, '%')))";
+        List<Note> notes = entityManager.createQuery(query, Note.class).setParameter("filter", filter.trim().toLowerCase()).getResultList();
+        System.out.println("Filter: " + filter.trim());
+        System.out.println("Notes Found: " + notes.size());
         return ResponseEntity.ok(notes);
     }
 
@@ -86,5 +88,6 @@ public class NoteController {
         Note newNote = repo.save(existingNote);
         return ResponseEntity.ok(newNote);
     }
+
 
 }
