@@ -763,26 +763,21 @@ public class MarkdownCtrl {
     public void removalWarning() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Confirmation");
-        dialog.setHeaderText("Are you sure you want to delete this note?");
+        dialog.setContentText("Are you sure you want to delete this?");
 
         ButtonType deleteButtonType = new ButtonType("Delete", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(deleteButtonType, cancelButtonType);
 
-        dialog.getDialogPane().setStyle("-fx-background-color: #B23A48;");
+        dialog.getDialogPane().setStyle("-fx-background-color: #fed0bb; -fx-text-fill: black");
 
-        Label headerLabel = (Label) dialog.getDialogPane().getHeader();
-        if (headerLabel != null) {
-            headerLabel.setFont(new Font("System", 18));
-            headerLabel.setTextFill(Color.DARKRED);
-        }
+        dialog.getDialogPane().lookup(".content").setStyle("-fx-font-size: 18;");
         dialog.getDialogPane().lookupButton(deleteButtonType).setStyle(
-                "-fx-background-color: #2fc436; -fx-text-fill: #fed0bb; -fx-font-size: 14px; -fx-font-weight: bold;");
+                "-fx-background-color: #42f56c; -fx-text-fill: black; -fx-font-size: 18px;");
         dialog.getDialogPane().lookupButton(cancelButtonType).setStyle(
-                "-fx-background-color: #f44336; -fx-text-fill: #fed0bb; -fx-font-size: 14px; -fx-font-weight: bold;");
+                "-fx-background-color: #F65855; -fx-text-fill: black; -fx-font-size: 18px;");
 
         Optional<ButtonType> result = dialog.showAndWait();
-
         if (result.isPresent()) {
             if (result.get() == deleteButtonType) {
                 System.out.println("Note deleted.");
@@ -792,17 +787,9 @@ public class MarkdownCtrl {
                 currentNote = null;
                 currentlyEditedNote = null;
                 Alert deleted = new Alert(Alert.AlertType.CONFIRMATION);
-                deleted.setTitle("Deletion succesful");
-                deleted.setHeaderText("(Current note) deleted");
+                deleted.setTitle("Deletion successful");
+                deleted.setHeaderText("Note deleted");
                 deleted.setContentText("This action cannot be undone.");
-
-                deleted.getDialogPane().setStyle("-fx-background-color: #B23A48;");
-                deleted.getDialogPane().lookup(".header-panel").setStyle("-fx-background-color:  #B23A48; -fx-text-fill: #fed0bb;");
-                deleted.getDialogPane().lookup(".content").setStyle("-fx-text-fill: #fed0bb; -fx-font-size: 14px; -fx-font-family: 'System';");
-
-                Button button = (Button) deleted.getDialogPane().lookupButton(deleted.getDialogPane().getButtonTypes().get(0));
-                button.setStyle("-fx-background-color: #ff3300; -fx-text-fill: white; -fx-font-size: 14px;");
-
                 Button deleteButton = (Button) dialog.getDialogPane().lookupButton(deleteButtonType);
                 Button cancelButton = (Button) dialog.getDialogPane().lookupButton(cancelButtonType);
                 if (deleteButton != null) {
@@ -811,12 +798,9 @@ public class MarkdownCtrl {
                 if (cancelButton != null) {
                     cancelButton.setFont(new Font("System", 14));  // Font for cancel button
                 }
-
                 deleted.showAndWait();
-
                 refreshNoteList();
                 System.out.println("Notes refreshed");
-
 
             } else if (result.get() == cancelButtonType) {
                 System.out.println("Delete action canceled.");

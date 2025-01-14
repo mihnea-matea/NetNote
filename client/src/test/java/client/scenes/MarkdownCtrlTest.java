@@ -1,6 +1,5 @@
 package client.scenes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,7 +10,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,6 +51,9 @@ class MarkdownCtrlTest extends ApplicationTest {
         serverUtils = mock(ServerUtils.class);
         mainNetNode = new MainNetNodeCtrl();
         when(serverUtils.getNotes()).thenReturn(List.of(new Note(), new Note()));
+        markdownCtrl = new MarkdownCtrl(mainNetNode, serverUtils);
+        when(serverUtils.updateNote(any(Note.class))).thenReturn(mockNote);
+        mainNetNode = new MainNetNodeCtrl();
         markdownCtrl = new MarkdownCtrl(mainNetNode, serverUtils);
         when(serverUtils.updateNote(any(Note.class))).thenReturn(mockNote);
         mainNetNode = new MainNetNodeCtrl();
@@ -125,20 +126,20 @@ class MarkdownCtrlTest extends ApplicationTest {
         assertEquals(10, textArea.getCaretPosition());
     }
 
-    @Test
-    void testAutoSaveAfterDesiredOKCharsText() throws NoSuchFieldException, IllegalAccessException {
-        markdownTitleArea = new TextArea();
-        markdownTextArea = new TextArea();
-        markdownCtrl.setMarkdownText(markdownTextArea);
-        markdownCtrl.setMarkdownTitle(markdownTitleArea);
-        markdownCtrl.initialize();
-        ListView<Note> noteNameList = new ListView<>();
-        markdownCtrl.setNoteNameList(noteNameList);
-        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
-        markdownCtrl.setCurrentlyEditedNote(mockNote);
-        for(int i=0;i<charLimit;i++)
-            markdownTextArea.setText(markdownTextArea.getText() + 'a');
-        verify(serverUtils, times(1)).updateNote(any(Note.class));
+      @Test
+    void testAutoSaveAfterFiveOKCharsText() throws NoSuchFieldException, IllegalAccessException {
+          markdownTitleArea = new TextArea();
+          markdownTextArea = new TextArea();
+          markdownCtrl.setMarkdownText(markdownTextArea);
+          markdownCtrl.setMarkdownTitle(markdownTitleArea);
+          markdownCtrl.initialize();
+          ListView<Note> noteNameList = new ListView<>();
+          markdownCtrl.setNoteNameList(noteNameList);
+          markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
+          markdownCtrl.setCurrentlyEditedNote(mockNote);
+          for(int i=0;i<charLimit;i++)
+              markdownTextArea.setText(markdownTextArea.getText() + 'a');
+          verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 
     @Test
