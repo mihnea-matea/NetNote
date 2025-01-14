@@ -913,7 +913,6 @@ public class MarkdownCtrl {
         try {
             byte[] fileBytes = Files.readAllBytes(file.toPath());
             Long noteId = currentNote.getId();
-            ;
             String fileUrl = serverUtils.uploadFile(noteId, file.getName(), fileBytes);
             String img = "![Image](" + fileUrl + ")";
             int caretPosition = markdownText.getCaretPosition();

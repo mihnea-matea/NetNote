@@ -36,7 +36,7 @@ public class FileController {
             return ResponseEntity.noContent().build();
         }
         List<String> fileUrls=files.stream()
-                .map(file -> MvcUriComponentsBuilder.fromMethodName(FileController.class,"serveFiles", file.getFileName()).build().toUri().toString())
+                .map(file -> MvcUriComponentsBuilder.fromMethodName(FileController.class,"serveFile", file.getFileName()).build().toUri().toString())
                 .toList();
         return ResponseEntity.ok(fileUrls);
     }

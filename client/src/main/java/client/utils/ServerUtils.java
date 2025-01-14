@@ -25,9 +25,8 @@
 	import java.nio.charset.StandardCharsets;
 	import java.util.ArrayList;
 	import java.util.List;
-	
 	import com.sun.jersey.core.header.FormDataContentDisposition;
-	import com.sun.jersey.multipart.FormDataBodyPart;
+
 	import com.sun.jersey.multipart.FormDataMultiPart;
 	import com.sun.jersey.multipart.file.StreamDataBodyPart;
 	import commons.Directory;
@@ -36,21 +35,22 @@
 	import javax.ws.rs.core.MediaType;
 	import jakarta.ws.rs.core.Response;
 	import org.glassfish.jersey.client.ClientConfig;
-	
+
 	import commons.Quote;
 	import jakarta.ws.rs.ProcessingException;
 	import jakarta.ws.rs.client.ClientBuilder;
 	import jakarta.ws.rs.client.Entity;
 	import jakarta.ws.rs.core.GenericType;
+	import org.glassfish.jersey.media.multipart.MultiPartFeature;
 	import org.springframework.http.HttpStatus;
 	import org.springframework.web.client.HttpClientErrorException;
 	import org.springframework.web.client.RestClientException;
 	import org.springframework.web.client.RestTemplate;
 	
 	public class ServerUtils {
-	
+
 		private static final String SERVER = "http://localhost:8080/";
-	
+
 		public void getQuotesTheHardWay() throws IOException, URISyntaxException {
 			var url = new URI("http://localhost:8080/api/quotes").toURL();
 			var is = url.openConnection().getInputStream();
@@ -60,7 +60,7 @@
 				System.out.println(line);
 			}
 		}
-	
+
 		public List<Quote> getQuotes() {
 			return ClientBuilder.newClient(new ClientConfig()) //
 					.target(SERVER).path("api/quotes") //
@@ -68,15 +68,15 @@
 					.get(new GenericType<List<Quote>>() {
 					});
 		}
-	
+
 		public Quote addQuote(Quote quote) {
 			return ClientBuilder.newClient(new ClientConfig()) //
 					.target(SERVER).path("api/quotes") //
 					.request(APPLICATION_JSON) //
 					.post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
 		}
-	
-	
+
+
 		//this is from the quote setup, but I think we should keep it
 		public boolean isServerAvailable() {
 			try {
@@ -91,9 +91,9 @@
 			}
 			return true;
 		}
-	
+
 		// NOTES SECTION -------------------------------------------------------
-	
+
 		/**
 		 * Get all notes saved on the server
 		 *
@@ -106,7 +106,7 @@
 					.get(new GenericType<List<Note>>() {
 					});
 		}
-	
+
 		/**
 		 * Get a single note by its id
 		 *
@@ -119,7 +119,7 @@
 					.request(APPLICATION_JSON)
 					.get(Note.class);
 		}
-	
+
 		/**
 		 * Add a new note to the server
 		 *
@@ -134,7 +134,7 @@
 					.request(APPLICATION_JSON)
 					.post(Entity.entity(note, APPLICATION_JSON), Note.class);
 		}
-	
+
 		/**
 		 * Update an existing note on the server
 		 *
@@ -147,7 +147,7 @@
 					.request(APPLICATION_JSON)
 					.put(Entity.entity(note, APPLICATION_JSON), Note.class);
 		}
-	
+
 		/**
 		 * Delete a note by its id
 		 *
@@ -160,7 +160,7 @@
 					.delete();
 		}
 		//we can add error messages and try catch blocks for operations, but we should at least have a label that can display the message first
-	
+
 		public List<Note> getFilteredNotes(String filter) {
 			//Generative AI used for figuring out encoding
 			String encodedFilter = URLEncoder.encode(filter, StandardCharsets.UTF_8);
@@ -169,9 +169,9 @@
 					.get(new GenericType<List<Note>>() {
 					});
 		}
-	
+
 		private RestTemplate restTemplate = new RestTemplate();
-	
+
 		public void deleteNoteById(long id) {
 			try {
 				if (id < 0) {
@@ -187,12 +187,12 @@
 			} catch (RestClientException e) {
 				System.err.println("Error: Note with ID " + id + " not found. " + e.getMessage());
 				System.out.println("id is hardcoded to be 10 for now");
-	
+
 				throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Note with ID " + id + " not found", null, null, null);
-	
+
 			}
 		}
-	
+
 		/**
 		 * Fetches all directories in the repository and creates an all directory
 		 *
@@ -204,7 +204,7 @@
 			//Directory savedDirectory = addDirectory(allDirectory);
 			if (allDirectory != null) {
 				allDirectory.setNotes(getNotes());
-	
+
 				try {
 					allDirectories = ClientBuilder.newClient(new ClientConfig())
 							.target(SERVER)
@@ -221,7 +221,7 @@
 			}
 			return List.of();
 		}
-	
+
 		/**
 		 * Gets the notes of each directory
 		 *
@@ -241,7 +241,7 @@
 				return List.of();
 			}
 		}
-	
+
 		public Directory addDirectory(Directory directory) {
 			try {
 				String url = SERVER + "api/directories";
@@ -255,36 +255,48 @@
 				return null;
 			}
 		}
-	
-		public String uploadFile(Long noteId, String fileName, byte[] fileBytes){
-			try{
-				String url="http://localhost:8080/api/files"+noteId+"/upload";
-				Client client=ClientBuilder.newBuilder()
-					//	.register(MultiPartFeature.class)  // Register the MultiPartFeature
+
+		public String uploadFile(Long noteId, String fileName, byte[] fileBytes) {
+			try {
+				// Define the URL for the file upload
+				String url = "http://localhost:8080/api/files/" + noteId + "/upload";
+
+				// Create a Jersey client with multipart support
+				Client client = ClientBuilder.newBuilder()
+						.register(MultiPartFeature.class)  // Register the MultiPartFeature
 						.build();
+
+				// Create the multipart form data
 				FormDataMultiPart multiPart = new FormDataMultiPart();
 				FormDataContentDisposition contentDisposition = FormDataContentDisposition
 						.name("file")
 						.fileName(fileName)
 						.build();
-				FormDataBodyPart filePart = new StreamDataBodyPart(
+
+				StreamDataBodyPart filePart = new StreamDataBodyPart(
 						"file",
 						new ByteArrayInputStream(fileBytes),
 						fileName,
-						MediaType.APPLICATION_OCTET_STREAM_TYPE
+						MediaType.APPLICATION_OCTET_STREAM_TYPE  // Correct content type for binary files
 				);
 				filePart.setContentDisposition(contentDisposition);
 				multiPart.bodyPart(filePart);
-				Response response=client.target(url)
+
+				// Send the POST request
+				Response response = client.target(url)
 						.request(MediaType.MULTIPART_FORM_DATA)
-						.post(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA));
-				if(response.getStatus()==200){
-					return response.readEntity(String.class);
-				} else{
-					throw new RuntimeException("Failed to upload file"+response.getStatus());
+						.post(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA));
+
+				// Process the response
+				if (response.getStatus() == 200) {
+					return response.readEntity(String.class);  // Return the server response
+				} else {
+					String errorResponse = response.readEntity(String.class);
+					throw new RuntimeException("File upload failed with status: "
+							+ response.getStatus() + ", error: " + errorResponse);
 				}
-			} catch (Exception e){
-				throw new RuntimeException();
+			} catch (Exception e) {
+				throw new RuntimeException("Error uploading file: " + e.getMessage(), e);
 			}
 		}
 	}
