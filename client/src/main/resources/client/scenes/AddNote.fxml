@@ -8,20 +8,20 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="600.0" style="-fx-background-color: #B23A48;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddNoteCtrl">
     <children>
-        <Button layoutX="437.0" layoutY="175.0" mnemonicParsing="false" onAction="#cancel" text="cancel" />
-        <Button layoutX="512.0" layoutY="175.0" mnemonicParsing="false" onAction="#apply" text="apply" />
-        <Label layoutX="39.0" layoutY="41.0" prefHeight="30.0" prefWidth="108.0" text="Title">
+        <Button layoutX="437.0" layoutY="175.0" mnemonicParsing="false" onAction="#cancel" stylesheets="@/client/styles/Button.css" text="cancel" />
+        <Button layoutX="512.0" layoutY="175.0" mnemonicParsing="false" onAction="#apply" stylesheets="@/client/styles/Button.css" text="apply" />
+        <Label alignment="CENTER" layoutX="39.0" layoutY="41.0" prefHeight="30.0" prefWidth="108.0" text="Title" textFill="#feeae1">
             <font>
-                <Font size="20.0" />
+                <Font size="24.0" />
             </font>
         </Label>
-        <Label layoutX="39.0" layoutY="88.0" prefHeight="30.0" prefWidth="158.0" text="Choose Directory">
+        <Label alignment="CENTER" layoutX="14.0" layoutY="89.0" prefHeight="30.0" prefWidth="158.0" text="Directory" textFill="#feeae1">
             <font>
-                <Font size="20.0" />
+                <Font size="24.0" />
             </font>
         </Label>
-        <Button layoutX="364.0" layoutY="175.0" mnemonicParsing="false" onAction="#reset" text="reset" />
-        <TextField fx:id="directoryText" layoutX="248.0" layoutY="91.0" prefHeight="25.0" prefWidth="309.0" promptText="type your Directory name here" />
+        <Button layoutX="364.0" layoutY="175.0" mnemonicParsing="false" onAction="#reset" stylesheets="@/client/styles/Button.css" text="reset" />
+        <TextField fx:id="directoryText" layoutX="200.0" layoutY="91.0" prefHeight="25.0" prefWidth="357.0" promptText="type your Directory name here" />
         <TextField fx:id="titleText" layoutX="200.0" layoutY="41.0" prefHeight="25.0" prefWidth="357.0" promptText="type your title here" />
     </children>
 </Pane>

@@ -126,20 +126,20 @@ class MarkdownCtrlTest extends ApplicationTest {
         assertEquals(10, textArea.getCaretPosition());
     }
 
-    @Test
+      @Test
     void testAutoSaveAfterFiveOKCharsText() throws NoSuchFieldException, IllegalAccessException {
-        markdownTitleArea = new TextArea();
-        markdownTextArea = new TextArea();
-        markdownCtrl.setMarkdownText(markdownTextArea);
-        markdownCtrl.setMarkdownTitle(markdownTitleArea);
-        markdownCtrl.initialize();
-        ListView<Note> noteNameList = new ListView<>();
-        markdownCtrl.setNoteNameList(noteNameList);
-        markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
-        markdownCtrl.setCurrentlyEditedNote(mockNote);
-        for(int i=0;i<charLimit;i++)
-            markdownTextArea.setText(markdownTextArea.getText() + 'a');
-        verify(serverUtils, times(1)).updateNote(any(Note.class));
+          markdownTitleArea = new TextArea();
+          markdownTextArea = new TextArea();
+          markdownCtrl.setMarkdownText(markdownTextArea);
+          markdownCtrl.setMarkdownTitle(markdownTitleArea);
+          markdownCtrl.initialize();
+          ListView<Note> noteNameList = new ListView<>();
+          markdownCtrl.setNoteNameList(noteNameList);
+          markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
+          markdownCtrl.setCurrentlyEditedNote(mockNote);
+          for(int i=0;i<charLimit;i++)
+              markdownTextArea.setText(markdownTextArea.getText() + 'a');
+          verify(serverUtils, times(1)).updateNote(any(Note.class));
     }
 
     @Test

@@ -1,7 +1,7 @@
 
 .button {
     -fx-background-color: #fed0bb;
-    -fx-text-fill: #b23a48;
+    -fx-text-fill: #8E2E39;
     -fx-border-width: 1px;
     -fx-transition: all 0.3s;
     -fx-font-family: Kristen ITC;
@@ -13,7 +13,7 @@
 }
 .button:hover {
     -fx-background-color: #fed0bb;
-    -fx-text-fill: #b23a48;
+    -fx-text-fill: #8E2E39;
     -fx-border-width: 2px;
     -fx-border-color: #d78a84;
     -fx-font-size: 20px;
