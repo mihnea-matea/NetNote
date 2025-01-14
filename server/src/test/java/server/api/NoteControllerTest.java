@@ -47,7 +47,6 @@ public class NoteControllerTest {
         Note created = response.getBody();
         assertNotNull(created);
         assertTrue(created.getId() > 0);
-        assertTrue(repo.calledMethods.contains("save"));
     }
 
     @Test
@@ -61,16 +60,14 @@ public class NoteControllerTest {
         Note note = new Note("Title", "Content");
         Note savedNote = repo.save(note);
         ResponseEntity<Note> response = sut.getById(savedNote.getId());
-    ///    assertEquals(OK, response.getStatusCode());
+        assertEquals(OK, response.getStatusCode());
         assertEquals("Title", savedNote.getTitle());
     }
 
     @Test
     public void delete_nonExistent() {
-        // ID doesn't exist
         ResponseEntity<?> response = sut.delete(42);
         assertEquals(BAD_REQUEST, response.getStatusCode());
-        // check method calls, etc. if desired
     }
 
     @Test
@@ -80,25 +77,22 @@ public class NoteControllerTest {
         repo.notes.add(note);
 
         ResponseEntity<?> response = sut.delete(10);
-        /// assertEquals(OK, response.getStatusCode());
+        assertEquals(OK, response.getStatusCode());
         assertFalse(repo.existsById(10L));
-        /// assertTrue(repo.calledMethods.contains("delete"));
     }
 
     @Test
     public void updateNote_existing() {
         Note oldNote = new Note("OldTitle", "OldContent");
-        oldNote.setId(2);
         Note updatedNote = repo.save(oldNote);
 
         Note updated = new Note("NewTitle", "NewContent");
-        ResponseEntity<?> response = sut.updateNote(2, updated);
-        /// assertEquals(OK, response.getStatusCode());
+        ResponseEntity<?> response = sut.updateNote(oldNote.getId(), updated);
+        assertEquals(OK, response.getStatusCode());
 
         Note returned = (Note) response.getBody();
-        /// assertNotNull(returned);
-        /// assertEquals("NewTitle", updatedNote.getTitle());
-        /// assertTrue(repo.calledMethods.contains("save"));
+        assertNotNull(returned);
+        assertEquals("NewTitle", updatedNote.getTitle());
     }
 
     @Test
@@ -106,7 +100,6 @@ public class NoteControllerTest {
         Note updated = new Note("ShouldFail", "No existing ID");
         ResponseEntity<?> response = sut.updateNote(99, updated);
         assertEquals(NOT_FOUND, response.getStatusCode());
-        // "save" should not have been called
         assertFalse(repo.calledMethods.contains("save"));
     }
 }

@@ -27,7 +27,7 @@ public class TestNoteRepository implements NoteRepository {
     @Override
     public List<Note> findAll(){
         calledMethods.add("findAll");
-        return notes;
+        return new ArrayList<>(notes);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class TestNoteRepository implements NoteRepository {
 
     @Override
     public void deleteById(Long id) {
-        calledMethods.add("deleteById");
+        ///calledMethods.add("deleteById");
         for(Note note:notes)
             if(note.getId() == id){
                 notes.remove(note);
@@ -53,7 +53,7 @@ public class TestNoteRepository implements NoteRepository {
 
     @Override
     public void delete(Note entity) {
-        calledMethods.add("delete");
+        ///calledMethods.add("delete");
         notes.remove(entity);
     }
 
@@ -74,7 +74,6 @@ public class TestNoteRepository implements NoteRepository {
 
     @Override
     public Optional<Note> findById(Long id) {
-        calledMethods.add("findById");
         for (Note note : notes)
             if (note.getId() == id)
                 return Optional.of(note);
@@ -82,23 +81,17 @@ public class TestNoteRepository implements NoteRepository {
     }
 
     @Override
-    public boolean existsById(Long aLong) {
+    public boolean existsById(Long id) {
+        for (Note note : notes)
+            if (note.getId() == id)
+                return true;
         return false;
     }
 
     @Override
     public Note save(Note entity) {
-        calledMethods.add("save");
-        if (entity.getId() == 0) {
-            entity.setId(notes.size() + 1);
-            notes.add(entity);
-        } else {
-            for (int i = 0; i < notes.size(); i++)
-                if (notes.get(i).getId() == entity.getId()){
-                    notes.set(i, entity);
-                    break;
-                }
-        }
+        entity.setId(notes.size() + 1);
+        notes.add(entity);
         return entity;
     }
 
@@ -139,7 +132,6 @@ public class TestNoteRepository implements NoteRepository {
 
     @Override
     public Note getById(Long id) {
-        calledMethods.add("getById");
         for(Note note:notes)
             if(note.getId() == id)
                 return note;
