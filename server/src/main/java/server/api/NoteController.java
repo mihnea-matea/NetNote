@@ -79,6 +79,7 @@ public class NoteController {
 
     @PutMapping("/{id}")
     public ResponseEntity updateNote(@PathVariable("id") long id, @RequestBody Note updatedNote) {
+        System.out.println("Server received update request");
         if (id < 0) {
             return ResponseEntity.badRequest().build();
         }

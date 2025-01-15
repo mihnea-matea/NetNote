@@ -44,8 +44,10 @@ public class NoteSearchCtrl {
         resultingListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 Note note = searchResults.get(resultingListView.getSelectionModel().getSelectedIndex());
+                markdownCtrl.setCurrentNote(note);
                 markdownCtrl.displayNoteTitle(note);
                 markdownCtrl.displayNoteContent(note);
+                markdownCtrl.getNoteNameList().getSelectionModel().select(note);
                 Stage stage =  (Stage) resultingListView.getScene().getWindow();
                 stage.close();
             }

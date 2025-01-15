@@ -72,8 +72,6 @@ public class MarkdownCtrl {
     @FXML
     private Button searchButton;
 
-    private Note currentlyEditedNote;
-
     private int charsModifiedSinceLastSave;
     public static final int CHAR_NO_FOR_AUTOSAVE = 3;
     public static final int SECONDS_FOR_AUTOSAVE = 5;
@@ -153,28 +151,30 @@ public class MarkdownCtrl {
             /*if (oldValue != null)
                 autosaveCertainNote(oldValue);*/
             if (oldValue != null) {
-                oldValue.setTitle(markdownTitle.getText());
-                oldValue.setContent(markdownText.getText());
-                Note updatedOld = serverUtils.updateNote(oldValue);
-                if (updatedOld != null) {
-                    int index = notes.indexOf(oldValue);
-                    if (index != -1)
-                        notes.set(index, updatedOld);
-                }
+                autosaveCurrentNote();
+//                oldValue.setTitle(markdownTitle.getText());
+//                oldValue.setContent(markdownText.getText());
+//                Note updatedOld = serverUtils.updateNote(oldValue);
+//                if (updatedOld != null) {
+//                    int index = notes.indexOf(oldValue);
+//                    if (index != -1)
+//                        notes.set(index, updatedOld);
+//                }
             }
-            if (newValue != null && !autosaveInProgress) {
-                currentlyEditedNote = newValue;
-                displayNoteTitle(newValue);
-                displayNoteContent(newValue);
-                charsModifiedSinceLastSave = 0;
-            }
+//            if (newValue != null && !autosaveInProgress) {
+//                charsModifiedSinceLastSave = 0;
+//                currentNote = newValue;
+//                noteNameList.getSelectionModel().select(currentNote);
+//                displayNoteTitle(currentNote);
+//                displayNoteContent(currentNote);
+//            }
         });
 
         /*
             The check for control chars was with the help of GPT
          */
         markdownText.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (currentlyEditedNote != null) {
+            if (currentNote != null) {
                 charsModifiedSinceLastSave++;
                 if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
                     autosaveCurrentNote();
@@ -184,7 +184,7 @@ public class MarkdownCtrl {
         });
 
         markdownTitle.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (currentlyEditedNote != null) {
+            if (currentNote != null) {
                 charsModifiedSinceLastSave++;
                 if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
                     autosaveCurrentNote();
@@ -482,25 +482,24 @@ public class MarkdownCtrl {
 
 
     public void autosaveCurrentNote() {
-        if (autosaveInProgress || currentlyEditedNote == null || noteNameList.getSelectionModel().getSelectedItem() == null)
-            return;
-        if (!currentlyEditedNote.equals(noteNameList.getSelectionModel().getSelectedItem()))
+        if (autosaveInProgress || currentNote == null || noteNameList.getSelectionModel().getSelectedItem() == null)
             return;
         autosaveInProgress = true;
-        currentlyEditedNote.setTitle(markdownTitle.getText());
-        currentlyEditedNote.setContent(markdownText.getText());
+        currentNote.setTitle(markdownTitle.getText());
+        currentNote.setContent(markdownText.getText());
 
-        Note updatedNote = serverUtils.updateNote(currentlyEditedNote);
+        Note updatedNote = serverUtils.updateNote(currentNote);
         if (updatedNote == null)
             System.out.println("Can't autosave note.");
         else {
-            int index = notes.indexOf(currentlyEditedNote);
-            if (index != -1)
-                notes.set(index, updatedNote);
-            if (!Objects.equals(currentlyEditedNote.getTitle(), markdownTitle.getText()))
-                noteNameList.refresh();
-            currentlyEditedNote = updatedNote;
-            System.out.println("Note with title" + currentlyEditedNote.getTitle() + "autosaved locally.");
+//            int index = notes.indexOf(currentNote);
+//            if (index != -1)
+//                notes.set(index, updatedNote);
+//            if (!Objects.equals(currentNote.getTitle(), markdownTitle.getText()))
+//                noteNameList.refresh();
+//            currentNote = updatedNote;
+            notes = FXCollections.observableArrayList(serverUtils.getNotes());
+            System.out.println("Note with title " + currentNote.getTitle() + " autosaved locally.");
         }
         autosaveInProgress = false;
 
@@ -517,13 +516,13 @@ public class MarkdownCtrl {
         if (updatedNote == null)
             System.out.println("Can't autosave note.");
         else {
-            int index = notes.indexOf(currentlyEditedNote);
+            int index = notes.indexOf(currentNote);
             if (index != -1)
                 notes.set(index, updatedNote);
-            if (!Objects.equals(currentlyEditedNote.getTitle(), markdownTitle.getText()))
+            if (!Objects.equals(currentNote.getTitle(), markdownTitle.getText()))
                 noteNameList.refresh();
-            currentlyEditedNote = updatedNote;
-            System.out.println("Note with title" + currentlyEditedNote.getTitle() + "autosaved locally.");
+            currentNote = updatedNote;
+            System.out.println("Note with title" + currentNote.getTitle() + "autosaved locally.");
         }
         autosaveInProgress = false;
     }
@@ -778,7 +777,7 @@ public class MarkdownCtrl {
                 long id = currentNote.getId();
                 serverUtils.deleteNoteById(id);
                 currentNote = null;
-                currentlyEditedNote = null;
+                currentNote = null;
                 Alert deleted = new Alert(Alert.AlertType.CONFIRMATION);
                 deleted.setTitle("Deletion successful");
                 deleted.setHeaderText("Note deleted");
@@ -860,8 +859,8 @@ public class MarkdownCtrl {
      *
      * @param note
      */
-    public void setCurrentlyEditedNote(Note note) {
-        this.currentlyEditedNote = note;
+    public void setCurrentNote(Note note) {
+        this.currentNote = note;
     }
 
     public void setServerUtils(ServerUtils serverUtils) {
