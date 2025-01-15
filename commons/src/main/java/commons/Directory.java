@@ -18,6 +18,9 @@ public class Directory {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
+    private Boolean isDefault;
+
     @OneToMany(cascade = CascadeType.PERSIST)
     private List<Note> notes;
 
@@ -34,6 +37,7 @@ public class Directory {
     public Directory(String title) {
         this.title = title;
         this.notes = new ArrayList<>();
+        this.isDefault = false;
     }
 
     /**
@@ -43,7 +47,14 @@ public class Directory {
     public Directory(String title, List<Note> notes) {
         this.title = title;
         this.notes = notes;
+        this.isDefault = false;
     }
+
+    public boolean getIsDefault() {return isDefault;}
+
+    public void setDefault(){this.isDefault = true;}
+
+    public void setNotDefault(){this.isDefault = false;}
 
     public String getTitle() {
         return title;
@@ -96,5 +107,27 @@ public class Directory {
     @Override
     public int hashCode() {
         return Objects.hash(getTitle(), getNotes());
+    }
+
+    /**
+     * Sets the currently edited Collection to default, and all other not to default
+     */
+    public void makeDefault(){
+        //Chould be replaced by the real selected collection and allCollections
+        Directory selectedCollection = new Directory();
+        List<Directory> allCollections = new ArrayList<>();
+        if(selectedCollection == null){
+            System.out.println("No collection selected or selected is null");
+
+        }
+        for(Directory collection : allCollections){
+            if(collection.getId() != selectedCollection.getId()){
+                collection.setNotDefault();
+            }
+            if(collection.getId() == selectedCollection.getId()){
+                collection.setDefault();
+            }
+        }
+        System.out.println("Make default needs to be implemented");
     }
 }

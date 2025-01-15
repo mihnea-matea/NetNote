@@ -106,8 +106,8 @@
 					.get(new GenericType<List<Note>>() {
 					});
 		}
-	
-		/**
+
+        /**
 		 * Get a single note by its id
 		 *
 		 * @param id The id of the note
