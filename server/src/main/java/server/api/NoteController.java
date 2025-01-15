@@ -1,11 +1,15 @@
 package server.api;
 
 import commons.Note;
+import commons.Tag;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.NoteRepository;
+import server.service.TagService;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +20,8 @@ import java.util.Optional;
 public class NoteController {
 
     private final NoteRepository repo;
+    @Autowired
+    private TagService tagService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -24,7 +30,7 @@ public class NoteController {
         this.repo = repo;
     }
 
-    @GetMapping(path = { "", "/" })
+    @GetMapping(path = {"", "/"})
     public List<Note> getAll() {
         return repo.findAll();
     }
@@ -37,7 +43,7 @@ public class NoteController {
         return ResponseEntity.ok(repo.findById(id).get());
     }
 
-    @PostMapping(path = { "", "/" })
+    @PostMapping(path = {"", "/"})
     public ResponseEntity<Note> add(@RequestBody Note note) {
         if (note.getTitle() == null || note.getTitle().isEmpty()) {
             return ResponseEntity.badRequest().build();
@@ -49,7 +55,9 @@ public class NoteController {
     @GetMapping("/search")
     public ResponseEntity<List<Note>> noteSearcher(@RequestParam("filter") String filter) {
         System.out.println(filter);
-        if (filter == null || filter.trim().isEmpty()) {return ResponseEntity.ok(Collections.emptyList());}
+        if (filter == null || filter.trim().isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
 
         String query = "SELECT n FROM Note n WHERE (LOWER(n.content) LIKE LOWER(CONCAT('%', :filter, '%'))) OR (LOWER(n.title) LIKE LOWER(CONCAT('%', :filter, '%')))";
         List<Note> notes = entityManager.createQuery(query, Note.class).setParameter("filter", filter.trim().toLowerCase()).getResultList();
@@ -70,17 +78,17 @@ public class NoteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateNote(@PathVariable("id") long id, @RequestBody Note updatedNote){
-        if(id < 0) {
+    public ResponseEntity updateNote(@PathVariable("id") long id, @RequestBody Note updatedNote) {
+        if (id < 0) {
             return ResponseEntity.badRequest().build();
         }
-        if(!repo.existsById(id))
+        if (!repo.existsById(id))
             return ResponseEntity.notFound().build();
         Note existingNote = null;
         Optional<Note> optionalNote = repo.findById(id);
-        if(optionalNote.isPresent())
+        if (optionalNote.isPresent())
             existingNote = optionalNote.get();
-        if(existingNote == null)
+        if (existingNote == null)
             return ResponseEntity.notFound().build();
 
         existingNote.setContent(updatedNote.getContent());
@@ -89,5 +97,22 @@ public class NoteController {
         return ResponseEntity.ok(newNote);
     }
 
-
+    /**
+     * Fetches all tags associated with a note
+     * @param noteId ID of the note
+     * @return List of tags for the note
+     */
+    @GetMapping("/{noteId}/tags")
+    public ResponseEntity<List<Tag>> getTagsByNote(@PathVariable("noteId") long noteId) {
+        try {
+            List<Tag> tags = tagService.getTagsByNote(noteId);
+            if (tags.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(tags);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

@@ -1,18 +1,13 @@
 package commons;
 
 import jakarta.persistence.*;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
+import java.util.Set;
 
 /**
  * Note entity with title, content and creation date. Stored in database.
@@ -40,8 +35,9 @@ public class Note {
 
     private String directory;
 
-//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-//    private final LocalDateTime creationTime = LocalDateTime.now();
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Tag> tags;
+
 
     public Note() {
         // for object mappers
@@ -57,6 +53,7 @@ public class Note {
         this.title = title;
         this.content = content;
         this.directory = directory;
+        this.tags= new HashSet<>();
     }
 
     /**
@@ -68,6 +65,7 @@ public class Note {
         this.title = title;
         this.content = content;
         this.directory = "default";
+        this.tags = new HashSet<>();
     }
 
     /**
@@ -136,6 +134,14 @@ public class Note {
         this.files = files;
     }
 
+    public Set<Tag> getTags() {
+        return tags;
+    }
+    public void setId(int i) {
+        this.id = i;
+    }
+
+    //    public LocalDateTime getCreationTime() {
     public void setId(long id) {
         this.id = id;
     }
@@ -143,4 +149,16 @@ public class Note {
 //        return creationTime;
 //    }
 
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+    public void addTag(Tag tag) {
+        tags.add(tag);
+        tag.getNotes().add(this);
+    }
+
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
+        tag.getNotes().remove(this);
+    }
 }

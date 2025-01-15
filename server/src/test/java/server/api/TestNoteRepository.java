@@ -2,6 +2,8 @@ package server.api;
 
 import commons.Directory;
 import commons.Note;
+import commons.Quote;
+import org.hibernate.boot.jaxb.hbm.internal.GenerationTimingConverter;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class TestNoteRepository implements NoteRepository {
+    public List<Note> notes = new ArrayList<>();
+    public List<String> calledMethods = new ArrayList<>();
 
     public final List<Note> notes = new ArrayList<>();
     public final List<String> calledMethods = new ArrayList<>();
@@ -39,7 +43,8 @@ public class TestNoteRepository implements NoteRepository {
     }
 
     @Override
-    public List<Note> findAll() {
+    public List<Note> findAll(){
+        calledMethods.add("findAll");
         return new ArrayList<>(notes);
     }
 
@@ -54,13 +59,20 @@ public class TestNoteRepository implements NoteRepository {
     }
 
     @Override
-    public void deleteById(Long aLong) {
+    public void deleteById(Long id) {
+        ///calledMethods.add("deleteById");
+        for(Note note:notes)
+            if(note.getId() == id){
+                notes.remove(note);
+                break;
+            }
 
     }
 
     @Override
     public void delete(Note entity) {
-
+        ///calledMethods.add("delete");
+        notes.remove(entity);
     }
 
     @Override
@@ -82,8 +94,27 @@ public class TestNoteRepository implements NoteRepository {
     public Note save(Note note) {
         notes.add(note);
         return note;
+    public Optional<Note> findById(Long id) {
+        for (Note note : notes)
+            if (note.getId() == id)
+                return Optional.of(note);
+        return Optional.empty();
     }
 
+    @Override
+    public boolean existsById(Long id) {
+        for (Note note : notes)
+            if (note.getId() == id)
+                return true;
+        return false;
+    }
+
+    @Override
+    public Note save(Note entity) {
+        entity.setId(notes.size() + 1);
+        notes.add(entity);
+        return entity;
+    }
 
     @Override
     public void flush() {
@@ -121,7 +152,10 @@ public class TestNoteRepository implements NoteRepository {
     }
 
     @Override
-    public Note getById(Long aLong) {
+    public Note getById(Long id) {
+        for(Note note:notes)
+            if(note.getId() == id)
+                return note;
         return null;
     }
 
