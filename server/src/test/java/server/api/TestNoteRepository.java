@@ -1,8 +1,6 @@
 package server.api;
 
 import commons.Note;
-import commons.Quote;
-import org.hibernate.boot.jaxb.hbm.internal.GenerationTimingConverter;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,8 +14,13 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class TestNoteRepository implements NoteRepository {
-    public List<Note> notes = new ArrayList<>();
-    public List<String> calledMethods = new ArrayList<>();
+
+    public final List<Note> notes = new ArrayList<>();
+    public final List<String> calledMethods = new ArrayList<>();
+
+    public void call(String method) {
+        calledMethods.add(method);
+    }
 
     @Override
     public <S extends Note> List<S> saveAll(Iterable<S> entities) {
@@ -72,19 +75,22 @@ public class TestNoteRepository implements NoteRepository {
 
     }
 
-    @Override
-    public Optional<Note> findById(Long id) {
-        for (Note note : notes)
-            if (note.getId() == id)
-                return Optional.of(note);
-        return Optional.empty();
-    }
+    public Optional<Note> findById (Long id){
+            for (Note note : notes) {
+                if (note.getId() == id){
+                    return Optional.of(note);
+                }
+            }
+            return Optional.empty();
+        }
 
     @Override
     public boolean existsById(Long id) {
-        for (Note note : notes)
-            if (note.getId() == id)
+        for (Note note : notes) {
+            if (note.getId() == id) {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -188,3 +194,5 @@ public class TestNoteRepository implements NoteRepository {
         return null;
     }
 }
+
+

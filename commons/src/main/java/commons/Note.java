@@ -142,6 +142,10 @@ public class Note {
     }
 
     //    public LocalDateTime getCreationTime() {
+    public void setId(long id) {
+        this.id = id;
+    }
+//    public LocalDateTime getCreationTime() {
 //        return creationTime;
 //    }
 
