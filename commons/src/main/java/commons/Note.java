@@ -137,9 +137,9 @@ public class Note {
     public Set<Tag> getTags() {
         return tags;
     }
-    public void setId(int i) {
-        this.id = i;
-    }
+//    public void setId(int i) {
+//        this.id = i;
+//    }
 
     //    public LocalDateTime getCreationTime() {
     public void setId(long id) {
