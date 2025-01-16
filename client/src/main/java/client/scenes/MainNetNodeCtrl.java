@@ -14,13 +14,24 @@ public class MainNetNodeCtrl {
     private Scene AddScene;
     private Scene EditCollectionScene;
     private MarkdownCtrl markdownCtrl;
+// uncomment after adding the collections fxml
+//    public void init(Stage primaryStage, Pair<MarkdownCtrl, Parent> mainScene, Pair<AddNoteCtrl,
+//            Parent> addNoteScene, Pair<EditCollectionsCtrl, Parent> editCollectionScene, MarkdownCtrl markdownCtrl) {
+//        this.primaryStage = primaryStage;
+//        this.MainScene = new Scene(mainScene.getValue());
+//        this.AddScene = new Scene(addNoteScene.getValue());
+//        this.EditCollectionScene = new Scene(editCollectionScene.getValue());
+//        this.markdownCtrl = markdownCtrl;
+//        showMainScene();
+//        primaryStage.show();
+//    }
 
+    //comment out after adding the collections fxml
     public void init(Stage primaryStage, Pair<MarkdownCtrl, Parent> mainScene, Pair<AddNoteCtrl,
-            Parent> addNoteScene, Pair<EditCollectionsCtrl, Parent> editCollectionScene, MarkdownCtrl markdownCtrl) {
+            Parent> addNoteScene, MarkdownCtrl markdownCtrl) {
         this.primaryStage = primaryStage;
         this.MainScene = new Scene(mainScene.getValue());
         this.AddScene = new Scene(addNoteScene.getValue());
-        this.EditCollectionScene = new Scene(editCollectionScene.getValue());
         this.markdownCtrl = markdownCtrl;
         showMainScene();
         primaryStage.show();

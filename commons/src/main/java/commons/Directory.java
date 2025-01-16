@@ -1,6 +1,7 @@
 package commons;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.GenericType;
@@ -13,13 +14,14 @@ import java.util.Objects;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Entity
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Directory {
 
     @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
-    private Boolean isDefault;
+    private Boolean isDefault=false;
 
     @OneToMany(cascade = CascadeType.PERSIST)
     private List<Note> notes;

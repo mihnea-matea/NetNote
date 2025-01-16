@@ -42,7 +42,7 @@ public class DirectoryController {
         allDirectory.setId(-1);
 
         List<Directory> directories = directoryRepository.findAll();
-        directories.addFirst(allDirectory);
+        directories.add(0, allDirectory);
         return ResponseEntity.ok(directories);
     }
 

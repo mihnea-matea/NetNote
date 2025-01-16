@@ -25,7 +25,8 @@
 	import java.nio.charset.StandardCharsets;
 	import java.util.ArrayList;
 	import java.util.List;
-	
+	import java.util.logging.ErrorManager;
+
 	import com.sun.jersey.core.header.FormDataContentDisposition;
 	import com.sun.jersey.multipart.FormDataBodyPart;
 	import com.sun.jersey.multipart.FormDataMultiPart;
@@ -199,27 +200,32 @@
 		 * @return - List of all directories
 		 */
 		public List<Directory> getAllDirectories() {
-			List<Directory> allDirectories = new ArrayList<Directory>();
+			List<Directory> allDirectories = new ArrayList<>();
 			Directory allDirectory = new Directory("All");
-			//Directory savedDirectory = addDirectory(allDirectory);
+
 			if (allDirectory != null) {
-				allDirectory.setNotes(getNotes());
-	
+				allDirectory.setNotes(getNotes()); // Ensure getNotes() fetches all notes correctly.
+
 				try {
+					String url = SERVER + "api/directories";
+					System.out.println("Fetching directories from: " + url);
+
 					allDirectories = ClientBuilder.newClient(new ClientConfig())
-							.target(SERVER)
-							.path("api/directories")
+							.target(url)
 							.request(APPLICATION_JSON)
-							.get(new GenericType<List<Directory>>() {
-							});
-					allDirectories.addFirst(allDirectory);
-					return allDirectories;
+							.get(new GenericType<List<Directory>>() {});
+
+					// Ensure "All" is not duplicated.
+					allDirectories.removeIf(directory -> "All".equals(directory.getTitle()));
+					allDirectories.add(0, allDirectory);
+
 				} catch (Exception e) {
 					e.printStackTrace();
-					return List.of();
+					return List.of(); // Return an empty list on error.
 				}
 			}
-			return List.of();
+
+			return allDirectories;
 		}
 	
 		/**
