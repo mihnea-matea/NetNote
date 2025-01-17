@@ -148,26 +148,42 @@ public class MarkdownCtrl {
         });
 
         noteNameList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            /*if (oldValue != null)
-                autosaveCertainNote(oldValue);*/
             if (oldValue != null) {
-                autosaveCurrentNote();
-//                oldValue.setTitle(markdownTitle.getText());
-//                oldValue.setContent(markdownText.getText());
-//                Note updatedOld = serverUtils.updateNote(oldValue);
-//                if (updatedOld != null) {
-//                    int index = notes.indexOf(oldValue);
-//                    if (index != -1)
-//                        notes.set(index, updatedOld);
-//                }
+                oldValue.setTitle(markdownTitle.getText());
+                oldValue.setContent(markdownText.getText());
+
+                Note updatedOld = serverUtils.updateNote(oldValue);
+                if (updatedOld != null) {
+                    int index = notes.indexOf(updatedOld);
+                    if (index != -1) {
+                        notes.set(index, updatedOld);
+                    }
+                }
             }
-//            if (newValue != null && !autosaveInProgress) {
-//                charsModifiedSinceLastSave = 0;
-//                currentNote = newValue;
-//                noteNameList.getSelectionModel().select(currentNote);
-//                displayNoteTitle(currentNote);
-//                displayNoteContent(currentNote);
-//            }
+
+            charsModifiedSinceLastSave = 0;
+
+            if(newValue != null && !autosaveInProgress) {
+                currentNote = newValue;
+
+                Note freshNote = serverUtils.getNoteById(newValue.getId());
+                if(freshNote != null) {
+                    Platform.runLater(() -> {
+                        markdownTitle.setText(freshNote.getTitle());
+                        markdownText.setText(freshNote.getContent());
+                        int index = notes.indexOf(newValue);
+                        if (index != -1) {
+                            notes.set(index, freshNote);
+                        }
+                        currentNote = freshNote;
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        markdownTitle.setText(newValue.getTitle());
+                        markdownText.setText(newValue.getContent());
+                    });
+                }
+            }
         });
 
         /*
@@ -485,20 +501,22 @@ public class MarkdownCtrl {
         if (autosaveInProgress || currentNote == null || noteNameList.getSelectionModel().getSelectedItem() == null)
             return;
         autosaveInProgress = true;
-        currentNote.setTitle(markdownTitle.getText());
-        currentNote.setContent(markdownText.getText());
+        Note savedNote = new Note("Hi", "i want to be saved");
+        savedNote.setContent(currentNote.getContent());
+        savedNote.setTitle(currentNote.getTitle());
+        savedNote.setId(currentNote.getId());
 
-        Note updatedNote = serverUtils.updateNote(currentNote);
+        Note updatedNote = serverUtils.updateNote(savedNote);
         if (updatedNote == null)
             System.out.println("Can't autosave note.");
         else {
-//            int index = notes.indexOf(currentNote);
-//            if (index != -1)
-//                notes.set(index, updatedNote);
-//            if (!Objects.equals(currentNote.getTitle(), markdownTitle.getText()))
-//                noteNameList.refresh();
-//            currentNote = updatedNote;
-            notes = FXCollections.observableArrayList(serverUtils.getNotes());
+            int index = notes.indexOf(currentNote);
+            if (index != -1)
+                notes.set(index, updatedNote);
+            currentNote = updatedNote;
+            if (!Objects.equals(savedNote.getTitle(), currentNote.getTitle())) {
+                Platform.runLater(() -> noteNameList.refresh());
+            }
             System.out.println("Note with title " + currentNote.getTitle() + " autosaved locally.");
         }
         autosaveInProgress = false;
@@ -863,6 +881,10 @@ public class MarkdownCtrl {
         this.currentNote = note;
     }
 
+    public Note getCurrentNote() {
+        return currentNote;
+    }
+
     public void setServerUtils(ServerUtils serverUtils) {
         this.serverUtils = serverUtils;
     }
@@ -906,6 +928,21 @@ public class MarkdownCtrl {
         }
     }
 
+    public void updateNoteInList(Note note) {
+        if (note == null) return;
+        int index = -1;
+        for (int i = 0; i < notes.size(); i++) {
+            if (notes.get(i).getId() == note.getId()) {
+                index = i;
+                break;
+            }
+        }
+        if (index != -1) {
+            notes.set(index, note);
+            Platform.runLater(() -> noteNameList.refresh());
+        }
+    }
+
     public void errorMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText(message);
@@ -920,4 +957,9 @@ public class MarkdownCtrl {
     public ListView<Note> getNoteNameList () {
         return noteNameList;
     }
+
+    public ServerUtils getServerUtils() {
+        return serverUtils;
+    }
+
 }

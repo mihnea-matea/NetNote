@@ -1,7 +1,10 @@
 package client.scenes;
 
+import commons.Directory;
 import commons.Note;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -12,15 +15,25 @@ import java.util.List;
 public class NoteSearchCtrl {
 
     @FXML
-    private ListView<String> resultingListView;
+    private ListView<Note> resultingListView;
 
     private MarkdownCtrl markdownCtrl;
-
     /**
      * Initialises the scene
      */
     @FXML
     public void initialize() {
+        resultingListView.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Note note, boolean empty) {
+                super.updateItem(note, empty);
+                if (empty || note == null || note.getTitle() == null) {
+                    setText(null);
+                } else {
+                    setText(note.getTitle());
+                }
+            }
+        });
         resultingListView.setFocusTraversable(true);
         resultingListView.setOnKeyPressed(event -> {
             int selectedIndex = resultingListView.getSelectionModel().getSelectedIndex();
@@ -45,20 +58,37 @@ public class NoteSearchCtrl {
         this.markdownCtrl = markdownCtrl;
 
         resultingListView.getItems().clear();
-        for (Note searchResult : searchResults) {
-            resultingListView.getItems().add(searchResult.getTitle());
-        }
+        resultingListView.getItems().addAll(searchResults);
 
         resultingListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                Note note = searchResults.get(resultingListView.getSelectionModel().getSelectedIndex());
-                markdownCtrl.setCurrentNote(note);
-                markdownCtrl.displayNoteTitle(note);
-                markdownCtrl.displayNoteContent(note);
-                markdownCtrl.getNoteNameList().getSelectionModel().select(note);
-                Stage stage =  (Stage) resultingListView.getScene().getWindow();
-                stage.close();
+            if (newValue == null) return;
+            if (markdownCtrl.getCurrentNote() != null) {
+                Note oldNote = markdownCtrl.getCurrentNote();
+                oldNote.setTitle(markdownCtrl.getMarkdownTitle().getText());
+                oldNote.setContent(markdownCtrl.getMarkdownText().getText());
+                Note updatedNote = markdownCtrl.getServerUtils().updateNote(oldNote);
+
+                if (updatedNote != null) {
+                    markdownCtrl.updateNoteInList(updatedNote);
+
+                }
             }
+
+            Note newNote = markdownCtrl.getServerUtils().getNoteById(newValue.getId());
+            if (newNote != null) {
+                newValue = newNote;
+            }
+
+            Note finalNewValue = newValue;
+            Platform.runLater(() -> {
+                markdownCtrl.setCurrentNote(finalNewValue);
+                markdownCtrl.getNoteNameList().getSelectionModel().select(finalNewValue);
+                markdownCtrl.displayNoteTitle(finalNewValue);
+                markdownCtrl.displayNoteContent(finalNewValue);
+
+                Stage stage = (Stage) resultingListView.getScene().getWindow();
+                stage.close();
+            });
         });
     }
 
@@ -66,7 +96,7 @@ public class NoteSearchCtrl {
      * Getter for resulting listView
      * @return - Listview
      */
-    public ListView<String> getResultingListView() {
+    public ListView<Note> getResultingListView() {
         return resultingListView;
     }
 
@@ -74,7 +104,7 @@ public class NoteSearchCtrl {
      * Setter for resulting listView
      * @param resultingListView - Listview
      */
-    public void setResultingListView(ListView<String> resultingListView) {
+    public void setResultingListView(ListView<Note> resultingListView) {
         this.resultingListView = resultingListView;
     }
 

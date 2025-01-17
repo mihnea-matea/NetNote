@@ -102,6 +102,10 @@ public class Note {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -136,9 +140,6 @@ public class Note {
 
     public Set<Tag> getTags() {
         return tags;
-    }
-    public void setId(int i) {
-        this.id = i;
     }
 
     //    public LocalDateTime getCreationTime() {
