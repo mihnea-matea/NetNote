@@ -136,7 +136,7 @@ class MarkdownCtrlTest extends ApplicationTest {
           ListView<Note> noteNameList = new ListView<>();
           markdownCtrl.setNoteNameList(noteNameList);
           markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
-          markdownCtrl.setCurrentlyEditedNote(mockNote);
+          markdownCtrl.setCurrentNote(mockNote);
           for(int i=0;i<charLimit;i++)
               markdownTextArea.setText(markdownTextArea.getText() + 'a');
           verify(serverUtils, times(1)).updateNote(any(Note.class));
@@ -152,7 +152,7 @@ class MarkdownCtrlTest extends ApplicationTest {
         ListView<Note> noteNameList = new ListView<>();
         markdownCtrl.setNoteNameList(noteNameList);
         markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
-        markdownCtrl.setCurrentlyEditedNote(mockNote);
+        markdownCtrl.setCurrentNote(mockNote);
         for(int i=0;i<charLimit;i++)
             markdownTextArea.setText(markdownTextArea.getText() + 'a');
         verify(serverUtils, times(1)).updateNote(any(Note.class));
@@ -173,7 +173,7 @@ class MarkdownCtrlTest extends ApplicationTest {
         ListView<Note> noteNameList = new ListView<>();
         markdownCtrl.setNoteNameList(noteNameList);
         markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
-        markdownCtrl.setCurrentlyEditedNote(mockNote);
+        markdownCtrl.setCurrentNote(mockNote);
 
         for(int i=0;i<charLimit;i++)
             simulateKeyTypedEvent(markdownTextArea, "\u001B"); /// escape character
@@ -190,7 +190,7 @@ class MarkdownCtrlTest extends ApplicationTest {
         ListView<Note> noteNameList = new ListView<>();
         markdownCtrl.setNoteNameList(noteNameList);
         markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
-        markdownCtrl.setCurrentlyEditedNote(mockNote);
+        markdownCtrl.setCurrentNote(mockNote);
 
         for(int i=0;i<charLimit-1;i++)
             markdownTextArea.setText(markdownTextArea.getText() + 'a');
@@ -207,7 +207,7 @@ class MarkdownCtrlTest extends ApplicationTest {
         ListView<Note> noteNameList = new ListView<>();
         markdownCtrl.setNoteNameList(noteNameList);
         markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
-        markdownCtrl.setCurrentlyEditedNote(mockNote);
+        markdownCtrl.setCurrentNote(mockNote);
 
         for(int i=0;i<charLimit;i++)
             markdownTextArea.setText(markdownTextArea.getText() + '\n');
@@ -224,7 +224,7 @@ class MarkdownCtrlTest extends ApplicationTest {
         ListView<Note> noteNameList = new ListView<>();
         markdownCtrl.setNoteNameList(noteNameList);
         markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
-        markdownCtrl.setCurrentlyEditedNote(mockNote);
+        markdownCtrl.setCurrentNote(mockNote);
 
         for(int i=0;i<charLimit;i++)
             markdownTitleArea.setText(markdownTitleArea.getText() + '\n');
@@ -241,7 +241,7 @@ class MarkdownCtrlTest extends ApplicationTest {
         ListView<Note> noteNameList = new ListView<>();
         markdownCtrl.setNoteNameList(noteNameList);
         markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
-        markdownCtrl.setCurrentlyEditedNote(mockNote);
+        markdownCtrl.setCurrentNote(mockNote);
 
         for(int i=0;i<charLimit;i++)
             markdownTitleArea.setText(markdownTitleArea.getText() + 'a');
@@ -260,7 +260,7 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
-        markdownCtrl.setCurrentlyEditedNote(mockNote);
+        markdownCtrl.setCurrentNote(mockNote);
 
         for(int i=0;i<charLimit;i++)
             simulateKeyTypedEvent(markdownTitleArea, "\u001B"); /// escape character
@@ -274,7 +274,7 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setMarkdownText(markdownTextArea);
         markdownCtrl.setMarkdownTitle(markdownTitleArea);
         markdownCtrl.initialize();
-        markdownCtrl.setCurrentlyEditedNote(mockNote);
+        markdownCtrl.setCurrentNote(mockNote);
 
         for(int i=0;i<charLimit-1;i++)
             markdownTitleArea.setText(markdownTitleArea.getText() + 'a');
@@ -292,7 +292,7 @@ class MarkdownCtrlTest extends ApplicationTest {
         ListView<Note> noteNameList = new ListView<>();
         markdownCtrl.setNoteNameList(noteNameList);
         markdownCtrl.getNoteNameList().getSelectionModel().select(mockNote);
-        markdownCtrl.setCurrentlyEditedNote(mockNote);
+        markdownCtrl.setCurrentNote(mockNote);
 
         for(int i=0;i<charLimit;i++)
             markdownTitleArea.setText(markdownTitleArea.getText() + '\n');
