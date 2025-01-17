@@ -174,7 +174,7 @@ public class MarkdownCtrl {
             The check for control chars was with the help of GPT
          */
         markdownText.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (currentNote != null) {
+            if (currentNote != null) {  
                 charsModifiedSinceLastSave++;
                 if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
                     autosaveCurrentNote();
@@ -698,10 +698,10 @@ public class MarkdownCtrl {
     @FXML
     private void handleNoteSelection() {
         Note note = noteNameList.getSelectionModel().getSelectedItem();
-        if (note != null) {
+        currentNote = note;
+        if (currentNote != null) {
             displayNoteTitle(note);
             displayNoteContent(note);
-            currentNote = note;
         }
     }
 
