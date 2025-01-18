@@ -228,12 +228,13 @@ public class MarkdownCtrl {
                 if (empty || directory == null) {
                     setText(null);
                 } else {
-                    setText(directory.getTitle());
+                    setText(directory.getTitle() != null ? directory.getTitle() : "Untitled");
                 }
             }
         });
 
-        directoryDropDown.setValue(directories.getFirst());
+// Set default value
+        directoryDropDown.setValue(directories.isEmpty() ? null : directories.get(0));
 
         directoryDropDown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -247,15 +248,16 @@ public class MarkdownCtrl {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    // Log the error or show user-friendly message
                 }
             }
+        });
 //            if (newValue == oldValue) {
 //                System.out.println("Already selected!");
 //            }
 //            if(newValue != null) {
 //                System.out.println("Directory selected");
 //            }
-        });
 
 
         searchField.sceneProperty().addListener((observable, oldScene, newScene) -> {
@@ -767,6 +769,13 @@ public class MarkdownCtrl {
      */
     public void addButtonPress() {
         pc.showAddScene();
+    }
+
+    /**
+     * Sets the scene to the EditCollection scene when the button is pressed
+     */
+    public void editCollectionButtonPress() {
+        pc.showEditCollectionScene();
     }
 
     @FXML

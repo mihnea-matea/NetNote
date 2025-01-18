@@ -42,7 +42,7 @@ public class DirectoryController {
         allDirectory.setId(-1);
 
         List<Directory> directories = directoryRepository.findAll();
-        directories.addFirst(allDirectory);
+        directories.add(0, allDirectory);
         return ResponseEntity.ok(directories);
     }
 
@@ -96,5 +96,37 @@ public class DirectoryController {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    public DirectoryService getDirectoryService() {
+        return directoryService;
+    }
+
+    public void setDirectoryService(DirectoryService directoryService) {
+        this.directoryService = directoryService;
+    }
+
+    public DirectoryRepository getDirectoryRepository() {
+        return directoryRepository;
+    }
+
+    public void setDirectoryRepository(DirectoryRepository directoryRepository) {
+        this.directoryRepository = directoryRepository;
+    }
+
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    public NoteRepository getNoteRepository() {
+        return noteRepository;
+    }
+
+    public void setNoteRepository(NoteRepository noteRepository) {
+        this.noteRepository = noteRepository;
     }
 }
