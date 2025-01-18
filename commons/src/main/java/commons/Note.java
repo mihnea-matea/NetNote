@@ -102,6 +102,10 @@ public class Note {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -142,10 +146,6 @@ public class Note {
 //    }
 
     //    public LocalDateTime getCreationTime() {
-    public void setId(long id) {
-        this.id = id;
-    }
-//    public LocalDateTime getCreationTime() {
 //        return creationTime;
 //    }
 
