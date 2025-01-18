@@ -92,6 +92,12 @@ public class EditCollectionsCtrl {
         System.out.println("Saved collections");
     }
 
+    /**
+     * Makes the selected collection the default collection
+     */
+    public void makeDefault(){
+        System.out.println("Making default collections needs to be implemented");
+    }
 
 //    @FXML
 //    public void refreshCollectionList() {
