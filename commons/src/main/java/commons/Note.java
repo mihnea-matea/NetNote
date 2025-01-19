@@ -10,10 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -83,17 +80,22 @@ public class Note {
      * @return true if the notes are equal
      */
     @Override
-    public boolean equals(Object obj){
-        return EqualsBuilder.reflectionEquals(this, obj);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Note note = (Note) o;
+        return id == note.id; // compare ID
     }
+
+
 
     /**
      * Calculates the hash value
      * @return the hash value of the note
      */
     @Override
-    public int hashCode(){
-        return HashCodeBuilder.reflectionHashCode(this);
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     /**

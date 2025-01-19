@@ -184,10 +184,10 @@ public class MarkdownCtrl {
         });
 
         noteNameList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != null) {
+            if (oldValue != null && charsModifiedSinceLastSave > 0) {
+                charsModifiedSinceLastSave = 0;
                 oldValue.setTitle(markdownTitle.getText());
                 oldValue.setContent(markdownText.getText());
-
                 Note updatedOld = serverUtils.updateNote(oldValue);
                 if (updatedOld != null) {
                     int index = notes.indexOf(updatedOld);
@@ -226,7 +226,7 @@ public class MarkdownCtrl {
             The check for control chars was with the help of GPT
          */
         markdownText.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (currentNote != null) {  
+            if (currentNote != null) {
                 charsModifiedSinceLastSave++;
                 if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
                     autosaveCurrentNote();
@@ -428,7 +428,6 @@ public class MarkdownCtrl {
         searchButton.setText(LanguageChange.getInstance().getText("searchButton"));
         markdownText.setPromptText(LanguageChange.getInstance().getText("noteContent"));
         markdownTitle.setPromptText(LanguageChange.getInstance().getText("noteTitle"));
-
         languageButton.setOnAction(null);
         languageButton.getItems().clear();
         String english = LanguageChange.getInstance().getText("englishButton");
@@ -524,7 +523,10 @@ public class MarkdownCtrl {
         autosaveTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                Platform.runLater(() -> autosaveCurrentNote());
+                if(charsModifiedSinceLastSave > 0){
+                    charsModifiedSinceLastSave = 0;
+                    Platform.runLater(() -> autosaveCurrentNote());
+                }
             }
         }, SECONDS_FOR_AUTOSAVE * 1000, SECONDS_FOR_AUTOSAVE * 1000);
     }
@@ -540,11 +542,14 @@ public class MarkdownCtrl {
             return;
         autosaveInProgress = true;
         Note savedNote = new Note("Hi", "i want to be saved");
+        currentNote.setContent(markdownText.getText());
+        currentNote.setTitle(markdownTitle.getText());
         savedNote.setContent(currentNote.getContent());
         savedNote.setTitle(currentNote.getTitle());
         savedNote.setId(currentNote.getId());
-
+        System.out.println("Before "+ currentNote.getContent());
         Note updatedNote = serverUtils.updateNote(savedNote);
+        System.out.println("After: "+ updatedNote.getContent());
         if (updatedNote == null)
             System.out.println("Can't autosave note.");
         else {
@@ -693,6 +698,7 @@ public class MarkdownCtrl {
     @FXML
     public void refreshNoteList() {
         List<Note> newNotes = serverUtils.getNotes();
+        System.out.println("Refreshed" + newNotes);
         if (newNotes == null) {
             System.out.println("No notes available or server error.");
             newNotes = new ArrayList<>();
@@ -737,6 +743,7 @@ public class MarkdownCtrl {
      */
     public void displayNoteContent(Note note) {
         markdownText.setText(note.getContent());
+        currentNote.setContent(markdownText.getText());
     }
 
     /**
@@ -746,6 +753,7 @@ public class MarkdownCtrl {
      */
     public void displayNoteTitle(Note note) {
         markdownTitle.setText(note.getTitle());
+        currentNote.setTitle(markdownTitle.getText());
     }
 
     /**
