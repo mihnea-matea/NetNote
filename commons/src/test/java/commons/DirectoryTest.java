@@ -38,12 +38,12 @@ public class DirectoryTest {
         notes2.add(note3);
 
 
-        directory1 = new Directory("School", notes1);
-        directory2 = new Directory("School", notes1);
-        directory3 = new Directory("Free-Time", notes1);
-        directory4 = new Directory("School", notes2);
+        directory1 = new Directory("School", notes1, "All");
+        directory2 = new Directory("School", notes1, "All");
+        directory3 = new Directory("Free-Time", notes1, "All");
+        directory4 = new Directory("School", notes2, "All");
 
-        directory1.setDefault();
+        directory1.setDefault(true);
     }
 
     @Test
@@ -148,27 +148,6 @@ public class DirectoryTest {
         assertEquals(directory1, directory1);
         assertEquals(directory1, directory2);
         assertNotEquals(directory1, directory3);
-    }
-
-    @Test
-    public void testMakeDefault1() {
-        directory1.makeDefault();
-        assertTrue(directory1.getIsDefault());
-        assertFalse(directory2.getIsDefault());
-        assertFalse(directory3.getIsDefault());
-        assertFalse(directory4.getIsDefault());
-    }
-
-    @Test
-    public void testMakeDefault2() {
-        directory1.makeDefault();
-        directory2.makeDefault();
-        directory3.makeDefault();
-        directory4.makeDefault();
-        assertTrue(directory1.getIsDefault(), " directory 1 should not be default");
-        assertFalse(directory2.getIsDefault());
-        assertFalse(directory3.getIsDefault());
-        assertFalse(directory4.getIsDefault());
     }
 
 }

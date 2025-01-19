@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 public class EditCollectionsCtrl {
@@ -96,7 +97,40 @@ public class EditCollectionsCtrl {
      * Makes the selected collection the default collection
      */
     public void makeDefault(){
-        System.out.println("Making default collections needs to be implemented");
+        Optional<Directory> toDefaultCollection = collections
+                .stream()
+                .filter(x -> x.getCollection().equals(collectionText.getText()))
+                .findFirst();
+        if(toDefaultCollection.isPresent()){
+            Directory defaultCollection = toDefaultCollection.get();
+            defaultCollection.setDefault(true);
+            Directory saved = serverUtils.makeDirectoryDefault(defaultCollection);
+
+            collections.stream().filter(x -> x.getDefault()).forEach(x -> x.setDefault(false));
+            int index = -1;
+            for(int i = 0; i < collections.size(); i++){
+                if(collections.get(i).getCollection().equals(collectionText.getText())){
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1) {
+                collections.set(index, saved);
+            }
+            collectionsList.setItems(FXCollections.observableList(collections));
+            collectionsList.refresh();
+            collectionsList.getSelectionModel().select(index);
+        } else {
+            List<Directory> collectionsCopy = new ArrayList(collections);
+            Directory defaultCollection = new Directory(titleText.getText(), collectionText.getText());
+            defaultCollection.setDefault(true);
+            Directory saved = serverUtils.makeDirectoryDefault(defaultCollection);
+            collectionsCopy.stream().filter(x -> x.getDefault()).forEach(x -> x.setDefault(false));
+            collectionsCopy.add(saved);
+            collectionsList.setItems(FXCollections.observableList(collectionsCopy));
+            collectionsList.refresh();
+            collectionsList.getSelectionModel().select(collections.size() - 1);
+        }
     }
 
 //    @FXML

@@ -193,6 +193,13 @@ public class ServerUtils {
 		}
 	}
 
+	public Directory getDirectoryById(long id) {
+		return ClientBuilder.newClient(new ClientConfig())
+				.target(SERVER).path("api/directories/" + id)
+				.request(APPLICATION_JSON)
+				.get(Directory.class);
+	}
+
 	/**
 	 * Fetches all directories in the repository and creates an all directory
 	 *
@@ -200,7 +207,7 @@ public class ServerUtils {
 	 */
 	public List<Directory> getAllDirectories() {
 		List<Directory> allDirectories = new ArrayList<>();
-		Directory allDirectory = new Directory("All");
+		Directory allDirectory = new Directory("All", "All");
 		if (allDirectory != null) {
 			allDirectory.setNotes(getNotes()); // Ensure getNotes() fetches all notes correctly.
 			try {
@@ -253,6 +260,13 @@ public class ServerUtils {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public Directory makeDirectoryDefault(Directory directory) {
+		return ClientBuilder.newClient(new ClientConfig())
+				.target(SERVER).path("api/directories/" + directory.getId())
+				.request(APPLICATION_JSON)
+				.put(Entity.entity(directory, APPLICATION_JSON), Directory.class);
 	}
 
 	public String uploadFile(Long noteId, String fileName, byte[] fileBytes){

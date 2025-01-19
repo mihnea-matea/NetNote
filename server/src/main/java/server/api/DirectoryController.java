@@ -14,6 +14,7 @@ import server.service.DirectoryService;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/directories")
@@ -40,6 +41,7 @@ public class DirectoryController {
         allDirectory.setTitle("All");
         allDirectory.setNotes(noteRepository.findAll());
         allDirectory.setId(-1);
+        allDirectory.setCollection("All");
 
         List<Directory> directories = directoryRepository.findAll();
         directories.add(0, allDirectory);
@@ -53,7 +55,7 @@ public class DirectoryController {
      */
     @GetMapping("/{id}")
         public ResponseEntity<Directory> getDirectoryById(@PathVariable("id") long id) {
-            if (id < 0 || !directoryRepository.existsById(id)) {
+            if (id < -1 || !directoryRepository.existsById(id)) {
                 return ResponseEntity.badRequest().build();
             }
             return ResponseEntity.ok(directoryRepository.findById(id).get());
@@ -80,6 +82,35 @@ public class DirectoryController {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Directory> updateDirectory(@PathVariable("id") long id, @RequestBody Directory directory) {
+        if (id < -1) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (!directoryRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        Directory existingDirectory = null;
+        Optional<Directory> optionalDirectory = directoryRepository.findById(id);
+        if (optionalDirectory.isPresent()) {
+            existingDirectory = optionalDirectory.get();
+            for (Directory directory1 : directoryRepository.findAll()) {
+                directory1.setDefault(false);
+            }
+        }
+        if (existingDirectory == null) {
+            return ResponseEntity.notFound().build();
+        }
+        existingDirectory.setTitle(directory.getTitle());
+        existingDirectory.setNotes(directory.getNotes());
+        existingDirectory.setId(id);
+        existingDirectory.setDefault(true);
+        existingDirectory.setCollection(directory.getCollection());
+
+        Directory saved = directoryRepository.save(existingDirectory);
+        return ResponseEntity.ok(saved);
     }
 
     /**
