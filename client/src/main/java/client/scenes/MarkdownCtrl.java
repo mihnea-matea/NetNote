@@ -1044,4 +1044,11 @@ public class MarkdownCtrl {
         return serverUtils;
     }
 
+    public ListView<String> getFileList() {
+        return fileList;
+    }
+
+    public void setFileList(ListView<String> fileList) {
+        this.fileList = fileList;
+    }
 }

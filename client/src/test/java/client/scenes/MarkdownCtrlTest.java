@@ -66,7 +66,8 @@ class MarkdownCtrlTest extends ApplicationTest {
         mockDirectory.setTitle("Test Directory");
         mockDirectories = FXCollections.observableArrayList(mockDirectory);
         when(serverUtils.getAllDirectories() ).thenReturn(mockDirectories);
-
+        ListView<String> fileList=new ListView<>();
+        markdownCtrl.setFileList(fileList);
     }
 
     @Test
