@@ -12,7 +12,7 @@
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="598.0" style="-fx-background-color: #B23A48;">
          <children>
-            <Label layoutX="140.0" layoutY="8.0" text="Edit collections" textFill="#feeae1">
+            <Label layoutX="87.0" layoutY="4.0" text="Add/Edit collections" textFill="#feeae1">
                <font>
                   <Font size="48.0" />
                </font>
