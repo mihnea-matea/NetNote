@@ -4,6 +4,8 @@ import client.scenes.EditCollectionsCtrl;
 import client.scenes.MainNetNodeCtrl;
 import client.scenes.AddNoteCtrl;
 import client.scenes.MarkdownCtrl;
+import client.utils.Config;
+import client.utils.ConfigUtils;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import java.net.URL;
@@ -22,6 +24,8 @@ public class MainClient extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        Config initialConfig = ConfigUtils.readConfig();
+        LanguageChange.getInstance().changeLanguage(initialConfig.getLanguage());
         var mainScene = FXML.load(MarkdownCtrl.class, "client", "scenes", "mainClient.fxml");
         var addScene = FXML.load(AddNoteCtrl.class, "client","scenes", "AddNote.fxml");
         var editCollectionScene = FXML.load(EditCollectionsCtrl.class, "client","scenes", "EditCollection.fxml");

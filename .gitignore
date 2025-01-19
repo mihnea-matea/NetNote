@@ -1,12 +1,18 @@
-HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-*/.gitignore
+*/nore
 
+# Ignore all logs
+logs/
+**/logs/*
+*.log
+*.gz
+
+# Ignore target directories
 **/target/*
 **/*.mv.db
 /coverage/*
@@ -43,6 +49,10 @@ out/
 ### VS Code ###
 .vscode/
 
-### H2 database files
+### H2 database files ###
 *.mv.db
 *.trace.db
+
+# Ignore logs and uploads directories
+logs/
+uploads/

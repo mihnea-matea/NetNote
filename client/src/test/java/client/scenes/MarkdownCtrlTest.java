@@ -7,9 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import commons.Directory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,7 +19,6 @@ import org.testfx.framework.junit5.ApplicationTest;
 
 import client.utils.ServerUtils;
 import commons.Note;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebView;
 
@@ -68,6 +65,16 @@ class MarkdownCtrlTest extends ApplicationTest {
         when(serverUtils.getAllDirectories() ).thenReturn(mockDirectories);
         ListView<String> fileList=new ListView<>();
         markdownCtrl.setFileList(fileList);
+        Button deleteButton = new Button();
+        markdownCtrl.setDeleteButton(deleteButton);
+        Button refreshButton = new Button();
+        markdownCtrl.setRefreshButton(refreshButton);
+        Button addFileButton = new Button();
+        markdownCtrl.setAddFileButton(addFileButton);
+        Button addNoteButton = new Button();
+        markdownCtrl.setAddNoteButton(addNoteButton);
+        Button searchButton = new Button();
+        markdownCtrl.setSearchButton(searchButton);
     }
 
     @Test
