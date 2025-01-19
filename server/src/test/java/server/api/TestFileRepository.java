@@ -1,14 +1,11 @@
 package server.api;
 
-import commons.Directory;
 import commons.File;
-import commons.Note;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
-import server.database.DirectoryRepository;
 import server.database.FileRepository;
 
 import java.util.ArrayList;
@@ -84,6 +81,43 @@ public class TestFileRepository implements FileRepository {
         }
         return Optional.empty();
     }
+
+    @Override
+    public File findByFileName(String fileName){
+        for(File file : files){
+            if(file.getFileName().equals(fileName)){
+                return file;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<File> findByFileType(String fileType){
+        List<File> files = new ArrayList<>();
+        for(File file : files){
+            if(file.getFileType().equals(fileType)){
+                files.add(file);
+            }
+        }
+        return files;
+    }
+
+    //I am not sure about these methods -------------------------------------------------------------------------
+
+    @Override
+    public List<File> findByNoteId(Long noteId){
+        return List.of();
+    }
+
+
+
+    @Override
+    public void deleteByNoteId(Long noteId){
+
+    }
+
+    //----------------------------------------------------------------------------------------------------------
 
     @Override
     public boolean existsById(Long id) {
