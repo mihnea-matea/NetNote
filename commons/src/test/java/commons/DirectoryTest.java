@@ -42,21 +42,52 @@ public class DirectoryTest {
         directory2 = new Directory("School", notes1);
         directory3 = new Directory("Free-Time", notes1);
         directory4 = new Directory("School", notes2);
+
+        directory1.setDefault();
     }
 
     @Test
-    public void testContains(){
+    public void testContainsTrue(){
         assertTrue(directory1.containsNote(note1));
     }
+
     @Test
-    public void testAddNote(){
+    public void testContainsFalse(){
+        assertFalse(directory1.containsNote(note4));
+    }
+
+    @Test
+    public void testAddNoteOne(){
         directory1.addNote(note4);
-        assertTrue(directory2.containsNote(note4));
+        assertTrue(directory1.containsNote(note4));
+    }
+
+    @Test
+    public void testAddNoteMany(){
+        directory1.addNote(note1);
+        directory1.addNote(note2);
+        directory1.addNote(note3);
+        directory1.addNote(note4);
+        assertTrue(directory1.containsNote(note1));
+        assertTrue(directory1.containsNote(note2));
+        assertTrue(directory1.containsNote(note3));
+        assertTrue(directory1.containsNote(note4));
     }
 
     @Test
     public void testRemoveNote(){
         directory1.removeNote(note3);
+        assertFalse(directory1.containsNote(note3));
+    }
+
+    @Test
+    public void testRemoveToMany(){
+        directory1.removeNote(note1);
+        directory1.removeNote(note2);
+        directory1.removeNote(note3);
+        directory1.removeNote(note4);
+        assertFalse(directory1.containsNote(note1));
+        assertFalse(directory1.containsNote(note2));
         assertFalse(directory1.containsNote(note3));
     }
 
@@ -68,7 +99,7 @@ public class DirectoryTest {
     }
 
     @Test
-    public void testToString(){
+    public void testToString1(){
         String test  = "School\n" +
                 "[\n" +
                 "Calculus\n" +
@@ -84,10 +115,60 @@ public class DirectoryTest {
     }
 
     @Test
+    public void testToString2(){
+        String test ="Free-Time\n" +
+                "[\n" +
+                "Calculus\n" +
+                "I know calculus\n" +
+                ", \n" +
+                "Calculus\n" +
+                "I dont know calculus\n" +
+                ", \n" +
+                "CSEP\n" +
+                "I like CSEP\n" +
+                "]";
+        assertEquals(test, directory3.toString());
+    }
+
+    @Test
+    public void testToString3(){
+        String test ="School\n" +
+                "[\n" +
+                "Calculus\n" +
+                "I dont know calculus\n" +
+                ", \n" +
+                "CSEP\n" +
+                "I like CSEP\n" +
+                "]";
+        assertEquals(test, directory4.toString());
+    }
+
+    @Test
     public void testEquals() {
         assertEquals(directory1, directory1);
         assertEquals(directory1, directory2);
         assertNotEquals(directory1, directory3);
+    }
+
+    @Test
+    public void testMakeDefault1() {
+        directory1.makeDefault();
+        assertTrue(directory1.getIsDefault());
+        assertFalse(directory2.getIsDefault());
+        assertFalse(directory3.getIsDefault());
+        assertFalse(directory4.getIsDefault());
+    }
+
+    @Test
+    public void testMakeDefault2() {
+        directory1.makeDefault();
+        directory2.makeDefault();
+        directory3.makeDefault();
+        directory4.makeDefault();
+        assertTrue(directory1.getIsDefault(), " directory 1 should not be default");
+        assertFalse(directory2.getIsDefault());
+        assertFalse(directory3.getIsDefault());
+        assertFalse(directory4.getIsDefault());
     }
 
 }

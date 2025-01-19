@@ -2,10 +2,6 @@ package server.service;
 
 import commons.Directory;
 import commons.Note;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.core.GenericType;
-import jakarta.ws.rs.core.MediaType;
-import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import server.database.DirectoryRepository;
@@ -48,5 +44,21 @@ public class DirectoryService {
             System.out.println("Directory not found");
             return List.of();
         }
+    }
+
+    public DirectoryRepository getDirectoryRepository() {
+        return directoryRepository;
+    }
+
+    public void setDirectoryRepository(DirectoryRepository directoryRepository) {
+        this.directoryRepository = directoryRepository;
+    }
+
+    public NoteRepository getNoteRepository() {
+        return noteRepository;
+    }
+
+    public void setNoteRepository(NoteRepository noteRepository) {
+        this.noteRepository = noteRepository;
     }
 }

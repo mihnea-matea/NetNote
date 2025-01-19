@@ -11,19 +11,32 @@ public class MainNetNodeCtrl {
     private Stage primaryStage;
 
     private Scene MainScene;
-    public Scene AddScene;
-    //private NoteOverviewCtrl noteOverviewCtrl;
+    private Scene AddScene;
+    private Scene EditCollectionScene;
     private MarkdownCtrl markdownCtrl;
 
-    public void init(Stage primaryStage, Pair<MarkdownCtrl, Parent> mainScene, Pair<AddNoteCtrl, Parent> addNoteScene, MarkdownCtrl markdownCtrl) {
+ //uncomment after adding the collections fxml
+    public void init(Stage primaryStage, Pair<MarkdownCtrl, Parent> mainScene, Pair<AddNoteCtrl,
+            Parent> addNoteScene, Pair<EditCollectionsCtrl, Parent> editCollectionScene, MarkdownCtrl markdownCtrl) {
         this.primaryStage = primaryStage;
         this.MainScene = new Scene(mainScene.getValue());
         this.AddScene = new Scene(addNoteScene.getValue());
+        this.EditCollectionScene = new Scene(editCollectionScene.getValue());
         this.markdownCtrl = markdownCtrl;
         showMainScene();
         primaryStage.show();
-        //this.noteOverviewCtrl= noteOverviewCtrl;
     }
+
+//    //comment out after adding the collections fxml
+//    public void init(Stage primaryStage, Pair<MarkdownCtrl, Parent> mainScene, Pair<AddNoteCtrl,
+//            Parent> addNoteScene, MarkdownCtrl markdownCtrl) {
+//        this.primaryStage = primaryStage;
+//        this.MainScene = new Scene(mainScene.getValue());
+//        this.AddScene = new Scene(addNoteScene.getValue());
+//        this.markdownCtrl = markdownCtrl;
+//        showMainScene();
+//        primaryStage.show();
+//    }
     public void showMainScene(){
         primaryStage.setTitle("NetNode");
         primaryStage.setScene(MainScene);
@@ -39,6 +52,14 @@ public class MainNetNodeCtrl {
             return;
         }
         primaryStage.setScene(AddScene);
+    }
+
+    public void showEditCollectionScene() {
+        if(primaryStage == null || EditCollectionScene == null) {
+            System.err.println("Error: primaryStage or EditCollectionScene is null");
+        }
+        primaryStage.setTitle( "NetNode: edit collection" );
+        primaryStage.setScene(EditCollectionScene);
     }
 
     public MarkdownCtrl getMarkdownCtrl() {

@@ -208,14 +208,15 @@
 				allDirectory.setNotes(getNotes());
 
 				try {
+					String url = SERVER + "api/directories";
+					System.out.println("Fetching directories from: " + url);
 					allDirectories = ClientBuilder.newClient(new ClientConfig())
-							.target(SERVER)
-							.path("api/directories")
+							.target(url)
 							.request(APPLICATION_JSON)
-							.get(new GenericType<List<Directory>>() {
-							});
-					allDirectories.addFirst(allDirectory);
-					return allDirectories;
+							.get(new GenericType<List<Directory>>() {});
+					// Ensure "All" is not duplicated.
+					allDirectories.removeIf(directory -> "All".equals(directory.getTitle()));
+					allDirectories.add(0, allDirectory);
 				} catch (Exception e) {
 					e.printStackTrace();
 					return List.of();

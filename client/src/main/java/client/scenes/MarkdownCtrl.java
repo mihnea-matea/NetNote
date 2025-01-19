@@ -85,8 +85,6 @@ public class MarkdownCtrl {
     @FXML
     private Button searchButton;
 
-    private Note currentlyEditedNote;
-
     private int charsModifiedSinceLastSave;
     public static final int CHAR_NO_FOR_AUTOSAVE = 3;
     public static final int SECONDS_FOR_AUTOSAVE = 5;
@@ -186,23 +184,41 @@ public class MarkdownCtrl {
         });
 
         noteNameList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            /*if (oldValue != null)
-                autosaveCertainNote(oldValue);*/
             if (oldValue != null) {
                 oldValue.setTitle(markdownTitle.getText());
                 oldValue.setContent(markdownText.getText());
+
                 Note updatedOld = serverUtils.updateNote(oldValue);
                 if (updatedOld != null) {
-                    int index = notes.indexOf(oldValue);
-                    if (index != -1)
+                    int index = notes.indexOf(updatedOld);
+                    if (index != -1) {
                         notes.set(index, updatedOld);
+                    }
                 }
             }
-            if (newValue != null && !autosaveInProgress) {
-                currentlyEditedNote = newValue;
-                displayNoteTitle(newValue);
-                displayNoteContent(newValue);
-                charsModifiedSinceLastSave = 0;
+
+            charsModifiedSinceLastSave = 0;
+
+            if(newValue != null && !autosaveInProgress) {
+                currentNote = newValue;
+
+                Note freshNote = serverUtils.getNoteById(newValue.getId());
+                if(freshNote != null) {
+                    Platform.runLater(() -> {
+                        markdownTitle.setText(freshNote.getTitle());
+                        markdownText.setText(freshNote.getContent());
+                        int index = notes.indexOf(newValue);
+                        if (index != -1) {
+                            notes.set(index, freshNote);
+                        }
+                        currentNote = freshNote;
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        markdownTitle.setText(newValue.getTitle());
+                        markdownText.setText(newValue.getContent());
+                    });
+                }
             }
         });
 
@@ -210,7 +226,7 @@ public class MarkdownCtrl {
             The check for control chars was with the help of GPT
          */
         markdownText.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (currentlyEditedNote != null) {
+            if (currentNote != null) {  
                 charsModifiedSinceLastSave++;
                 if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
                     autosaveCurrentNote();
@@ -220,7 +236,7 @@ public class MarkdownCtrl {
         });
 
         markdownTitle.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (currentlyEditedNote != null) {
+            if (currentNote != null) {
                 charsModifiedSinceLastSave++;
                 if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
                     autosaveCurrentNote();
@@ -248,12 +264,13 @@ public class MarkdownCtrl {
                 if (empty || directory == null) {
                     setText(null);
                 } else {
-                    setText(directory.getTitle());
+                    setText(directory.getTitle() != null ? directory.getTitle() : "Untitled");
                 }
             }
         });
 
-        directoryDropDown.setValue(directories.getFirst());
+// Set default value
+        directoryDropDown.setValue(directories.isEmpty() ? null : directories.get(0));
 
         directoryDropDown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -267,15 +284,16 @@ public class MarkdownCtrl {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    // Log the error or show user-friendly message
                 }
             }
+        });
 //            if (newValue == oldValue) {
 //                System.out.println("Already selected!");
 //            }
 //            if(newValue != null) {
 //                System.out.println("Directory selected");
 //            }
-        });
 
 
         searchField.sceneProperty().addListener((observable, oldScene, newScene) -> {
@@ -518,25 +536,26 @@ public class MarkdownCtrl {
 
 
     public void autosaveCurrentNote() {
-        if (autosaveInProgress || currentlyEditedNote == null || noteNameList.getSelectionModel().getSelectedItem() == null)
-            return;
-        if (!currentlyEditedNote.equals(noteNameList.getSelectionModel().getSelectedItem()))
+        if (autosaveInProgress || currentNote == null || noteNameList.getSelectionModel().getSelectedItem() == null)
             return;
         autosaveInProgress = true;
-        currentlyEditedNote.setTitle(markdownTitle.getText());
-        currentlyEditedNote.setContent(markdownText.getText());
+        Note savedNote = new Note("Hi", "i want to be saved");
+        savedNote.setContent(currentNote.getContent());
+        savedNote.setTitle(currentNote.getTitle());
+        savedNote.setId(currentNote.getId());
 
-        Note updatedNote = serverUtils.updateNote(currentlyEditedNote);
+        Note updatedNote = serverUtils.updateNote(savedNote);
         if (updatedNote == null)
             System.out.println("Can't autosave note.");
         else {
-            int index = notes.indexOf(currentlyEditedNote);
+            int index = notes.indexOf(currentNote);
             if (index != -1)
                 notes.set(index, updatedNote);
-            if (!Objects.equals(currentlyEditedNote.getTitle(), markdownTitle.getText()))
-                noteNameList.refresh();
-            currentlyEditedNote = updatedNote;
-            System.out.println("Note with title" + currentlyEditedNote.getTitle() + "autosaved locally.");
+            currentNote = updatedNote;
+            if (!Objects.equals(savedNote.getTitle(), currentNote.getTitle())) {
+                Platform.runLater(() -> noteNameList.refresh());
+            }
+            System.out.println("Note with title " + currentNote.getTitle() + " autosaved locally.");
         }
         autosaveInProgress = false;
 
@@ -553,13 +572,13 @@ public class MarkdownCtrl {
         if (updatedNote == null)
             System.out.println("Can't autosave note.");
         else {
-            int index = notes.indexOf(currentlyEditedNote);
+            int index = notes.indexOf(currentNote);
             if (index != -1)
                 notes.set(index, updatedNote);
-            if (!Objects.equals(currentlyEditedNote.getTitle(), markdownTitle.getText()))
+            if (!Objects.equals(currentNote.getTitle(), markdownTitle.getText()))
                 noteNameList.refresh();
-            currentlyEditedNote = updatedNote;
-            System.out.println("Note with title" + currentlyEditedNote.getTitle() + "autosaved locally.");
+            currentNote = updatedNote;
+            System.out.println("Note with title" + currentNote.getTitle() + "autosaved locally.");
         }
         autosaveInProgress = false;
     }
@@ -735,10 +754,10 @@ public class MarkdownCtrl {
     @FXML
     private void handleNoteSelection() {
         Note note = noteNameList.getSelectionModel().getSelectedItem();
-        if (note != null) {
+        currentNote = note;
+        if (currentNote != null) {
             displayNoteTitle(note);
             displayNoteContent(note);
-            currentNote = note;
         }
     }
 
@@ -788,6 +807,13 @@ public class MarkdownCtrl {
         pc.showAddScene();
     }
 
+    /**
+     * Sets the scene to the EditCollection scene when the button is pressed
+     */
+    public void editCollectionButtonPress() {
+        pc.showEditCollectionScene();
+    }
+
     @FXML
     public void removalWarning() {
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -814,7 +840,7 @@ public class MarkdownCtrl {
                 long id = currentNote.getId();
                 serverUtils.deleteNoteById(id);
                 currentNote = null;
-                currentlyEditedNote = null;
+                currentNote = null;
                 Alert deleted = new Alert(Alert.AlertType.CONFIRMATION);
                 deleted.setTitle("Deletion successful");
                 deleted.setHeaderText("Note deleted");
@@ -896,8 +922,12 @@ public class MarkdownCtrl {
      *
      * @param note
      */
-    public void setCurrentlyEditedNote(Note note) {
-        this.currentlyEditedNote = note;
+    public void setCurrentNote(Note note) {
+        this.currentNote = note;
+    }
+
+    public Note getCurrentNote() {
+        return currentNote;
     }
 
     public void setServerUtils(ServerUtils serverUtils) {
@@ -963,6 +993,21 @@ public class MarkdownCtrl {
 
     }
 
+    public void updateNoteInList(Note note) {
+        if (note == null) return;
+        int index = -1;
+        for (int i = 0; i < notes.size(); i++) {
+            if (notes.get(i).getId() == note.getId()) {
+                index = i;
+                break;
+            }
+        }
+        if (index != -1) {
+            notes.set(index, note);
+            Platform.runLater(() -> noteNameList.refresh());
+        }
+    }
+
     public void errorMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText(message);
@@ -994,4 +1039,9 @@ public class MarkdownCtrl {
     public ListView<Note> getNoteNameList () {
         return noteNameList;
     }
+
+    public ServerUtils getServerUtils() {
+        return serverUtils;
+    }
+
 }
