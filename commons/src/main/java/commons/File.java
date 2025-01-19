@@ -1,19 +1,25 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name="files")
 public class File {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name="note_id", nullable = false)
+    @JsonBackReference
     private Note note;
 
+    @Column(length = 255, nullable = false)
     private String fileName;
+    @Column(length = 2048, nullable = false)
     private String fileUrl;
+    @Column(length = 100)
     private String fileType;
     private Long fileSize;
 
@@ -42,6 +48,9 @@ public class File {
 
     public void setNote(Note note) {
         this.note = note;
+        if(note!=null&&!note.getFiles().contains(this)){
+            note.getFiles().add(this);
+        }
     }
 
     public String getFileName() {
