@@ -1,18 +1,14 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 /**
  * Note entity with title, content and creation date. Stored in database.
@@ -28,6 +24,7 @@ public class Note {
     private long id;
 
     @OneToMany(mappedBy = "note",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonManagedReference
     private List<File> files=new ArrayList<>();
     /**
      * Title of the note. Cannot be null
@@ -140,4 +137,13 @@ public class Note {
 //        return creationTime;
 //    }
 
+    public void addFile(File file){
+        files.add(file);
+        file.setNote(this);
+    }
+
+    public void removeFile(File file){
+        files.remove(file);
+        file.setNote(null);
+    }
 }

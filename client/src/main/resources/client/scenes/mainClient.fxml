@@ -80,6 +80,7 @@
                                                             <font>
                                                                 <Font name="Calibri" size="14.0" />
                                                             </font></TextArea>
+                                          <ListView fx:id="fileList" layoutX="-1.0" layoutY="380.0" orientation="HORIZONTAL" prefHeight="45.0" prefWidth="454.0" AnchorPane.bottomAnchor="0.7999999999999758" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="5.684341886080802E-14" />
                                                     </children></AnchorPane>
                                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="434.0" prefWidth="186.0" style="-fx-background-color: #fed0bb;" SplitPane.resizableWithParent="false">
                                                     <children>

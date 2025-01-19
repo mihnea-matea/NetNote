@@ -25,10 +25,7 @@
 	import java.nio.charset.StandardCharsets;
 	import java.util.ArrayList;
 	import java.util.List;
-	import com.sun.jersey.core.header.FormDataContentDisposition;
 
-	import com.sun.jersey.multipart.FormDataMultiPart;
-	import com.sun.jersey.multipart.file.StreamDataBodyPart;
 	import commons.Directory;
 	import commons.Note;
 	import jakarta.ws.rs.client.Client;
@@ -41,12 +38,17 @@
 	import jakarta.ws.rs.client.ClientBuilder;
 	import jakarta.ws.rs.client.Entity;
 	import jakarta.ws.rs.core.GenericType;
+	import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+	import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+	import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 	import org.glassfish.jersey.media.multipart.MultiPartFeature;
+	import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
+	import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 	import org.springframework.http.HttpStatus;
 	import org.springframework.web.client.HttpClientErrorException;
 	import org.springframework.web.client.RestClientException;
 	import org.springframework.web.client.RestTemplate;
-	
+
 	public class ServerUtils {
 
 		private static final String SERVER = "http://localhost:8080/";
@@ -256,47 +258,34 @@
 			}
 		}
 
-		public String uploadFile(Long noteId, String fileName, byte[] fileBytes) {
-			try {
-				// Define the URL for the file upload
-				String url = "http://localhost:8080/api/files/" + noteId + "/upload";
-
-				// Create a Jersey client with multipart support
-				Client client = ClientBuilder.newBuilder()
+		public String uploadFile(Long noteId, String fileName, byte[] fileBytes){
+			try{
+				String url="http://localhost:8080/api/files/"+noteId+"/upload";
+				Client client=ClientBuilder.newBuilder()
 						.register(MultiPartFeature.class)  // Register the MultiPartFeature
 						.build();
-
-				// Create the multipart form data
 				FormDataMultiPart multiPart = new FormDataMultiPart();
 				FormDataContentDisposition contentDisposition = FormDataContentDisposition
 						.name("file")
 						.fileName(fileName)
 						.build();
-
-				StreamDataBodyPart filePart = new StreamDataBodyPart(
+				FormDataBodyPart filePart = new StreamDataBodyPart(
 						"file",
 						new ByteArrayInputStream(fileBytes),
-						fileName,
-						MediaType.APPLICATION_OCTET_STREAM_TYPE  // Correct content type for binary files
+						fileName
 				);
 				filePart.setContentDisposition(contentDisposition);
 				multiPart.bodyPart(filePart);
-
-				// Send the POST request
-				Response response = client.target(url)
+				Response response=client.target(url)
 						.request(MediaType.MULTIPART_FORM_DATA)
-						.post(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA));
-
-				// Process the response
-				if (response.getStatus() == 200) {
-					return response.readEntity(String.class);  // Return the server response
-				} else {
-					String errorResponse = response.readEntity(String.class);
-					throw new RuntimeException("File upload failed with status: "
-							+ response.getStatus() + ", error: " + errorResponse);
+						.post(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA));
+				if(response.getStatus()==200){
+					return response.readEntity(String.class);
+				} else{
+					throw new RuntimeException("Failed to upload file"+response.getStatus());
 				}
-			} catch (Exception e) {
-				throw new RuntimeException("Error uploading file: " + e.getMessage(), e);
+			} catch (Exception e){
+				throw new RuntimeException();
 			}
 		}
 	}
