@@ -70,7 +70,7 @@ public class DirectoryControllerTest {
 
     @Test
     void createDirectoryTest() {
-        ResponseEntity<Directory> response = directoryController.createDirectory(new Directory("New Directory"));
+        ResponseEntity<Directory> response = directoryController.createDirectory(new Directory("New Directory", "All"));
 
         assertNotNull(response);
         assertEquals("New Directory", response.getBody().getTitle());
