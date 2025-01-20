@@ -110,6 +110,9 @@ public class MarkdownCtrl {
     @FXML
     private Button refreshButton;
 
+    @FXML
+    private Button editCollectionsButton;
+
     private ServerUtils serverUtils = new ServerUtils();
 
     private boolean autosaveInProgress = false;
