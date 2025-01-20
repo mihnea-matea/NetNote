@@ -56,3 +56,6 @@ out/
 # Ignore logs and uploads directories
 logs/
 uploads/
+
+# Ignore config.json
+config.json
