@@ -10,10 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -95,6 +92,7 @@ public class Note {
     public int hashCode(){
         return HashCodeBuilder.reflectionHashCode(this);
     }
+
 
     /**
      * Creates a string representation of the note
