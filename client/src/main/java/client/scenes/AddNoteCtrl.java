@@ -1,10 +1,13 @@
 package client.scenes;
 
+import client.LanguageChange;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Note;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -15,6 +18,21 @@ public class AddNoteCtrl{
 
     @FXML
     private TextField directoryText;
+
+    @FXML
+    private Button applyButton;
+
+    @FXML
+    private Button cancelButton;
+
+    @FXML
+    private Button resetButton;
+
+    @FXML
+    private Label titleLabel;
+
+    @FXML
+    private Label directoryLabel;
 
     private final ServerUtils server;
     private final MainNetNodeCtrl pc;
@@ -80,6 +98,17 @@ public class AddNoteCtrl{
                 event.consume();
             }
         });
+        updateLanguage();
+    }
+
+    public void updateLanguage() {
+        titleText.setPromptText(LanguageChange.getInstance().getText("addNote.titleText.prompt"));
+        directoryText.setPromptText(LanguageChange.getInstance().getText("addNote.directoryText.prompt"));
+        resetButton.setText(LanguageChange.getInstance().getText("addNote.button.reset"));
+        cancelButton.setText(LanguageChange.getInstance().getText("addNote.button.cancel"));
+        applyButton.setText(LanguageChange.getInstance().getText("addNote.button.apply"));
+        titleLabel.setText(LanguageChange.getInstance().getText("addNote.label.title"));
+        directoryLabel.setText(LanguageChange.getInstance().getText("addNote.label.directory"));
     }
 
     /**

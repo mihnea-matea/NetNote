@@ -1,5 +1,6 @@
 package client.scenes;
 import client.LanguageChange;
+import client.utils.Config;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Directory;
@@ -102,6 +103,12 @@ public class MarkdownCtrl {
 
     @FXML
     private Button addNoteButton;
+
+    @FXML
+    private Button deleteButton;
+
+    @FXML
+    private Button refreshButton;
 
     private ServerUtils serverUtils = new ServerUtils();
 
@@ -418,7 +425,25 @@ public class MarkdownCtrl {
 
         languageButton.getItems().clear();
         languageButton.getItems().addAll("English", "Dutch", "Romanian");
-        languageButton.getSelectionModel().select("English");
+        String currentLang = LanguageChange.getInstance().getCurrentLanguage();
+        if(currentLang.equals("en"))
+            languageButton.getSelectionModel().select("English");
+        else if (currentLang.equals("nl"))
+            languageButton.getSelectionModel().select("Dutch");
+        else if (currentLang.equals("ro"))
+            languageButton.getSelectionModel().select("Romanian");
+        else
+            languageButton.getSelectionModel().select("English");
+
+        deleteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.delete")));
+        refreshButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.refresh")));
+        addFile.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addFile")));
+        addFile.setText(LanguageChange.getInstance().getText("button.addFile"));
+        addNoteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addFile")));
+        searchField.setPromptText(LanguageChange.getInstance().getText("searchBar"));
+        searchButton.setText(LanguageChange.getInstance().getText("searchButton"));
+        markdownText.setPromptText(LanguageChange.getInstance().getText("noteContent"));
+        markdownTitle.setPromptText(LanguageChange.getInstance().getText("noteTitle"));
     }
 
     @FXML
@@ -428,6 +453,13 @@ public class MarkdownCtrl {
         searchButton.setText(LanguageChange.getInstance().getText("searchButton"));
         markdownText.setPromptText(LanguageChange.getInstance().getText("noteContent"));
         markdownTitle.setPromptText(LanguageChange.getInstance().getText("noteTitle"));
+
+        deleteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.delete")));
+        refreshButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.refresh")));
+        addFile.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addFile")));
+        addFile.setText(LanguageChange.getInstance().getText("button.addFile"));
+        addNoteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addNoteButton")));
+
         languageButton.setOnAction(null);
         languageButton.getItems().clear();
         String english = LanguageChange.getInstance().getText("englishButton");
@@ -444,6 +476,9 @@ public class MarkdownCtrl {
             languageButton.getSelectionModel().select(romanian);
         }
         languageButton.setOnAction(event -> languagePressed());
+        pc.getAddNoteCtrl().updateLanguage();
+        Config config = new Config(newLanguage);
+        client.utils.ConfigUtils.writeConfig(config);
     }
 
     @FXML
@@ -825,11 +860,17 @@ public class MarkdownCtrl {
     @FXML
     public void removalWarning() {
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Confirmation");
-        dialog.setContentText("Are you sure you want to delete this?");
+        dialog.setTitle(LanguageChange.getInstance().getText("dialog.delete.title"));
+        dialog.setContentText(LanguageChange.getInstance().getText("dialog.delete.content"));
 
-        ButtonType deleteButtonType = new ButtonType("Delete", ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType deleteButtonType = new ButtonType(
+                LanguageChange.getInstance().getText("dialog.delete.button.confirm"),
+                ButtonBar.ButtonData.OK_DONE
+        );
+        ButtonType cancelButtonType = new ButtonType(
+                LanguageChange.getInstance().getText("dialog.delete.button.cancel"),
+                ButtonBar.ButtonData.CANCEL_CLOSE
+        );
         dialog.getDialogPane().getButtonTypes().addAll(deleteButtonType, cancelButtonType);
 
         dialog.getDialogPane().setStyle("-fx-background-color: #fed0bb; -fx-text-fill: black");
@@ -850,9 +891,9 @@ public class MarkdownCtrl {
                 currentNote = null;
                 currentNote = null;
                 Alert deleted = new Alert(Alert.AlertType.CONFIRMATION);
-                deleted.setTitle("Deletion successful");
-                deleted.setHeaderText("Note deleted");
-                deleted.setContentText("This action cannot be undone.");
+                deleted.setTitle(LanguageChange.getInstance().getText("delete.confirmation.title"));
+                deleted.setHeaderText(LanguageChange.getInstance().getText("delete.confirmation.header"));
+                deleted.setContentText(LanguageChange.getInstance().getText("delete.confirmation.content"));
                 Button deleteButton = (Button) dialog.getDialogPane().lookupButton(deleteButtonType);
                 Button cancelButton = (Button) dialog.getDialogPane().lookupButton(cancelButtonType);
                 if (deleteButton != null) {
@@ -1058,5 +1099,25 @@ public class MarkdownCtrl {
 
     public void setFileList(ListView<String> fileList) {
         this.fileList = fileList;
+    }
+
+    public void setDeleteButton(Button deleteButton){
+        this.deleteButton = deleteButton;
+    }
+
+    public void setRefreshButton(Button refreshButton){
+        this.refreshButton = refreshButton;
+    }
+
+    public void setAddFileButton(Button addFileButton) {
+        this.addFile = addFileButton;
+    }
+
+    public void setAddNoteButton(Button addNoteButton){
+        this.addNoteButton = addNoteButton;
+    }
+
+    public void setSearchButton(Button searchButton) {
+        this.searchButton = searchButton;
     }
 }

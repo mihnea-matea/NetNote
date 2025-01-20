@@ -21,8 +21,8 @@
                     <children>
                         <HBox fillHeight="false" layoutX="152.0" layoutY="61.0" prefHeight="27.0" prefWidth="479.0" AnchorPane.leftAnchor="152.0" AnchorPane.rightAnchor="197.0">
                             <children>
-                                <TextField fx:id="searchField" prefHeight="27.0" prefWidth="369.0" promptText="Enter the note you are looking for:" HBox.hgrow="ALWAYS" />
-                                <Button fx:id="searchButton" mnemonicParsing="false" onMouseClicked="#search" prefHeight="25.0" prefWidth="78.0" styleClass="upper-button" text="Search 🔍" textFill="#b23a48" HBox.hgrow="ALWAYS"> </Button>
+                                <TextField fx:id="searchField" prefHeight="27.0" prefWidth="369.0" HBox.hgrow="ALWAYS" />
+                                <Button fx:id="searchButton" mnemonicParsing="false" onMouseClicked="#search" prefHeight="25.0" prefWidth="78.0" styleClass="upper-button" textFill="#b23a48" HBox.hgrow="ALWAYS"> </Button>
                             </children>
                         </HBox>
                         <Label alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="-2.0" prefHeight="64.0" prefWidth="830.0" text=" ∘₊✧────✧₊∘  NetNote 📜   ∘₊✧────✧₊∘ " textAlignment="CENTER" textFill="#feeae1" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-3.0" AnchorPane.topAnchor="-2.0">
@@ -40,30 +40,29 @@
                             <items>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #8C2F39;" SplitPane.resizableWithParent="false">
                                     <children>
-                                        <ListView fx:id="noteNameList" layoutY="-4.0" prefHeight="299.0" prefWidth="151.0" AnchorPane.bottomAnchor="140.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-4.0" />
-                                        <Button layoutX="-3.0" layoutY="427.0" mnemonicParsing="false" onAction="#removalWarning" prefHeight="43.0" prefWidth="42.0" stylesheets="@/client/styles/Button.css" text="🗑" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+                                        <ListView fx:id="noteNameList" layoutY="-4.0" prefHeight="362.0" prefWidth="151.0" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-4.0" />
+                                        <Button fx:id="deleteButton" layoutX="-3.0" layoutY="427.0" mnemonicParsing="false" onAction="#removalWarning" prefHeight="43.0" prefWidth="42.0" stylesheets="@/client/styles/Button.css" text="🗑" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                                             <tooltip>
                                                 <Tooltip text="Delete a note" />
                                             </tooltip>
                                             <font>
                                                 <Font name="Kristen ITC" size="20.0" />
                                             </font></Button>
-                                        <Button alignment="CENTER" ellipsisString="" layoutX="54.0" layoutY="412.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#addButtonPress" prefHeight="43.0" prefWidth="42.0" stylesheets="@/client/styles/Button.css" text="✎Add a new note✎" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="54.0" AnchorPane.rightAnchor="54.0">
+                                        <Button fx:id="addNoteButton" alignment="CENTER" ellipsisString="" layoutX="54.0" layoutY="412.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#addButtonPress" prefHeight="43.0" prefWidth="42.0" stylesheets="@/client/styles/Button.css" text="✎Add a new note✎" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="54.0" AnchorPane.rightAnchor="54.0">
                                             <tooltip>
                                                 <Tooltip text="Add a note" />
                                             </tooltip>
                                             <font>
                                                 <Font name="Kristen ITC" size="20.0" />
                                             </font></Button>
-                                        <Button layoutX="108.0" layoutY="412.0" mnemonicParsing="false" onAction="#refreshNoteList" prefHeight="43.0" prefWidth="42.0" stylesheets="@/client/styles/Button.css" text="⟲" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                        <Button fx:id="refreshButton" layoutX="108.0" layoutY="412.0" mnemonicParsing="false" onAction="#refreshNoteList" prefHeight="43.0" prefWidth="42.0" stylesheets="@/client/styles/Button.css" text="⟲" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                             <tooltip>
                                                 <Tooltip text="Refresh" />
                                             </tooltip>
                                             <font>
                                     <Font name="Kristen ITC" size="23.0" />
                                  </font></Button>
-                              <Button fx:id="addFile" layoutY="356.0" mnemonicParsing="false" onAction="#upload" prefHeight="23.0" prefWidth="151.0" stylesheets="@/client/styles/Button.css" text="AddFile" AnchorPane.bottomAnchor="47.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                              <Button fx:id="addFile1" layoutY="306.0" mnemonicParsing="false" onAction="#editCollectionButtonPress" prefHeight="23.0" prefWidth="151.0" stylesheets="@/client/styles/Button.css" text="Edit Collections" AnchorPane.bottomAnchor="94.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                              <Button fx:id="addFile" layoutY="356.0" mnemonicParsing="false" onAction="#upload" prefHeight="26.0" prefWidth="151.0" stylesheets="@/client/styles/Button.css"  style="-fx-font-size: 16px;" text="AddFile" AnchorPane.bottomAnchor="45.6" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                                     </children>
                                 </AnchorPane>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
