@@ -14,9 +14,9 @@
 	 * limitations under the License.
 	 */
 	package client.utils;
-	
+
 	import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
-	
+
 	import java.io.*;
 	import java.net.ConnectException;
 	import java.net.URI;

@@ -1,10 +1,11 @@
+HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-*/nore
+*/.gitignore
 
 # Ignore all logs
 logs/
@@ -49,7 +50,7 @@ out/
 ### VS Code ###
 .vscode/
 
-### H2 database files ###
+### H2 database files
 *.mv.db
 *.trace.db
 

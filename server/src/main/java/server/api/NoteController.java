@@ -79,7 +79,7 @@ public class NoteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Note> updateNote(@PathVariable("id") long id, @RequestBody Note updatedNote) {
-        System.out.println("Server received update request");
+        System.out.println("update request was sent");
         if (id < 0) {
             return ResponseEntity.badRequest().build();
         }
@@ -89,6 +89,7 @@ public class NoteController {
         Optional<Note> optionalNote = repo.findById(id);
         if (optionalNote.isPresent())
             existingNote = optionalNote.get();
+
         if (existingNote == null)
             return ResponseEntity.notFound().build();
 
