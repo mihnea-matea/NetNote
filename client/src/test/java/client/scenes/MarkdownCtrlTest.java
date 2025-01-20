@@ -75,6 +75,8 @@ class MarkdownCtrlTest extends ApplicationTest {
         markdownCtrl.setAddNoteButton(addNoteButton);
         Button searchButton = new Button();
         markdownCtrl.setSearchButton(searchButton);
+        Button editCollectionsButton = new Button();
+        markdownCtrl.setEditCollectionsButton(editCollectionsButton);
     }
 
     @Test

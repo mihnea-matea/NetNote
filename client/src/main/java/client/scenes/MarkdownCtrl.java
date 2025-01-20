@@ -442,6 +442,9 @@ public class MarkdownCtrl {
         refreshButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.refresh")));
         addFile.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addFile")));
         addFile.setText(LanguageChange.getInstance().getText("button.addFile"));
+        editCollectionsButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText(
+                "tooltip.editCollectionsButton")));
+        editCollectionsButton.setText(LanguageChange.getInstance().getText("button.editCollections"));
         addNoteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addFile")));
         searchField.setPromptText(LanguageChange.getInstance().getText("searchBar"));
         searchButton.setText(LanguageChange.getInstance().getText("searchButton"));
@@ -462,6 +465,9 @@ public class MarkdownCtrl {
         addFile.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addFile")));
         addFile.setText(LanguageChange.getInstance().getText("button.addFile"));
         addNoteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addNoteButton")));
+        editCollectionsButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText(
+                "tooltip.editCollectionsButton")));
+        editCollectionsButton.setText(LanguageChange.getInstance().getText("button.editCollections"));
 
         languageButton.setOnAction(null);
         languageButton.getItems().clear();
@@ -480,6 +486,7 @@ public class MarkdownCtrl {
         }
         languageButton.setOnAction(event -> languagePressed());
         pc.getAddNoteCtrl().updateLanguage();
+        pc.getEditCollectionsCtrl().updateLanguage();
         Config config = new Config(newLanguage);
         client.utils.ConfigUtils.writeConfig(config);
     }
@@ -892,7 +899,6 @@ public class MarkdownCtrl {
                 long id = currentNote.getId();
                 serverUtils.deleteNoteById(id);
                 currentNote = null;
-                currentNote = null;
                 Alert deleted = new Alert(Alert.AlertType.CONFIRMATION);
                 deleted.setTitle(LanguageChange.getInstance().getText("delete.confirmation.title"));
                 deleted.setHeaderText(LanguageChange.getInstance().getText("delete.confirmation.header"));
@@ -1122,5 +1128,9 @@ public class MarkdownCtrl {
 
     public void setSearchButton(Button searchButton) {
         this.searchButton = searchButton;
+    }
+
+    public void setEditCollectionsButton(Button editCollectionsButton) {
+        this.editCollectionsButton = editCollectionsButton;
     }
 }
