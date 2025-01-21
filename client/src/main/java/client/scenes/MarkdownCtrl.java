@@ -193,17 +193,21 @@ public class MarkdownCtrl {
         });
 
         noteNameList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != null && charsModifiedSinceLastSave > 0) {
-                charsModifiedSinceLastSave = 0;
-                oldValue.setTitle(markdownTitle.getText());
-                oldValue.setContent(markdownText.getText());
-                Note updatedOld = serverUtils.updateNote(oldValue);
-                if (updatedOld != null) {
-                    int index = notes.indexOf(updatedOld);
-                    if (index != -1) {
-                        notes.set(index, updatedOld);
-                    }
-                }
+//            if (oldValue != null && charsModifiedSinceLastSave > 0) {
+//                charsModifiedSinceLastSave = 0;
+//                oldValue.setTitle(markdownTitle.getText());
+//                oldValue.setContent(markdownText.getText());
+//                Note updatedOld = serverUtils.updateNote(oldValue);
+//                if (updatedOld != null) {
+//                    int index = notes.indexOf(updatedOld);
+//                    if (index != -1) {
+//                        notes.set(index, updatedOld);
+//                    }
+//                }
+//            }
+            if (oldValue != null) {
+                ensureUniqueTitle(oldValue);
+                autosaveCertainNote(oldValue);
             }
 
             charsModifiedSinceLastSave = 0;
@@ -241,6 +245,15 @@ public class MarkdownCtrl {
                     autosaveCurrentNote();
                     charsModifiedSinceLastSave = 0;
                 }
+            }
+        });
+
+        markdownTitle.focusedProperty().addListener((observable, oldFocus, newFocus) -> {
+            if (!newFocus) {
+
+                ensureUniqueTitle(currentNote);
+                markdownTitle.setText(currentNote.getTitle());
+                refreshNoteList();
             }
         });
 
@@ -589,7 +602,7 @@ public class MarkdownCtrl {
         autosaveInProgress = true;
         Note savedNote = new Note("Hi", "i want to be saved");
         currentNote.setContent(markdownText.getText());
-        currentNote.setTitle(markdownTitle.getText());
+//        currentNote.setTitle(markdownTitle.getText());
         savedNote.setContent(currentNote.getContent());
         savedNote.setTitle(currentNote.getTitle());
         savedNote.setId(currentNote.getId());
@@ -600,8 +613,10 @@ public class MarkdownCtrl {
             System.out.println("Can't autosave note.");
         else {
             int index = notes.indexOf(currentNote);
-            if (index != -1)
+            if (index != -1) {
                 notes.set(index, updatedNote);
+                Platform.runLater(() -> noteNameList.refresh());
+            }
             currentNote = updatedNote;
             if (!Objects.equals(savedNote.getTitle(), currentNote.getTitle())) {
                 Platform.runLater(() -> noteNameList.refresh());
@@ -1071,6 +1086,67 @@ public class MarkdownCtrl {
             Platform.runLater(() -> noteNameList.refresh());
         }
     }
+    private void ensureUniqueTitle(Note note) {
+        String baseTitle = markdownTitle.getText();
+
+        // Handle empty title
+        if (baseTitle == null || baseTitle.trim().isEmpty()) {
+            baseTitle = "Untitled" + note.getId();
+            showAlert("Empty Title Detected",
+                    "The title cannot be empty!",
+                    Alert.AlertType.WARNING);
+        }
+
+        String uniqueTitle = generateUniqueTitle(baseTitle, 0, note);
+
+        // Update title if it's not already the correct one
+        if (!uniqueTitle.equals(baseTitle)) {
+            showAlert("Duplicate Title Detected",
+                    "The title was changed to avoid duplicates: " + uniqueTitle,
+                    Alert.AlertType.WARNING);
+        }
+
+        if (!markdownTitle.getText().equals(uniqueTitle)) {
+            markdownTitle.setText(uniqueTitle);
+        }
+        note.setTitle(uniqueTitle);
+    }
+
+
+
+    /**
+     * Generates a unique title by appending a number to the base title.
+     * If the title already ends with a number, increments it.
+     */
+    private String generateUniqueTitle(String baseTitle, int count, Note unCheckedNote) {
+        String uniqueTitle = (count == 0) ? baseTitle : baseTitle + "(" + count + ")";
+        boolean isDuplicate = getNotes().stream()
+                .filter(note -> (!note.equals(unCheckedNote) && !(note.getId()==unCheckedNote.getId()))) // Exclude the current note
+                .map(Note::getTitle)
+                .anyMatch(title -> title.equalsIgnoreCase(uniqueTitle));
+
+        if (isDuplicate) {
+            return generateUniqueTitle(baseTitle, count + 1, unCheckedNote);
+        }
+
+        return uniqueTitle;
+    }
+
+    private void showAlert(String title, String message, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+
+        alert.getDialogPane().addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.SPACE) {
+                alert.close();
+                event.consume();
+            }
+        });
+        alert.showAndWait();
+    }
+
 
     public void errorMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
