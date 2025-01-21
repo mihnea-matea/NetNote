@@ -38,6 +38,7 @@ public class DirectoryControllerTest {
         Directory directory = new Directory();
         directory.setId(11);
         directory.setTitle("Test Directory");
+        directory.setCollection("Test Collection");
         directory.setNotes(new ArrayList<>());
         directory.addNote(note);
         directoryRepository.save(directory);
@@ -48,7 +49,8 @@ public class DirectoryControllerTest {
         ResponseEntity<List<Directory>> response = directoryController.getAllDirectories();
 
         assertNotNull(response);
-        assertEquals(2, response.getBody().size());
+        assertEquals(3, response.getBody().size());
+        assertEquals("Default", response.getBody().get(2).getTitle());
         assertEquals("All", response.getBody().getFirst().getTitle());
         assertEquals(11, response.getBody().get(1).getId());
     }
