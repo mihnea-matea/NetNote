@@ -15,6 +15,7 @@ public class MainNetNodeCtrl {
     private Scene EditCollectionScene;
     private MarkdownCtrl markdownCtrl;
     private AddNoteCtrl addNoteCtrl;
+    private EditCollectionsCtrl editCollectionsCtrl;
 
  //uncomment after adding the collections fxml
     public void init(Stage primaryStage, Pair<MarkdownCtrl, Parent> mainScene, Pair<AddNoteCtrl,
@@ -23,6 +24,7 @@ public class MainNetNodeCtrl {
         this.MainScene = new Scene(mainScene.getValue());
         this.AddScene = new Scene(addNoteScene.getValue());
         this.EditCollectionScene = new Scene(editCollectionScene.getValue());
+        this.editCollectionsCtrl = editCollectionScene.getKey();
         this.markdownCtrl = markdownCtrl;
         this.addNoteCtrl = addNoteScene.getKey();
         showMainScene();
@@ -70,5 +72,9 @@ public class MainNetNodeCtrl {
 
     public AddNoteCtrl getAddNoteCtrl(){
         return this.addNoteCtrl;
+    }
+
+    public EditCollectionsCtrl getEditCollectionsCtrl() {
+        return this.editCollectionsCtrl;
     }
 }
