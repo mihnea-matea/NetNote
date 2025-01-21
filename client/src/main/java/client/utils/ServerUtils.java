@@ -25,6 +25,7 @@
 	import java.nio.charset.StandardCharsets;
 	import java.util.ArrayList;
 	import java.util.List;
+	import java.util.Optional;
 
 	import commons.Directory;
 	import commons.Note;
@@ -207,57 +208,66 @@
 	 *
 	 * @return - List of all directories
 	 */
-//	public List<Directory> getAllDirectories() {
-//		List<Directory> allDirectories = new ArrayList<>();
-//		Directory allDirectory = new Directory("All", "All");
-//		if (allDirectory != null) {
-//			allDirectory.setNotes(getNotes()); // Ensure getNotes() fetches all notes correctly.
-//			try {
-//				String url = SERVER + "api/directories";
-//				System.out.println("Fetching directories from: " + url);
-//				allDirectories = ClientBuilder.newClient(new ClientConfig())
-//						.target(url)
-//						.request(APPLICATION_JSON)
-//						.get(new GenericType<List<Directory>>() {});
-//				// Ensure "All" is not duplicated.
-//				allDirectories.removeIf(directory -> "All".equals(directory.getTitle()));
-//				allDirectories.add(0, allDirectory);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				return List.of(); // Return an empty list on error.
-//			}
-//		}
-//		return allDirectories;
-//	}
+	public List<Directory> getAllDirectories() {
+		List<Directory> allDirectories = new ArrayList<>();
+		Directory allDirectory = new Directory("All", "All");
+		if (allDirectory != null) {
+			allDirectory.setNotes(getNotes()); // Ensure getNotes() fetches all notes correctly.
+			try {
+				String url = SERVER + "api/directories";
+				System.out.println("Fetching directories from: " + url);
+				allDirectories = ClientBuilder.newClient(new ClientConfig())
+						.target(url)
+						.request(APPLICATION_JSON)
+						.get(new GenericType<List<Directory>>() {});
+				// Ensure "All" is not duplicated.
+				allDirectories.removeIf(directory -> "All".equals(directory.getTitle()));
+				allDirectories.add(0, allDirectory);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return List.of(); // Return an empty list on error.
+			}
+			return allDirectories;
+		}
+
+		Optional<Directory> defaultDirectory = allDirectories.stream().filter(x -> x.getDefault()).findFirst();
+		if (!defaultDirectory.isPresent()) {
+			Directory newDefaultDirectory = new Directory("Default", "Default");
+			makeDirectoryDefault(newDefaultDirectory);
+			addDirectory(newDefaultDirectory);
+			allDirectories.add(newDefaultDirectory);
+		}
+		return allDirectories;
+	}
 		/**
 		 * Fetches all directories in the repository and creates an all directory
 		 *
 		 * @return - List of all directories
 		 */
-		public List<Directory> getAllDirectories() {
-			List<Directory> allDirectories = new ArrayList<Directory>();
-			Directory allDirectory = new Directory("All");
-			//Directory savedDirectory = addDirectory(allDirectory);
-			if (allDirectory != null) {
-				allDirectory.setNotes(getNotes());
-
-				try {
-					String url = SERVER + "api/directories";
-					System.out.println("Fetching directories from: " + url);
-					allDirectories = ClientBuilder.newClient(new ClientConfig())
-							.target(url)
-							.request(APPLICATION_JSON)
-							.get(new GenericType<List<Directory>>() {});
-					// Ensure "All" is not duplicated.
-					allDirectories.removeIf(directory -> "All".equals(directory.getTitle()));
-					allDirectories.add(0, allDirectory);
-				} catch (Exception e) {
-					e.printStackTrace();
-					return List.of();
-				}
-			}
-			return List.of();
-		}
+//		public List<Directory> getAllDirectories() {
+//			List<Directory> allDirectories = new ArrayList<Directory>();
+//			Directory allDirectory = new Directory("All", "All");
+//			//Directory savedDirectory = addDirectory(allDirectory);
+//			if (allDirectory != null) {
+//				allDirectory.setNotes(getNotes());
+//
+//				try {
+//					String url = SERVER + "api/directories";
+//					System.out.println("Fetching directories from: " + url);
+//					allDirectories = ClientBuilder.newClient(new ClientConfig())
+//							.target(url)
+//							.request(APPLICATION_JSON)
+//							.get(new GenericType<List<Directory>>() {});
+//					// Ensure "All" is not duplicated.
+//					allDirectories.removeIf(directory -> "All".equals(directory.getTitle()));
+//					allDirectories.add(0, allDirectory);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					return List.of();
+//				}
+//			}
+//			return List.of();
+//		}
 
 		/**
 		 * Gets the notes of each directory
@@ -288,10 +298,12 @@
 						.accept(APPLICATION_JSON)
 						.post(Entity.entity(directory, APPLICATION_JSON), Directory.class);
 			} catch (Exception e) {
+				System.err.println("Error while adding directory: " + e.getMessage());
 				e.printStackTrace();
-				return null;
+				throw new RuntimeException("Failed to add directory. Ensure the server is running and the payload is valid.", e);
 			}
 		}
+
 
 		public String uploadFile(Long noteId, String fileName, byte[] fileBytes){
 			try{
@@ -323,7 +335,6 @@
 				throw new RuntimeException();
 			}
 		}
-	}
 
 	public Directory makeDirectoryDefault(Directory directory) {
 		return ClientBuilder.newClient(new ClientConfig())

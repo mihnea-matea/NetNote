@@ -45,6 +45,24 @@ public class DirectoryController {
 
         List<Directory> directories = directoryRepository.findAll();
         directories.add(0, allDirectory);
+        Optional<Directory> presentDefault = directories.stream().filter(d -> d.getDefault()).findFirst();
+        if(!presentDefault.isPresent()) {
+            Optional<Directory> existingDefaultCollection = findByCollection("Default");
+            Directory newDefaultDirectory;
+
+            if(existingDefaultCollection.isPresent()) {
+                newDefaultDirectory = existingDefaultCollection.get();
+                newDefaultDirectory.setDefault(true);
+            } else {
+                newDefaultDirectory = new Directory("Default", "Default");
+                newDefaultDirectory.setDefault(true);
+            }
+
+            Directory savedDefault = directoryRepository.save(newDefaultDirectory);
+            if(!directories.contains(savedDefault)) {
+                directories.add(savedDefault);
+            }
+        }
         return ResponseEntity.ok(directories);
     }
 
@@ -74,6 +92,9 @@ public class DirectoryController {
                 System.out.println("Directory title is empty");
                 return ResponseEntity.badRequest().build();
             }
+            if (directoryRepository.existsById(directory.getId())) {
+                return ResponseEntity.badRequest().build();
+            }
             Directory saved = directoryRepository.save(directory);
             System.out.println("Succesfully saved: " + saved.getTitle());
             return ResponseEntity.ok(saved);
@@ -84,9 +105,14 @@ public class DirectoryController {
         }
     }
 
+    private Optional<Directory> findByCollection(String collection) {
+        List<Directory> directories = directoryRepository.findAll();
+        return directories.stream().filter(d -> d.getCollection().equals(collection)).findFirst();
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Directory> updateDirectory(@PathVariable("id") long id, @RequestBody Directory directory) {
-        if (id < -1) {
+        if (id < -2) {
             return ResponseEntity.badRequest().build();
         }
         if (!directoryRepository.existsById(id)) {

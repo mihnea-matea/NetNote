@@ -265,10 +265,6 @@ public class MarkdownCtrl {
         startAutosaveTimer();
 
         ObservableList<Directory> directories = FXCollections.observableArrayList(serverUtils.getAllDirectories());
-        directories.stream()
-                        .filter(x -> x.getId() == -1)
-                                .filter(x -> x.getTitle().equals("All"))
-                                        .forEach(x -> x.setDefault(true));
         directoryDropDown.setItems(directories);
 
         directoryDropDown.setCellFactory(comboBox -> new ListCell<Directory>() {
@@ -1126,5 +1122,9 @@ public class MarkdownCtrl {
 
     public void setSearchButton(Button searchButton) {
         this.searchButton = searchButton;
+    }
+
+    public ComboBox<Directory> getDirectoryDropDown() {
+        return directoryDropDown;
     }
 }

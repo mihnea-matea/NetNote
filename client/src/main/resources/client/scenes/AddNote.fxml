@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.layout.HBox?>
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="600.0" style="-fx-background-color: #B23A48;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddNoteCtrl">
     <children>
         <Label fx:id="titleLabel" alignment="CENTER" layoutX="39.0" layoutY="41.0" prefHeight="30.0" prefWidth="108.0" text="Title" textFill="#feeae1">
@@ -19,16 +20,16 @@
                 <Font size="24.0" />
             </font>
         </Label>
-        <TextField fx:id="directoryText" layoutX="200.0" layoutY="91.0" prefHeight="25.0" prefWidth="357.0" promptText="type your Directory name here" />
         <TextField fx:id="titleText" layoutX="200.0" layoutY="41.0" prefHeight="25.0" prefWidth="357.0" promptText="type your title here" />
 
         <!-- Use HBox for buttons -->
-        <HBox layoutX="200.0" layoutY="175.0" spacing="15.0" alignment="CENTER">
+        <HBox alignment="CENTER" layoutX="200.0" layoutY="175.0" spacing="15.0">
             <children>
                 <Button fx:id="resetButton" mnemonicParsing="false" onAction="#reset" stylesheets="@/client/styles/Button.css" text="Reseteaza" />
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancel" stylesheets="@/client/styles/Button.css" text="Anuleaza" />
                 <Button fx:id="applyButton" mnemonicParsing="false" onAction="#apply" stylesheets="@/client/styles/Button.css" text="Confirma" />
             </children>
         </HBox>
+      <ComboBox fx:id="directorySelector" layoutX="200.0" layoutY="94.0" prefHeight="25.0" prefWidth="357.0" />
     </children>
 </Pane>
