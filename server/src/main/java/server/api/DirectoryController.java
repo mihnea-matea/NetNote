@@ -146,6 +146,7 @@ public class DirectoryController {
      */
     @GetMapping("/search")
     public ResponseEntity<List<Note>> getNotesOfDirectory(@RequestParam("filter") String filter) {
+        System.out.println("The filter is: " + filter);
         try{
             List<Note> notes = directoryService.fetchNotesByDirectory(Long.parseLong(filter));
             return ResponseEntity.ok(notes);

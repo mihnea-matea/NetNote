@@ -211,6 +211,7 @@
 	public List<Directory> getAllDirectories() {
 		List<Directory> allDirectories = new ArrayList<>();
 		Directory allDirectory = new Directory("All", "All");
+		allDirectory.setId(-1);
 		if (allDirectory != null) {
 			allDirectory.setNotes(getNotes()); // Ensure getNotes() fetches all notes correctly.
 			try {
@@ -276,10 +277,12 @@
 		 * @return - list of notes in the directory
 		 */
 		public List<Note> getDirectoryNotes(Directory directory) {
+			System.out.println(directory.getId());
 			try {
 				return ClientBuilder.newClient(new ClientConfig())
 						.target(SERVER)
-						.path("api/directories/search?filter=" + directory.getId())
+						.path("api/directories/search")
+						.queryParam("filter", String.valueOf(directory.getId()))
 						.request(APPLICATION_JSON)
 						.get(new GenericType<List<Note>>() {
 						});

@@ -123,7 +123,7 @@ public class AddNoteCtrl{
         }
         }
         directorySelector.setItems(directories);
-        //directorySelector.getSelectionModel().select(directories.stream().filter(Directory::getDefault).findFirst().get());
+        directorySelector.getSelectionModel().select(directories.stream().filter(Directory::getDefault).findFirst().get());
     }
 
     public void updateLanguage() {
