@@ -1,66 +1,59 @@
 package server.api;
 
+import commons.File;
 import commons.Note;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import commons.File;
 
-public class FileControllerTest {
-    private FileController fileController;
+public class FileServiceTest {
+    private FileProperties fileProperties;
+    private FileService fileService;
     private TestFileRepository testFileRepository;
     private TestNoteRepository testNoteRepository;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         testFileRepository = new TestFileRepository();
         testNoteRepository = new TestNoteRepository();
+        fileService = new FileService(fileProperties,testFileRepository, testNoteRepository);
 
         Note note1 = new Note();
         note1.setTitle("Note 1");
-        note1.setContent("this is test note 1");
         note1.setId(1);
         Note note2 = new Note();
         note2.setTitle("Note 2");
-        note2.setContent("this is test note 2");
         note2.setId(2);
         testNoteRepository.save(note1);
         testNoteRepository.save(note2);
 
+        long id1 = 1;
         File file1 = new File();
-        File file2 = new File();
+        file1.setId(id1);
+        file1.setFileName("testFile1");
         file1.setNote(note1);
+
+        long id2 = 2;
+        File file2 = new File();
+        file2.setId(id2);
+        file2.setFileName("testFile2");
         file2.setNote(note2);
-        file1.setFileName("file1");
-        file2.setFileName("file2");
-        file1.setFileUrl("");
-        file2.setFileUrl("");
-        file1.setFileType("Image");
-        file2.setFileType("Image");
-        Long fileSize1 = 111L;
-        Long fileSize2 = 222L;
-        file1.setFileSize(fileSize1);
-        file2.setFileSize(fileSize2);
         testFileRepository.save(file1);
         testFileRepository.save(file2);
     }
 
     @Test
-    void test1(){
-
+    public void uploadFileTest(){
     }
 
     @Test
-    void test2(){
-
-    }
+    public void getFilesByNoteValidIdTest(){}
 
     @Test
-    void test3(){
-
-    }
+    public void deleteFileSuccessTest(){}
 
     @Test
-    void test4(){
+    public void deleteFileFailTest(){}
 
-    }
+    @Test
+    public void loadAsRecourceTest(){}
 }

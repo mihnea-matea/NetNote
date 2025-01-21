@@ -103,21 +103,15 @@ public class TestFileRepository implements FileRepository {
         return files;
     }
 
-    //I am not sure about these methods -------------------------------------------------------------------------
-
     @Override
-    public List<File> findByNoteId(Long noteId){
+    public List<File> findByNoteId(Long noteId) {
         return List.of();
     }
-
-
 
     @Override
     public void deleteByNoteId(Long noteId){
 
     }
-
-    //----------------------------------------------------------------------------------------------------------
 
     @Override
     public boolean existsById(Long id) {
