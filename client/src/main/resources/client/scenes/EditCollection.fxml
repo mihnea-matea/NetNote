@@ -15,7 +15,7 @@
   <items>
     <AnchorPane maxHeight="-Infinity" minHeight="80.0" minWidth="0.0" prefHeight="80.0" prefWidth="598.0" style="-fx-background-color: #B23A48;" SplitPane.resizableWithParent="false">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="140.0" layoutY="8.0" text="Edit collections" textFill="#feeae1" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="140.0" AnchorPane.rightAnchor="140.0" AnchorPane.topAnchor="8.0">
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="140.0" layoutY="8.0" text="Add/Edit collections" textFill="#feeae1" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="140.0" AnchorPane.rightAnchor="140.0" AnchorPane.topAnchor="8.0">
                <font>
                   <Font size="48.0" />
                </font>

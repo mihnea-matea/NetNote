@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.database.DirectoryRepository;
 import server.database.NoteRepository;
 import server.service.TagService;
 
@@ -26,8 +27,11 @@ public class NoteController {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public NoteController(NoteRepository repo) {
+    private final DirectoryRepository directoryRepository;
+
+    public NoteController(NoteRepository repo, DirectoryRepository directoryRepository) {
         this.repo = repo;
+        this.directoryRepository = directoryRepository;
     }
 
     @GetMapping(path = {"", "/"})
@@ -47,6 +51,21 @@ public class NoteController {
     public ResponseEntity<Note> add(@RequestBody Note note) {
         if (note.getTitle() == null || note.getTitle().isEmpty()) {
             return ResponseEntity.badRequest().build();
+        }
+        if (note.getDirectory().equals("default")) {
+            note.setDirectory(directoryRepository.findAll().stream()
+                    .filter(x -> x.getDefault() == true)
+                    .findFirst().get().getCollection());
+            directoryRepository.findAll().stream()
+                    .filter(x -> x.getDefault() == true)
+                    .forEach(x -> x.addNote(note));
+        } else {
+            note.setDirectory(directoryRepository.findAll().stream()
+                    .filter(x -> x.getCollection().equals(note.getDirectory()))
+                    .findFirst().get().getCollection());
+            directoryRepository.findAll().stream()
+                    .filter(x -> x.getCollection().equals(note.getDirectory()))
+                    .forEach(x -> x.addNote(note));
         }
         Note saved = repo.save(note);
         return ResponseEntity.ok(saved);

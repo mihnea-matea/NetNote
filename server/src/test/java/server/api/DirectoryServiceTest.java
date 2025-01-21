@@ -40,6 +40,7 @@ public class DirectoryServiceTest {
         Directory directory = new Directory();
         directory.setId(1);
         directory.setTitle("Directory 1");
+        directory.setCollection("Directory 1");
         directory.setNotes(new ArrayList<Note>());
         directory.getNotes().add(note1);
         testDirectoryRepository.save(directory);
