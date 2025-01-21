@@ -1,5 +1,6 @@
 package client.scenes;
 import client.LanguageChange;
+import client.utils.Config;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Directory;
@@ -11,15 +12,19 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
@@ -30,14 +35,19 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.nio.file.Path;
 import java.util.*;
 
 public class MarkdownCtrl {
@@ -51,6 +61,10 @@ public class MarkdownCtrl {
     @FXML
     private ListView<Note> noteNameList;
 
+    @FXML
+    private ListView<String> fileList;
+
+    private ObservableList<String> fileNames=FXCollections.observableArrayList();
     @FXML
     private ComboBox<Directory> directoryDropDown;
 
@@ -90,6 +104,15 @@ public class MarkdownCtrl {
     @FXML
     private Button addNoteButton;
 
+    @FXML
+    private Button deleteButton;
+
+    @FXML
+    private Button refreshButton;
+
+    @FXML
+    private Button editCollectionsButton;
+
     private ServerUtils serverUtils = new ServerUtils();
 
     private boolean autosaveInProgress = false;
@@ -111,6 +134,29 @@ public class MarkdownCtrl {
 
     @FXML
     public void initialize() {
+        fileList.setItems(fileNames);
+        fileList.setCellFactory(param -> new ListCell<>(){
+            private Hyperlink link=new Hyperlink();
+            {
+                link.setOnAction(event -> {
+                    String fileName=getItem();
+                    if(fileName!=null){
+                        downloadFile(fileName);
+                    }
+                });
+            }
+            @Override
+            protected void updateItem(String item, boolean empty){
+                super.updateItem(item,empty);
+                if(empty||item==null){
+                    setGraphic(null);
+                    setText(null);
+                } else{
+                    link.setText(item);
+                    setGraphic(link);
+                }
+            }
+        });
         markdownText.scrollTopProperty().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable observable) {
@@ -148,10 +194,10 @@ public class MarkdownCtrl {
         });
 
         noteNameList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != null) {
+            if (oldValue != null && charsModifiedSinceLastSave > 0) {
+                charsModifiedSinceLastSave = 0;
                 oldValue.setTitle(markdownTitle.getText());
                 oldValue.setContent(markdownText.getText());
-
                 Note updatedOld = serverUtils.updateNote(oldValue);
                 if (updatedOld != null) {
                     int index = notes.indexOf(updatedOld);
@@ -190,7 +236,7 @@ public class MarkdownCtrl {
             The check for control chars was with the help of GPT
          */
         markdownText.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (currentNote != null) {  
+            if (currentNote != null) {
                 charsModifiedSinceLastSave++;
                 if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
                     autosaveCurrentNote();
@@ -386,7 +432,25 @@ public class MarkdownCtrl {
 
         languageButton.getItems().clear();
         languageButton.getItems().addAll("English", "Dutch", "Romanian");
-        languageButton.getSelectionModel().select("English");
+        String currentLang = LanguageChange.getInstance().getCurrentLanguage();
+        if(currentLang.equals("en"))
+            languageButton.getSelectionModel().select("English");
+        else if (currentLang.equals("nl"))
+            languageButton.getSelectionModel().select("Dutch");
+        else if (currentLang.equals("ro"))
+            languageButton.getSelectionModel().select("Romanian");
+        else
+            languageButton.getSelectionModel().select("English");
+
+        deleteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.delete")));
+        refreshButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.refresh")));
+        addFile.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addFile")));
+        addFile.setText(LanguageChange.getInstance().getText("button.addFile"));
+        addNoteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addFile")));
+        searchField.setPromptText(LanguageChange.getInstance().getText("searchBar"));
+        searchButton.setText(LanguageChange.getInstance().getText("searchButton"));
+        markdownText.setPromptText(LanguageChange.getInstance().getText("noteContent"));
+        markdownTitle.setPromptText(LanguageChange.getInstance().getText("noteTitle"));
     }
 
     @FXML
@@ -396,6 +460,12 @@ public class MarkdownCtrl {
         searchButton.setText(LanguageChange.getInstance().getText("searchButton"));
         markdownText.setPromptText(LanguageChange.getInstance().getText("noteContent"));
         markdownTitle.setPromptText(LanguageChange.getInstance().getText("noteTitle"));
+
+        deleteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.delete")));
+        refreshButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.refresh")));
+        addFile.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addFile")));
+        addFile.setText(LanguageChange.getInstance().getText("button.addFile"));
+        addNoteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addNoteButton")));
 
         languageButton.setOnAction(null);
         languageButton.getItems().clear();
@@ -413,6 +483,9 @@ public class MarkdownCtrl {
             languageButton.getSelectionModel().select(romanian);
         }
         languageButton.setOnAction(event -> languagePressed());
+        pc.getAddNoteCtrl().updateLanguage();
+        Config config = new Config(newLanguage);
+        client.utils.ConfigUtils.writeConfig(config);
     }
 
     @FXML
@@ -492,7 +565,10 @@ public class MarkdownCtrl {
         autosaveTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                Platform.runLater(() -> autosaveCurrentNote());
+                if(charsModifiedSinceLastSave > 0){
+                    charsModifiedSinceLastSave = 0;
+                    Platform.runLater(() -> autosaveCurrentNote());
+                }
             }
         }, SECONDS_FOR_AUTOSAVE * 1000, SECONDS_FOR_AUTOSAVE * 1000);
     }
@@ -508,11 +584,14 @@ public class MarkdownCtrl {
             return;
         autosaveInProgress = true;
         Note savedNote = new Note("Hi", "i want to be saved");
+        currentNote.setContent(markdownText.getText());
+        currentNote.setTitle(markdownTitle.getText());
         savedNote.setContent(currentNote.getContent());
         savedNote.setTitle(currentNote.getTitle());
         savedNote.setId(currentNote.getId());
-
+        System.out.println("Before "+ currentNote.getContent());
         Note updatedNote = serverUtils.updateNote(savedNote);
+        System.out.println("After: "+ updatedNote.getContent());
         if (updatedNote == null)
             System.out.println("Can't autosave note.");
         else {
@@ -661,6 +740,7 @@ public class MarkdownCtrl {
     @FXML
     public void refreshNoteList() {
         List<Note> newNotes = serverUtils.getNotes();
+        System.out.println("Refreshed" + newNotes);
         if (newNotes == null) {
             System.out.println("No notes available or server error.");
             newNotes = new ArrayList<>();
@@ -705,6 +785,7 @@ public class MarkdownCtrl {
      */
     public void displayNoteContent(Note note) {
         markdownText.setText(note.getContent());
+        currentNote.setContent(markdownText.getText());
     }
 
     /**
@@ -714,6 +795,7 @@ public class MarkdownCtrl {
      */
     public void displayNoteTitle(Note note) {
         markdownTitle.setText(note.getTitle());
+        currentNote.setTitle(markdownTitle.getText());
     }
 
     /**
@@ -785,11 +867,17 @@ public class MarkdownCtrl {
     @FXML
     public void removalWarning() {
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Confirmation");
-        dialog.setContentText("Are you sure you want to delete this?");
+        dialog.setTitle(LanguageChange.getInstance().getText("dialog.delete.title"));
+        dialog.setContentText(LanguageChange.getInstance().getText("dialog.delete.content"));
 
-        ButtonType deleteButtonType = new ButtonType("Delete", ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType deleteButtonType = new ButtonType(
+                LanguageChange.getInstance().getText("dialog.delete.button.confirm"),
+                ButtonBar.ButtonData.OK_DONE
+        );
+        ButtonType cancelButtonType = new ButtonType(
+                LanguageChange.getInstance().getText("dialog.delete.button.cancel"),
+                ButtonBar.ButtonData.CANCEL_CLOSE
+        );
         dialog.getDialogPane().getButtonTypes().addAll(deleteButtonType, cancelButtonType);
 
         dialog.getDialogPane().setStyle("-fx-background-color: #fed0bb; -fx-text-fill: black");
@@ -810,9 +898,9 @@ public class MarkdownCtrl {
                 currentNote = null;
                 currentNote = null;
                 Alert deleted = new Alert(Alert.AlertType.CONFIRMATION);
-                deleted.setTitle("Deletion successful");
-                deleted.setHeaderText("Note deleted");
-                deleted.setContentText("This action cannot be undone.");
+                deleted.setTitle(LanguageChange.getInstance().getText("delete.confirmation.title"));
+                deleted.setHeaderText(LanguageChange.getInstance().getText("delete.confirmation.header"));
+                deleted.setContentText(LanguageChange.getInstance().getText("delete.confirmation.content"));
                 Button deleteButton = (Button) dialog.getDialogPane().lookupButton(deleteButtonType);
                 Button cancelButton = (Button) dialog.getDialogPane().lookupButton(cancelButtonType);
                 if (deleteButton != null) {
@@ -918,7 +1006,6 @@ public class MarkdownCtrl {
                 new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
-
         File file = fileChooser.showOpenDialog(addFile.getScene().getWindow());
         if (file == null) {
             errorMessage("Select a file");
@@ -928,17 +1015,38 @@ public class MarkdownCtrl {
             errorMessage("Select a note before uploading a file");
             return;
         }
-        try {
+        Long noteId = currentNote.getId();
+        try{
             byte[] fileBytes = Files.readAllBytes(file.toPath());
-            Long noteId = currentNote.getId();
-            ;
             String fileUrl = serverUtils.uploadFile(noteId, file.getName(), fileBytes);
-            String img = "![Image](" + fileUrl + ")";
+            fileNames.add(file.getName());
+            String message="File inserted: \n";
+            int position = markdownText.getCaretPosition();
+            markdownText.insertText(position, message);
+            int width=150;
+            int height=150;
+            String img="![Image]("+file.getName()+")";
+            //String img = "<img src=\"" + fileUrl + "\" alt=\"Image\" width=\"150\" height=\"150\">";
             int caretPosition = markdownText.getCaretPosition();
             markdownText.insertText(caretPosition, img);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            htmlText.getEngine().getLoadWorker().stateProperty().addListener((observable,oldValue,newValue) ->{
+                if(newValue== Worker.State.SUCCEEDED){
+                    htmlText.getEngine().executeScript(
+                            //generated with the help of chatGPT
+                            "document.querySelectorAll('img').forEach(img => {" +
+                                    "   if (img.src.endsWith('" + file.getName() + "')) {" +
+                                    "       img.src = '" + fileUrl + "';" +
+                                    "       img.style.width='" + width +"px';"+
+                                    "       img.style.height='" + height +"px';"+
+                                    "   }" +
+                                    "});"
+                    );
+                }
+            });
+        } catch (Exception e){
+            errorMessage("Failed to upload the file"+e.getMessage());
         }
+
     }
 
     public void updateNoteInList(Note note) {
@@ -960,6 +1068,23 @@ public class MarkdownCtrl {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText(message);
     }
+
+    private void downloadFile(String fileName){
+        String fileUrl="http://localhost:8080/files/"+fileName;
+        FileChooser fileChooser=new FileChooser();
+        fileChooser.setTitle("Save file "+fileName);
+        fileChooser.setInitialFileName(fileName);
+        File fileDestination=fileChooser.showSaveDialog(fileList.getScene().getWindow());
+        if(fileDestination==null){
+            errorMessage("save place not specified");
+            return;
+        }
+        try(InputStream inputStream=new URL(fileUrl).openStream()){
+            Files.copy(inputStream,fileDestination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            errorMessage("Failed download the file");
+        }
+    }
     public void setNoteNameList (ListView < Note > noteNameList) {
         this.noteNameList = noteNameList;
     }
@@ -975,4 +1100,31 @@ public class MarkdownCtrl {
         return serverUtils;
     }
 
+    public ListView<String> getFileList() {
+        return fileList;
+    }
+
+    public void setFileList(ListView<String> fileList) {
+        this.fileList = fileList;
+    }
+
+    public void setDeleteButton(Button deleteButton){
+        this.deleteButton = deleteButton;
+    }
+
+    public void setRefreshButton(Button refreshButton){
+        this.refreshButton = refreshButton;
+    }
+
+    public void setAddFileButton(Button addFileButton) {
+        this.addFile = addFileButton;
+    }
+
+    public void setAddNoteButton(Button addNoteButton){
+        this.addNoteButton = addNoteButton;
+    }
+
+    public void setSearchButton(Button searchButton) {
+        this.searchButton = searchButton;
+    }
 }
