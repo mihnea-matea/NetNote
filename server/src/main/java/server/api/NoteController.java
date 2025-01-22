@@ -87,6 +87,7 @@ public class NoteController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") long id) {
+        System.out.println("Received delete request");
         if (id < 0 || !repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
 

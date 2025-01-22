@@ -205,7 +205,7 @@ public class MarkdownCtrl {
 //                    }
 //                }
 //            }
-            if (oldValue != null) {
+            if (oldValue != null && charsModifiedSinceLastSave > 0) {
                 ensureUniqueTitle(oldValue);
                 autosaveCertainNote(oldValue);
             }
@@ -250,10 +250,13 @@ public class MarkdownCtrl {
 
         markdownTitle.focusedProperty().addListener((observable, oldFocus, newFocus) -> {
             if (!newFocus) {
-
+                /// currentNote.setTitle(markdownTitle.getText());
+                System.out.println("Current title stored in currentNote is: " + currentNote.getTitle());
                 ensureUniqueTitle(currentNote);
+                System.out.println("Current title stored in currentNote is: " + currentNote.getTitle());
                 markdownTitle.setText(currentNote.getTitle());
-                refreshNoteList();
+                currentNote = serverUtils.updateNote(currentNote);
+                ///refreshNoteList();
             }
         });
 
@@ -764,7 +767,7 @@ public class MarkdownCtrl {
         } else {
             newNotes = serverUtils.getDirectoryNotes(directoryDropDown.getSelectionModel().getSelectedItem());
         }
-        System.out.println("Refreshed" + newNotes);
+        ///System.out.println("Refreshed" + newNotes);
         if (newNotes == null) {
             System.out.println("No notes available or server error.");
             newNotes = new ArrayList<>();
@@ -1098,7 +1101,7 @@ public class MarkdownCtrl {
         }
 
         String uniqueTitle = generateUniqueTitle(baseTitle, 0, note);
-
+        System.out.println("unique:"+uniqueTitle+" vs base:"+baseTitle);
         // Update title if it's not already the correct one
         if (!uniqueTitle.equals(baseTitle)) {
             showAlert("Duplicate Title Detected",
@@ -1110,6 +1113,7 @@ public class MarkdownCtrl {
             markdownTitle.setText(uniqueTitle);
         }
         note.setTitle(uniqueTitle);
+        currentNote.setTitle(uniqueTitle);
     }
 
 
