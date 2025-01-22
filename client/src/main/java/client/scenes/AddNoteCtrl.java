@@ -147,6 +147,10 @@ public class AddNoteCtrl{
             showAlert("Error", "Title is required!", Alert.AlertType.ERROR);
             return;
         }
+        if (isDuplicateTitle(title)) {
+            showAlert("Error", "Title already exists!", Alert.AlertType.ERROR);
+            return;
+        }
         String defaultContent = """
                 # My Note
                 This is the content of a note
@@ -168,6 +172,11 @@ public class AddNoteCtrl{
         } catch (Exception e) {
             showAlert("Error", "Failed to add note: " + e.getMessage(), Alert.AlertType.ERROR);
         }
+    }
+    private boolean isDuplicateTitle(String titleToCheck) {
+        return server.getNotes().stream()
+                .map(Note::getTitle)
+                .anyMatch(title -> title.equalsIgnoreCase(titleToCheck));
     }
 
     /**
