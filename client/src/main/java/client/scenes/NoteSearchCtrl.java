@@ -35,26 +35,15 @@ public class NoteSearchCtrl {
             }
         });
         resultingListView.setFocusTraversable(true);
-//        resultingListView.setOnKeyPressed(event -> {
-//            int selectedIndex = resultingListView.getSelectionModel().getSelectedIndex();
-//            if (event.getCode() == KeyCode.UP) {
-//                if (selectedIndex > 0) {
-//                    resultingListView.getSelectionModel().select(selectedIndex - 1);
-//                }
-//                event.consume(); // Prevent default behavior
-//            } else if (event.getCode() == KeyCode.DOWN) {
-//                if (selectedIndex < resultingListView.getItems().size() - 1) {
-//                    resultingListView.getSelectionModel().select(selectedIndex + 1);
-//                }
-//                event.consume(); // Prevent default behavior
-//            } else if (event.getCode() == KeyCode.ENTER) {
-//                Note selectedNote = resultingListView.getSelectionModel().getSelectedItem();
-//                if (selectedNote != null) {
-//                    resultingListView.getSelectionModel().select(selectedNote);
-//                }
-//                event.consume(); // Prevent default behavior
-//            }
-//        });
+        resultingListView.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 1) {
+                Note selectedNote = resultingListView.getSelectionModel().getSelectedItem();
+                if (selectedNote != null) {
+                    Stage stage = (Stage) resultingListView.getScene().getWindow();
+                    stage.close();
+                }
+            }
+        });
     }
 
     /**
@@ -87,7 +76,6 @@ public class NoteSearchCtrl {
             });
         });
 
-// Handle selection explicitly on ENTER key press
         resultingListView.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 Note selectedNote = resultingListView.getSelectionModel().getSelectedItem();
