@@ -250,13 +250,17 @@ public class MarkdownCtrl {
 
         markdownTitle.focusedProperty().addListener((observable, oldFocus, newFocus) -> {
             if (!newFocus) {
-                /// currentNote.setTitle(markdownTitle.getText());
-                System.out.println("Current title stored in currentNote is: " + currentNote.getTitle());
+//                /// currentNote.setTitle(markdownTitle.getText());
+//                System.out.println("Current title stored in currentNote is: " + currentNote.getTitle());
+//                ensureUniqueTitle(currentNote);
+//                System.out.println("Current title stored in currentNote is: " + currentNote.getTitle());
+//                markdownTitle.setText(currentNote.getTitle());
+//                currentNote = serverUtils.updateNote(currentNote);
+//                ///refreshNoteList();
                 ensureUniqueTitle(currentNote);
-                System.out.println("Current title stored in currentNote is: " + currentNote.getTitle());
                 markdownTitle.setText(currentNote.getTitle());
-                currentNote = serverUtils.updateNote(currentNote);
-                ///refreshNoteList();
+                refreshNoteList();
+
             }
         });
 
@@ -1113,7 +1117,7 @@ public class MarkdownCtrl {
             markdownTitle.setText(uniqueTitle);
         }
         note.setTitle(uniqueTitle);
-        currentNote.setTitle(uniqueTitle);
+        //currentNote.setTitle(uniqueTitle);
     }
 
 
