@@ -212,7 +212,15 @@ public class AddNoteCtrl{
     public void clearFields(){
         try {
             titleText.clear();
-            directorySelector.getSelectionModel().clearSelection();
+            ObservableList<Directory> directories = FXCollections.observableArrayList(server.getAllDirectories());
+            if(!directories.isEmpty() || directories == null) {
+                for(int i = 0; i < directories.size(); i++) {
+                    if (directories.get(i).getTitle().equals("All")) {
+                        directories.remove(i);
+                    }
+                }
+            }
+            directorySelector.getSelectionModel().select(directories.stream().filter(Directory::getDefault).findFirst().get());
         }
         catch(Exception e){
             System.err.println("Fields could not be deleted");
