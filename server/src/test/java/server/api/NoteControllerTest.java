@@ -47,7 +47,7 @@ public class NoteControllerTest {
 
     @Test
     public void canAddValidNote() {
-        Note valid = new Note("Hello", "World");
+        Note valid = new Note("Hello", "World", "All");
         ResponseEntity<Note> response = sut.add(valid);
 
         assertEquals(OK, response.getStatusCode());

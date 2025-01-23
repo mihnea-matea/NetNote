@@ -1,5 +1,6 @@
 package server.api;
 
+import commons.Directory;
 import commons.Note;
 import commons.Tag;
 import jakarta.persistence.EntityManager;
@@ -28,6 +29,8 @@ public class NoteController {
     private EntityManager entityManager;
 
     private final DirectoryRepository directoryRepository;
+    @Autowired
+    private NoteRepository noteRepository;
 
     public NoteController(NoteRepository repo, DirectoryRepository directoryRepository) {
         this.repo = repo;
@@ -52,20 +55,12 @@ public class NoteController {
         if (note.getTitle() == null || note.getTitle().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        if (note.getDirectory().equals("default")) {
-            note.setDirectory(directoryRepository.findAll().stream()
-                    .filter(x -> x.getDefault() == true)
-                    .findFirst().get().getCollection());
-            directoryRepository.findAll().stream()
-                    .filter(x -> x.getDefault() == true)
-                    .forEach(x -> x.addNote(note));
+        Directory noteDirectory = directoryRepository.findAll().stream()
+                .filter(x -> x.getTitle().equals(note.getDirectory())).findFirst().orElse(null);
+        if(noteDirectory == null) {
+            return ResponseEntity.badRequest().build();
         } else {
-            note.setDirectory(directoryRepository.findAll().stream()
-                    .filter(x -> x.getCollection().equals(note.getDirectory()))
-                    .findFirst().get().getCollection());
-            directoryRepository.findAll().stream()
-                    .filter(x -> x.getCollection().equals(note.getDirectory()))
-                    .forEach(x -> x.addNote(note));
+            directoryRepository.findById(noteDirectory.getId()).get().addNote(note);
         }
         Note saved = repo.save(note);
         return ResponseEntity.ok(saved);
@@ -87,12 +82,16 @@ public class NoteController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") long id) {
-        System.out.println("Received delete request");
-        if (id < 0 || !repo.existsById(id)) {
+        if (!repo.existsById(id)) {
+            System.out.println("Note not present in repo");
             return ResponseEntity.badRequest().build();
-
         }
         Note note = repo.findById(id).get();
+        Directory noteDirectory = directoryRepository.findAll().stream()
+                .filter(x -> x.getTitle().equals(note.getDirectory())).findFirst().orElse(null);
+        if(noteDirectory != null) {
+            directoryRepository.findById(noteDirectory.getId()).get().removeNote(note);
+        }
         repo.delete(note);
         return ResponseEntity.ok().build();
     }
