@@ -53,7 +53,7 @@ public class LanguageChangeTest {
         languageChange.changeLanguage("ro");
         String result = languageChange.getText("searchBar");
         assertNotNull(result);
-        assertEquals("Placeholder RO", result);
+        assertEquals("Scrieti titlul notitei pe care o cautati:", result);
     }
 
     @Test
