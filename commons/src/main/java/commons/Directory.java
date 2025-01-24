@@ -23,6 +23,9 @@ public class Directory {
     @Column(nullable = false)
     private Boolean isDefault=false;
 
+    @Column(nullable = false, unique = true)
+    private String collection;
+
     @OneToMany(cascade = CascadeType.PERSIST)
     private List<Note> notes;
 
@@ -36,25 +39,27 @@ public class Directory {
      * creates an instance of a Directory
      * @param title
      */
-    public Directory(String title) {
+    public Directory(String title, String collection) {
         this.title = title;
         this.notes = new ArrayList<>();
         this.isDefault = false;
+        this.collection = collection;
     }
 
     /**
      * creates an instance of a Directory
      * @return
      */
-    public Directory(String title, List<Note> notes) {
+    public Directory(String title, List<Note> notes, String collection) {
         this.title = title;
         this.notes = notes;
+        this.collection = collection;
         this.isDefault = false;
     }
 
-    public boolean getIsDefault() {return isDefault;}
-
-    public void setDefault(){this.isDefault = true;}
+//    public boolean getIsDefault() {return isDefault;}
+//
+//    public void setDefault(){this.isDefault = true;}
 
     public void setNotDefault(){this.isDefault = false;}
 
@@ -98,6 +103,22 @@ public class Directory {
         this.id = id;
     }
 
+    public Boolean getDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(Boolean aDefault) {
+        isDefault = aDefault;
+    }
+
+    public String getCollection() {
+        return collection;
+    }
+
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -111,25 +132,25 @@ public class Directory {
         return Objects.hash(getTitle(), getNotes());
     }
 
-    /**
-     * Sets the currently edited Collection to default, and all other not to default
-     */
-    public void makeDefault(){
-        //Chould be replaced by the real selected collection and allCollections
-        Directory selectedCollection = new Directory();
-        List<Directory> allCollections = new ArrayList<>();
-        if(selectedCollection == null){
-            System.out.println("No collection selected or selected is null");
-
-        }
-        for(Directory collection : allCollections){
-            if(collection.getId() != selectedCollection.getId()){
-                collection.setNotDefault();
-            }
-            if(collection.getId() == selectedCollection.getId()){
-                collection.setDefault();
-            }
-        }
-        System.out.println("Make default needs to be implemented");
-    }
+//    /**
+//     * Sets the currently edited Collection to default, and all other not to default
+//     */
+//    public void makeDefault(){
+//        //Chould be replaced by the real selected collection and allCollections
+//        Directory selectedCollection = new Directory();
+//        List<Directory> allCollections = new ArrayList<>();
+//        if(selectedCollection == null){
+//            System.out.println("No collection selected or selected is null");
+//
+//        }
+//        for(Directory collection : allCollections){
+//            if(collection.getId() != selectedCollection.getId()){
+//                collection.setNotDefault();
+//            }
+//            if(collection.getId() == selectedCollection.getId()){
+//                collection.setDefault();
+//            }
+//        }
+//        System.out.println("Make default needs to be implemented");
+//    }
 }

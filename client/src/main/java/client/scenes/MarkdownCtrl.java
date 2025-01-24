@@ -180,7 +180,6 @@ public class MarkdownCtrl {
         if (noteNameList == null) {
             noteNameList = new ListView<>();
         }
-        refreshNoteList();
         noteNameList.setItems(notes);
 
         noteNameList.setCellFactory(param -> new ListCell<>() {
@@ -300,6 +299,8 @@ public class MarkdownCtrl {
                 }
             }
         });
+
+        refreshNoteList();
 //            if (newValue == oldValue) {
 //                System.out.println("Already selected!");
 //            }
@@ -847,7 +848,12 @@ public class MarkdownCtrl {
 
     @FXML
     public void refreshNoteList() {
-        List<Note> newNotes = serverUtils.getNotes();
+        List<Note> newNotes = new ArrayList<>();
+        if(directoryDropDown.getSelectionModel().getSelectedItem() == null) {
+            newNotes = serverUtils.getNotes();
+        } else {
+            newNotes = serverUtils.getDirectoryNotes(directoryDropDown.getSelectionModel().getSelectedItem());
+        }
         System.out.println("Refreshed" + newNotes);
         if (newNotes == null) {
             System.out.println("No notes available or server error.");
@@ -1237,5 +1243,9 @@ public class MarkdownCtrl {
 
     public void setEditCollectionsButton(Button editCollectionsButton) {
         this.editCollectionsButton = editCollectionsButton;
+    }
+
+    public ComboBox<Directory> getDirectoryDropDown() {
+        return directoryDropDown;
     }
 }

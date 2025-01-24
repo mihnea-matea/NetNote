@@ -1,8 +1,10 @@
 package server.api;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.*;
 
+import commons.Directory;
 import commons.Note;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,13 +14,18 @@ import java.util.List;
 
 public class NoteControllerTest {
 
+    private TestDirectoryRepository directoryRepository;
     private TestNoteRepository repo;
     private NoteController sut; // "System Under Test"
 
     @BeforeEach
     public void setup() {
         repo = new TestNoteRepository();
-        sut = new NoteController(repo);
+        directoryRepository = new TestDirectoryRepository();
+        sut = new NoteController(repo, directoryRepository);
+        Directory allDirectory = new Directory("All", "All");
+        allDirectory.setDefault(true);
+        directoryRepository.save(allDirectory);
     }
 
     @Test
@@ -40,7 +47,7 @@ public class NoteControllerTest {
 
     @Test
     public void canAddValidNote() {
-        Note valid = new Note("Hello", "World");
+        Note valid = new Note("Hello", "World", "All");
         ResponseEntity<Note> response = sut.add(valid);
 
         assertEquals(OK, response.getStatusCode());
