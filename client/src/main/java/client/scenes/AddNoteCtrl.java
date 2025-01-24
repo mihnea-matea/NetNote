@@ -119,7 +119,8 @@ public class AddNoteCtrl{
         String directory = directoryText.getText();
 
         if (title == null || title.trim().isEmpty()) {
-            showAlert("Error", "Title is required!", Alert.AlertType.ERROR);
+            showAlert(LanguageChange.getInstance().getText("alert.error"),
+                    LanguageChange.getInstance().getText("alert.required_title"), Alert.AlertType.ERROR);
             return;
         }
         String defaultContent = """
@@ -136,12 +137,15 @@ public class AddNoteCtrl{
         try {
             server.addNote(newNote);
             pc.getMarkdownCtrl().refreshNoteList();
-            showAlert("Success", "Note added successfully!", Alert.AlertType.INFORMATION);
+            showAlert(LanguageChange.getInstance().getText("alert.success"),
+                    LanguageChange.getInstance().getText("alert.successful_add"), Alert.AlertType.INFORMATION);
             pc.showMainScene();
             pc.getMarkdownCtrl().refreshNoteList();
             clearFields();
         } catch (Exception e) {
-            showAlert("Error", "Failed to add note: " + e.getMessage(), Alert.AlertType.ERROR);
+            showAlert(LanguageChange.getInstance().getText("alert.error"),
+                    LanguageChange.getInstance().getText("alert.failed_add")+ e.getMessage(),
+                    Alert.AlertType.ERROR);
         }
     }
 

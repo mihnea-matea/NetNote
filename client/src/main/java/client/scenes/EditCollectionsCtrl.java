@@ -31,6 +31,9 @@ public class EditCollectionsCtrl {
     private TextField collectionText;
 
     @FXML
+    private Label editCollectionsLabel;
+
+    @FXML
     private Label titleLabel;
 
     @FXML
@@ -81,6 +84,7 @@ public class EditCollectionsCtrl {
     }
 
     public void updateLanguage() {
+        editCollectionsLabel.setText(LanguageChange.getInstance().getText("editCollections.label"));
         titleText.setPromptText(LanguageChange.getInstance().getText("editCollections.titleText.prompt"));
         titleLabel.setText(LanguageChange.getInstance().getText("editCollections.label.title"));
         serverText.setPromptText(LanguageChange.getInstance().getText("editCollections.serverText.prompt"));

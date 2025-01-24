@@ -7,7 +7,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.NoteSearchCtrl">
    <children>
-      <Label alignment="CENTER" layoutX="-5.0" prefHeight="96.0" prefWidth="606.0" style="-fx-background-color: b23a48;" text="Notes containing searched term" textAlignment="RIGHT" textFill="#fed0bb">
+      <Label fx:id="noteSearchLabel" alignment="CENTER" layoutX="-5.0" prefHeight="96.0" prefWidth="606.0" style="-fx-background-color: b23a48;" text="Notes containing searched term" textAlignment="RIGHT" textFill="#fed0bb">
          <font>
             <Font name="Elephant" size="23.0" />
          </font>
