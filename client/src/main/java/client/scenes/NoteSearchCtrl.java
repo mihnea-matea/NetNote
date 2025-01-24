@@ -1,9 +1,11 @@
 package client.scenes;
 
+import client.LanguageChange;
 import commons.Directory;
 import commons.Note;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
@@ -16,6 +18,9 @@ public class NoteSearchCtrl {
 
     @FXML
     private ListView<Note> resultingListView;
+
+    @FXML
+    private Label noteSearchLabel;
 
     private MarkdownCtrl markdownCtrl;
     /**
@@ -47,6 +52,8 @@ public class NoteSearchCtrl {
                 }
             }
         });
+
+        updateLanguage();
     }
 
     /**
@@ -118,5 +125,9 @@ public class NoteSearchCtrl {
 
     public void setMarkdownCtrl(MarkdownCtrl markdownCtrl) {
         this.markdownCtrl = markdownCtrl;
+    }
+
+    public void updateLanguage() {
+        noteSearchLabel.setText(LanguageChange.getInstance().getText("search.label"));
     }
 }

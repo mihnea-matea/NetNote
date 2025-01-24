@@ -1,5 +1,6 @@
 package client.scenes;
 import client.LanguageChange;
+import client.utils.Config;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Directory;
@@ -22,6 +23,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
@@ -103,6 +106,15 @@ public class MarkdownCtrl {
     @FXML
     private Button addNoteButton;
 
+    @FXML
+    private Button deleteButton;
+
+    @FXML
+    private Button refreshButton;
+
+    @FXML
+    private Button editCollectionsButton;
+
     private ServerUtils serverUtils = new ServerUtils();
 
     private boolean autosaveInProgress = false;
@@ -168,7 +180,6 @@ public class MarkdownCtrl {
         if (noteNameList == null) {
             noteNameList = new ListView<>();
         }
-        refreshNoteList();
         noteNameList.setItems(notes);
 
         noteNameList.setCellFactory(param -> new ListCell<>() {
@@ -184,10 +195,10 @@ public class MarkdownCtrl {
         });
 
         noteNameList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != null) {
+            if (oldValue != null && charsModifiedSinceLastSave > 0) {
+                charsModifiedSinceLastSave = 0;
                 oldValue.setTitle(markdownTitle.getText());
                 oldValue.setContent(markdownText.getText());
-
                 Note updatedOld = serverUtils.updateNote(oldValue);
                 if (updatedOld != null) {
                     int index = notes.indexOf(updatedOld);
@@ -226,7 +237,7 @@ public class MarkdownCtrl {
             The check for control chars was with the help of GPT
          */
         markdownText.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (currentNote != null) {  
+            if (currentNote != null) {
                 charsModifiedSinceLastSave++;
                 if (charsModifiedSinceLastSave >= CHAR_NO_FOR_AUTOSAVE) {
                     autosaveCurrentNote();
@@ -288,6 +299,8 @@ public class MarkdownCtrl {
                 }
             }
         });
+
+        refreshNoteList();
 //            if (newValue == oldValue) {
 //                System.out.println("Already selected!");
 //            }
@@ -417,8 +430,98 @@ public class MarkdownCtrl {
         }
 
         languageButton.getItems().clear();
-        languageButton.getItems().addAll("English", "Dutch", "Romanian");
-        languageButton.getSelectionModel().select("English");
+        languageButton.getItems().addAll(LanguageChange.getInstance().getText("englishButton"),
+                LanguageChange.getInstance().getText("dutchButton"),
+                LanguageChange.getInstance().getText("romanianButton"),
+                LanguageChange.getInstance().getText("frenchButton"));
+        String currentLang = LanguageChange.getInstance().getCurrentLanguage();
+        if(currentLang.equals("en"))
+            languageButton.getSelectionModel().select(LanguageChange.getInstance().getText("englishButton"));
+        else if (currentLang.equals("nl"))
+            languageButton.getSelectionModel().select(LanguageChange.getInstance().getText("dutchButton"));
+        else if (currentLang.equals("ro"))
+            languageButton.getSelectionModel().select(LanguageChange.getInstance().getText("romanianButton"));
+        else if (currentLang.equals("fr"))
+            languageButton.getSelectionModel().select(LanguageChange.getInstance().getText("frenchButton"));
+        else
+            languageButton.getSelectionModel().select(LanguageChange.getInstance().getText("englishButton"));
+
+        deleteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.delete")));
+        refreshButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.refresh")));
+        addFile.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addFile")));
+        addFile.setText(LanguageChange.getInstance().getText("button.addFile"));
+        editCollectionsButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText(
+                "tooltip.editCollectionsButton")));
+        editCollectionsButton.setText(LanguageChange.getInstance().getText("button.editCollections"));
+        addNoteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addFile")));
+        searchField.setPromptText(LanguageChange.getInstance().getText("searchBar"));
+        searchButton.setText(LanguageChange.getInstance().getText("searchButton"));
+        markdownText.setPromptText(LanguageChange.getInstance().getText("noteContent"));
+        markdownTitle.setPromptText(LanguageChange.getInstance().getText("noteTitle"));
+
+
+        languageButton.setCellFactory(comboBox -> new ListCell<>() {
+            private final ImageView imageView = new ImageView();
+            @Override
+            protected void updateItem(String langCode, boolean empty) {
+                super.updateItem(langCode, empty);
+                if (empty || langCode == null) {
+                    setGraphic(null);
+                    setText(null);
+                }
+                else {
+                    String oldLangCode = langCode;
+                    if(langCode.equals("Engels") || langCode.equals("Engleza") || langCode.equals("Anglais"))
+                        langCode = "English";
+                    else if(langCode.equals("Nederlands") || langCode.equals("Néerlandais") || langCode.equals("Daneza"))
+                        langCode = "Dutch";
+                    else if(langCode.equals("Roemeens") || langCode.equals("Roumain") || langCode.equals("Romana"))
+                        langCode = "Romanian";
+                    else if(langCode.equals("Franceza") || langCode.equals("Frans") || langCode.equals("Francais"))
+                        langCode = "French";
+                    String path = "/client/flags/" + langCode + ".png";
+                    InputStream resourceStream = getClass().getResourceAsStream(path);
+                    Image flag = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
+                    imageView.setImage(flag);
+                    imageView.setFitWidth(24);
+                    imageView.setFitHeight(24);
+                    setGraphic(imageView);
+                    setText(oldLangCode);
+                }
+            }
+        });
+
+        languageButton.setButtonCell(new ListCell<>() {
+            private final ImageView imageView = new ImageView();
+            @Override
+            protected void updateItem(String langCode, boolean empty) {
+                super.updateItem(langCode, empty);
+                if (empty || langCode == null) {
+                    setGraphic(null);
+                    setText(null);
+                }
+                else {
+                    String oldLangCode = langCode;
+                    if(langCode.equals("Engels") || langCode.equals("Engleza") || langCode.equals("Anglais"))
+                        langCode = "English";
+                    else if(langCode.equals("Nederlands") || langCode.equals("Néerlandais") || langCode.equals("Daneza"))
+                        langCode = "Dutch";
+                    else if(langCode.equals("Roemeens") || langCode.equals("Roumain") || langCode.equals("Romana"))
+                        langCode = "Romanian";
+                    else if(langCode.equals("Franceza") || langCode.equals("Frans") || langCode.equals("Francais"))
+                        langCode = "French";
+                    String path = "/client/flags/" + langCode + ".png";
+                    InputStream resourceStream = getClass().getResourceAsStream(path);
+                    Image flag = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
+                    imageView.setImage(flag);
+                    imageView.setFitWidth(24);
+                    imageView.setFitHeight(24);
+                    setGraphic(imageView);
+                    setText(oldLangCode);
+                }
+            }
+        });
+
     }
 
     @FXML
@@ -429,12 +532,22 @@ public class MarkdownCtrl {
         markdownText.setPromptText(LanguageChange.getInstance().getText("noteContent"));
         markdownTitle.setPromptText(LanguageChange.getInstance().getText("noteTitle"));
 
+        deleteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.delete")));
+        refreshButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.refresh")));
+        addFile.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addFile")));
+        addFile.setText(LanguageChange.getInstance().getText("button.addFile"));
+        addNoteButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText("tooltip.addNoteButton")));
+        editCollectionsButton.setTooltip(new Tooltip(LanguageChange.getInstance().getText(
+                "tooltip.editCollectionsButton")));
+        editCollectionsButton.setText(LanguageChange.getInstance().getText("button.editCollections"));
+
         languageButton.setOnAction(null);
         languageButton.getItems().clear();
         String english = LanguageChange.getInstance().getText("englishButton");
         String dutch = LanguageChange.getInstance().getText("dutchButton");
         String romanian = LanguageChange.getInstance().getText("romanianButton");
-        languageButton.getItems().addAll(english, dutch, romanian);
+        String french = LanguageChange.getInstance().getText("frenchButton");
+        languageButton.getItems().addAll(english, dutch, romanian, french);
         if(LanguageChange.getInstance().getCurrentLanguage().equals("en")) {
             languageButton.getSelectionModel().select(english);
         }
@@ -444,7 +557,15 @@ public class MarkdownCtrl {
         if(LanguageChange.getInstance().getCurrentLanguage().equals("ro")) {
             languageButton.getSelectionModel().select(romanian);
         }
+        if(LanguageChange.getInstance().getCurrentLanguage().equals("fr")){
+            languageButton.getSelectionModel().select(french);
+        }
         languageButton.setOnAction(event -> languagePressed());
+        pc.getAddNoteCtrl().updateLanguage();
+        pc.getEditCollectionsCtrl().updateLanguage();
+        pc.getNoteSearchCtrl().updateLanguage();
+        Config config = new Config(newLanguage);
+        client.utils.ConfigUtils.writeConfig(config);
     }
 
     @FXML
@@ -452,7 +573,7 @@ public class MarkdownCtrl {
         String selectedOption = languageButton.getSelectionModel().getSelectedItem();
         System.out.println(selectedOption + "test");
         String language = "en";
-
+        System.out.println("Current language is: " + LanguageChange.getInstance().getCurrentLanguage());
         if(LanguageChange.getInstance().getCurrentLanguage().equals("en")) {
             switch (selectedOption) {
                 case "English":
@@ -464,9 +585,12 @@ public class MarkdownCtrl {
                 case "Romanian":
                     language = languageRomanian();
                     break;
+                case "French":
+                    language = languageFrench();
+                    break;
             }
         }
-        if(LanguageChange.getInstance().getCurrentLanguage().equals("nl")) {
+        else if(LanguageChange.getInstance().getCurrentLanguage().equals("nl")) {
             switch (selectedOption) {
                 case "Engels":
                     language = languageEnglish();
@@ -477,18 +601,40 @@ public class MarkdownCtrl {
                 case "Roemeens":
                     language = languageRomanian();
                     break;
+                case "Frans":
+                    language = languageFrench();
+                    break;
             }
         }
-        if(LanguageChange.getInstance().getCurrentLanguage().equals("ro")) {
+        else if(LanguageChange.getInstance().getCurrentLanguage().equals("ro")) {
             switch (selectedOption) {
-                case "English":
+                case "Engleza":
                     language = languageEnglish();
                     break;
-                case "Dutch":
+                case "Daneza":
                     language = languageDutch();
                     break;
-                case "Romanian":
+                case "Romana":
                     language = languageRomanian();
+                    break;
+                case "Franceza":
+                    language = languageFrench();
+                    break;
+            }
+        }
+        else if(LanguageChange.getInstance().getCurrentLanguage().equals("fr")) {
+            switch (selectedOption) {
+                case "Anglais":
+                    language = languageEnglish();
+                    break;
+                case "Néerlandais":
+                    language = languageDutch();
+                    break;
+                case "Roumain":
+                    language = languageRomanian();
+                    break;
+                case "Francais":
+                    language = languageFrench();
                     break;
             }
         }
@@ -508,6 +654,10 @@ public class MarkdownCtrl {
         return "ro";
     }
 
+    public String languageFrench() {
+        return "fr";
+    }
+
 
     private boolean isCaretAtTopLine(TextArea textArea) {
         int cursorPosition = textArea.getCaretPosition();
@@ -524,7 +674,10 @@ public class MarkdownCtrl {
         autosaveTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                Platform.runLater(() -> autosaveCurrentNote());
+                if(charsModifiedSinceLastSave > 0){
+                    charsModifiedSinceLastSave = 0;
+                    Platform.runLater(() -> autosaveCurrentNote());
+                }
             }
         }, SECONDS_FOR_AUTOSAVE * 1000, SECONDS_FOR_AUTOSAVE * 1000);
     }
@@ -540,11 +693,14 @@ public class MarkdownCtrl {
             return;
         autosaveInProgress = true;
         Note savedNote = new Note("Hi", "i want to be saved");
+        currentNote.setContent(markdownText.getText());
+        currentNote.setTitle(markdownTitle.getText());
         savedNote.setContent(currentNote.getContent());
         savedNote.setTitle(currentNote.getTitle());
         savedNote.setId(currentNote.getId());
-
+        System.out.println("Before "+ currentNote.getContent());
         Note updatedNote = serverUtils.updateNote(savedNote);
+        System.out.println("After: "+ updatedNote.getContent());
         if (updatedNote == null)
             System.out.println("Can't autosave note.");
         else {
@@ -692,7 +848,13 @@ public class MarkdownCtrl {
 
     @FXML
     public void refreshNoteList() {
-        List<Note> newNotes = serverUtils.getNotes();
+        List<Note> newNotes = new ArrayList<>();
+        if(directoryDropDown.getSelectionModel().getSelectedItem() == null) {
+            newNotes = serverUtils.getNotes();
+        } else {
+            newNotes = serverUtils.getDirectoryNotes(directoryDropDown.getSelectionModel().getSelectedItem());
+        }
+        System.out.println("Refreshed" + newNotes);
         if (newNotes == null) {
             System.out.println("No notes available or server error.");
             newNotes = new ArrayList<>();
@@ -737,6 +899,7 @@ public class MarkdownCtrl {
      */
     public void displayNoteContent(Note note) {
         markdownText.setText(note.getContent());
+        currentNote.setContent(markdownText.getText());
     }
 
     /**
@@ -746,6 +909,7 @@ public class MarkdownCtrl {
      */
     public void displayNoteTitle(Note note) {
         markdownTitle.setText(note.getTitle());
+        currentNote.setTitle(markdownTitle.getText());
     }
 
     /**
@@ -817,11 +981,17 @@ public class MarkdownCtrl {
     @FXML
     public void removalWarning() {
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Confirmation");
-        dialog.setContentText("Are you sure you want to delete this?");
+        dialog.setTitle(LanguageChange.getInstance().getText("dialog.delete.title"));
+        dialog.setContentText(LanguageChange.getInstance().getText("dialog.delete.content"));
 
-        ButtonType deleteButtonType = new ButtonType("Delete", ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType deleteButtonType = new ButtonType(
+                LanguageChange.getInstance().getText("dialog.delete.button.confirm"),
+                ButtonBar.ButtonData.OK_DONE
+        );
+        ButtonType cancelButtonType = new ButtonType(
+                LanguageChange.getInstance().getText("dialog.delete.button.cancel"),
+                ButtonBar.ButtonData.CANCEL_CLOSE
+        );
         dialog.getDialogPane().getButtonTypes().addAll(deleteButtonType, cancelButtonType);
 
         dialog.getDialogPane().setStyle("-fx-background-color: #fed0bb; -fx-text-fill: black");
@@ -840,11 +1010,10 @@ public class MarkdownCtrl {
                 long id = currentNote.getId();
                 serverUtils.deleteNoteById(id);
                 currentNote = null;
-                currentNote = null;
                 Alert deleted = new Alert(Alert.AlertType.CONFIRMATION);
-                deleted.setTitle("Deletion successful");
-                deleted.setHeaderText("Note deleted");
-                deleted.setContentText("This action cannot be undone.");
+                deleted.setTitle(LanguageChange.getInstance().getText("delete.confirmation.title"));
+                deleted.setHeaderText(LanguageChange.getInstance().getText("delete.confirmation.header"));
+                deleted.setContentText(LanguageChange.getInstance().getText("delete.confirmation.content"));
                 Button deleteButton = (Button) dialog.getDialogPane().lookupButton(deleteButtonType);
                 Button cancelButton = (Button) dialog.getDialogPane().lookupButton(cancelButtonType);
                 if (deleteButton != null) {
@@ -1050,5 +1219,33 @@ public class MarkdownCtrl {
 
     public void setFileList(ListView<String> fileList) {
         this.fileList = fileList;
+    }
+
+    public void setDeleteButton(Button deleteButton){
+        this.deleteButton = deleteButton;
+    }
+
+    public void setRefreshButton(Button refreshButton){
+        this.refreshButton = refreshButton;
+    }
+
+    public void setAddFileButton(Button addFileButton) {
+        this.addFile = addFileButton;
+    }
+
+    public void setAddNoteButton(Button addNoteButton){
+        this.addNoteButton = addNoteButton;
+    }
+
+    public void setSearchButton(Button searchButton) {
+        this.searchButton = searchButton;
+    }
+
+    public void setEditCollectionsButton(Button editCollectionsButton) {
+        this.editCollectionsButton = editCollectionsButton;
+    }
+
+    public ComboBox<Directory> getDirectoryDropDown() {
+        return directoryDropDown;
     }
 }

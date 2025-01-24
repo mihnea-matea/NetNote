@@ -7,6 +7,13 @@ build/
 
 */.gitignore
 
+# Ignore all logs
+logs/
+**/logs/*
+*.log
+*.gz
+
+# Ignore target directories
 **/target/*
 **/*.mv.db
 /coverage/*
@@ -46,3 +53,10 @@ out/
 ### H2 database files
 *.mv.db
 *.trace.db
+
+# Ignore logs and uploads directories
+logs/
+uploads/
+
+# Ignore config.json
+config.json

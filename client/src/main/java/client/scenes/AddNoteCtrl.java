@@ -1,11 +1,14 @@
 package client.scenes;
 
+import client.LanguageChange;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Directory;
 import commons.Note;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -14,10 +17,26 @@ public class AddNoteCtrl{
     private TextField titleText;
 
     @FXML
-    private TextField directoryText;
+    private ComboBox<Directory> directorySelector;
+
+    @FXML
+    private Button applyButton;
+
+    @FXML
+    private Button cancelButton;
+
+    @FXML
+    private Button resetButton;
+
+    @FXML
+    private Label titleLabel;
+
+    @FXML
+    private Label directoryLabel;
 
     private final ServerUtils server;
     private final MainNetNodeCtrl pc;
+    private MarkdownCtrl markdownCtrl;
 
     /**
      * Constructor for the scene
@@ -25,9 +44,10 @@ public class AddNoteCtrl{
      * @param server the means of connecting to the server
      */
     @Inject
-    public AddNoteCtrl(MainNetNodeCtrl pc, ServerUtils server){
+    public AddNoteCtrl(MainNetNodeCtrl pc, ServerUtils server, MarkdownCtrl markdownCtrl) {
         this.server= server;
         this.pc = pc;
+        this.markdownCtrl = markdownCtrl;
     }
 
     /**
@@ -39,12 +59,12 @@ public class AddNoteCtrl{
 
         titleText.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.DOWN) {
-                directoryText.requestFocus();
+                directorySelector.requestFocus();
                 event.consume();
             }
         });
 
-        directoryText.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+        directorySelector.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.UP) {
                 titleText.requestFocus();
                 event.consume();
@@ -66,7 +86,7 @@ public class AddNoteCtrl{
             }
         });
 
-        directoryText.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+        directorySelector.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.isControlDown() && event.getCode() == KeyCode.A) {
                 apply();
                 event.consume();
@@ -80,6 +100,40 @@ public class AddNoteCtrl{
                 event.consume();
             }
         });
+        updateLanguage();
+
+        directorySelector.setCellFactory(comboBox -> new ListCell<Directory>() {
+            @Override
+            protected void updateItem(Directory directory, boolean empty) {
+                super.updateItem(directory, empty);
+                if (empty || directory == null) {
+                    setText(null);
+                } else {
+                    setText(directory.getTitle() != null ? directory.getTitle() : "Untitled");
+                }
+            }
+        });
+
+        ObservableList<Directory> directories = FXCollections.observableArrayList(server.getAllDirectories());
+        if(!directories.isEmpty() || directories == null) {
+        for(int i = 0; i < directories.size(); i++) {
+            if (directories.get(i).getTitle().equals("All")) {
+                directories.remove(i);
+            }
+        }
+        }
+        directorySelector.setItems(directories);
+        directorySelector.getSelectionModel().select(directories.stream().filter(Directory::getDefault).findFirst().get());
+    }
+
+    public void updateLanguage() {
+        titleText.setPromptText(LanguageChange.getInstance().getText("addNote.titleText.prompt"));
+        directorySelector.setPromptText(LanguageChange.getInstance().getText("addNote.directoryText.prompt"));
+        resetButton.setText(LanguageChange.getInstance().getText("addNote.button.reset"));
+        cancelButton.setText(LanguageChange.getInstance().getText("addNote.button.cancel"));
+        applyButton.setText(LanguageChange.getInstance().getText("addNote.button.apply"));
+        titleLabel.setText(LanguageChange.getInstance().getText("addNote.label.title"));
+        directoryLabel.setText(LanguageChange.getInstance().getText("addNote.label.directory"));
     }
 
     /**
@@ -87,10 +141,11 @@ public class AddNoteCtrl{
      */
     public void apply() {
         String title = titleText.getText();
-        String directory = directoryText.getText();
+        Directory directory = directorySelector.getSelectionModel().getSelectedItem();
 
         if (title == null || title.trim().isEmpty()) {
-            showAlert("Error", "Title is required!", Alert.AlertType.ERROR);
+            showAlert(LanguageChange.getInstance().getText("alert.error"),
+                    LanguageChange.getInstance().getText("alert.required_title"), Alert.AlertType.ERROR);
             return;
         }
         String defaultContent = """
@@ -102,17 +157,20 @@ public class AddNoteCtrl{
         Note newNote = new Note();
         newNote.setTitle(title);
         newNote.setContent(defaultContent);
-        newNote.setDirectory(directory);
+        newNote.setDirectory(directory.getCollection());
         //System.out.println("addNote method is being called"); just a testing statement
         try {
             server.addNote(newNote);
             pc.getMarkdownCtrl().refreshNoteList();
-            showAlert("Success", "Note added successfully!", Alert.AlertType.INFORMATION);
+            showAlert(LanguageChange.getInstance().getText("alert.success"),
+                    LanguageChange.getInstance().getText("alert.successful_add"), Alert.AlertType.INFORMATION);
             pc.showMainScene();
             pc.getMarkdownCtrl().refreshNoteList();
             clearFields();
         } catch (Exception e) {
-            showAlert("Error", "Failed to add note: " + e.getMessage(), Alert.AlertType.ERROR);
+            showAlert(LanguageChange.getInstance().getText("alert.error"),
+                    LanguageChange.getInstance().getText("alert.failed_add")+ e.getMessage(),
+                    Alert.AlertType.ERROR);
         }
     }
 
@@ -158,10 +216,26 @@ public class AddNoteCtrl{
     public void clearFields(){
         try {
             titleText.clear();
-            directoryText.clear();
+            ObservableList<Directory> directories = FXCollections.observableArrayList(server.getAllDirectories());
+            if(!directories.isEmpty() || directories == null) {
+                for(int i = 0; i < directories.size(); i++) {
+                    if (directories.get(i).getTitle().equals("All")) {
+                        directories.remove(i);
+                    }
+                }
+            }
+            directorySelector.getSelectionModel().select(directories.stream().filter(Directory::getDefault).findFirst().get());
         }
         catch(Exception e){
             System.err.println("Fields could not be deleted");
         }
+    }
+
+    public MarkdownCtrl getMarkdownCtrl() {
+        return markdownCtrl;
+    }
+
+    public void setMarkdownCtrl(MarkdownCtrl markdownCtrl) {
+        this.markdownCtrl = markdownCtrl;
     }
 }

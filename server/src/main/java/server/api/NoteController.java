@@ -1,5 +1,6 @@
 package server.api;
 
+import commons.Directory;
 import commons.Note;
 import commons.Tag;
 import jakarta.persistence.EntityManager;
@@ -7,6 +8,7 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.database.DirectoryRepository;
 import server.database.NoteRepository;
 import server.service.TagService;
 
@@ -26,8 +28,13 @@ public class NoteController {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public NoteController(NoteRepository repo) {
+    private final DirectoryRepository directoryRepository;
+    @Autowired
+    private NoteRepository noteRepository;
+
+    public NoteController(NoteRepository repo, DirectoryRepository directoryRepository) {
         this.repo = repo;
+        this.directoryRepository = directoryRepository;
     }
 
     @GetMapping(path = {"", "/"})
@@ -47,6 +54,13 @@ public class NoteController {
     public ResponseEntity<Note> add(@RequestBody Note note) {
         if (note.getTitle() == null || note.getTitle().isEmpty()) {
             return ResponseEntity.badRequest().build();
+        }
+        Directory noteDirectory = directoryRepository.findAll().stream()
+                .filter(x -> x.getTitle().equals(note.getDirectory())).findFirst().orElse(null);
+        if(noteDirectory == null) {
+            return ResponseEntity.badRequest().build();
+        } else {
+            directoryRepository.findById(noteDirectory.getId()).get().addNote(note);
         }
         Note saved = repo.save(note);
         return ResponseEntity.ok(saved);
@@ -68,18 +82,23 @@ public class NoteController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") long id) {
-        if (id < 0 || !repo.existsById(id)) {
+        if (!repo.existsById(id)) {
+            System.out.println("Note not present in repo");
             return ResponseEntity.badRequest().build();
-
         }
         Note note = repo.findById(id).get();
+        Directory noteDirectory = directoryRepository.findAll().stream()
+                .filter(x -> x.getTitle().equals(note.getDirectory())).findFirst().orElse(null);
+        if(noteDirectory != null) {
+            directoryRepository.findById(noteDirectory.getId()).get().removeNote(note);
+        }
         repo.delete(note);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Note> updateNote(@PathVariable("id") long id, @RequestBody Note updatedNote) {
-        System.out.println("Server received update request");
+        System.out.println("update request was sent");
         if (id < 0) {
             return ResponseEntity.badRequest().build();
         }
@@ -89,6 +108,7 @@ public class NoteController {
         Optional<Note> optionalNote = repo.findById(id);
         if (optionalNote.isPresent())
             existingNote = optionalNote.get();
+
         if (existingNote == null)
             return ResponseEntity.notFound().build();
 
