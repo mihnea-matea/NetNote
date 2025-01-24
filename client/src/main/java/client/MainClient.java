@@ -1,9 +1,6 @@
 package client;
 
-import client.scenes.EditCollectionsCtrl;
-import client.scenes.MainNetNodeCtrl;
-import client.scenes.AddNoteCtrl;
-import client.scenes.MarkdownCtrl;
+import client.scenes.*;
 import client.utils.Config;
 import client.utils.ConfigUtils;
 import javafx.application.Application;
@@ -29,11 +26,12 @@ public class MainClient extends Application {
         var mainScene = FXML.load(MarkdownCtrl.class, "client", "scenes", "mainClient.fxml");
         var addScene = FXML.load(AddNoteCtrl.class, "client","scenes", "AddNote.fxml");
         var editCollectionScene = FXML.load(EditCollectionsCtrl.class, "client","scenes", "EditCollection.fxml");
+        var noteSearchScene = FXML.load(NoteSearchCtrl.class, "client", "scenes", "noteSearch.fxml");
         var pc = INJECTOR.getInstance(MainNetNodeCtrl.class);
         var markdownCtrl = mainScene.getKey();
         //comment out after adding the collections fxml
 //        pc.init(stage, mainScene, addScene, markdownCtrl);
-        pc.init(stage, mainScene, addScene, editCollectionScene, markdownCtrl);
+        pc.init(stage, mainScene, addScene, editCollectionScene, noteSearchScene, markdownCtrl);
         stage.setOnCloseRequest(event -> {
             markdownCtrl.autosaveCurrentNote();
         });
