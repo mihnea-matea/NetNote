@@ -1109,7 +1109,7 @@ public class MarkdownCtrl {
         // Update title if it's not already the correct one
         if (!uniqueTitle.equals(baseTitle)) {
             showAlert("Duplicate Title Detected",
-                    "The title was changed to avoid duplicates: " + uniqueTitle,
+                    "The title was changed to avoid duplicates!",
                     Alert.AlertType.WARNING);
         }
 
