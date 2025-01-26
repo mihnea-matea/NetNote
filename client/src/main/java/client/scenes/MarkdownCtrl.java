@@ -208,6 +208,7 @@ public class MarkdownCtrl {
             if (oldValue != null && charsModifiedSinceLastSave > 0) {
                 ensureUniqueTitle(oldValue);
                 autosaveCertainNote(oldValue);
+                //refreshNoteList();
             }
 
             charsModifiedSinceLastSave = 0;
@@ -250,16 +251,16 @@ public class MarkdownCtrl {
 
         markdownTitle.focusedProperty().addListener((observable, oldFocus, newFocus) -> {
             if (!newFocus) {
-//                /// currentNote.setTitle(markdownTitle.getText());
-//                System.out.println("Current title stored in currentNote is: " + currentNote.getTitle());
-//                ensureUniqueTitle(currentNote);
-//                System.out.println("Current title stored in currentNote is: " + currentNote.getTitle());
-//                markdownTitle.setText(currentNote.getTitle());
-//                currentNote = serverUtils.updateNote(currentNote);
-//                ///refreshNoteList();
+                /// currentNote.setTitle(markdownTitle.getText());
+                System.out.println("Current title stored in currentNote is: " + currentNote.getTitle());
                 ensureUniqueTitle(currentNote);
+                System.out.println("Current title stored in currentNote is: " + currentNote.getTitle());
                 markdownTitle.setText(currentNote.getTitle());
-                refreshNoteList();
+                currentNote = serverUtils.updateNote(currentNote);
+                ///refreshNoteList();
+//                ensureUniqueTitle(currentNote);
+//                markdownTitle.setText(currentNote.getTitle());
+//                refreshNoteList();
 
             }
         });
