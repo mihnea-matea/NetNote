@@ -50,10 +50,6 @@ public class FileService {
         }
     }
 
-    public List<File> getFilesByNoteId(Long noteId){
-        return fileRepository.findByNoteId(noteId);
-    }
-
     public void deleteFile(Long fileId){
         try{
             File file=fileRepository.findById(fileId).orElseThrow(()-> new RuntimeException("The file was not found"));
@@ -81,10 +77,18 @@ public class FileService {
                 }
             }
             else{
-                throw new RuntimeException("File not found"+fileName);
+                throw new RuntimeException("File not found "+fileName);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public List<File> getFilesByNoteId(Long noteId){
+        if(noteId == -1){
+            return fileRepository.findAll();
+        } else {
+            return fileRepository.findByNoteId(noteId);
         }
     }
 }

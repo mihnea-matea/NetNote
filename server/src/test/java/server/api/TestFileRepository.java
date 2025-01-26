@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class TestFileRepository implements FileRepository {
     public final List<File> files = new ArrayList<>();
@@ -105,7 +106,9 @@ public class TestFileRepository implements FileRepository {
 
     @Override
     public List<File> findByNoteId(Long noteId) {
-        return List.of();
+        return files.stream()
+                .filter(file -> file.getNote().getId() == noteId)
+                .collect(Collectors.toList());
     }
 
     @Override
