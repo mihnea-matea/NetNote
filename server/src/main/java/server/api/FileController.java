@@ -30,7 +30,7 @@ public class FileController {
     public FileController(FileService fileService, NoteRepository noteRepository) {
         this.fileService = fileService;
         this.noteRepository = noteRepository;
-        System.out.println("controller initialized");
+        System.out.println("File controller initialized");
     }
 
     @GetMapping("/{noteId:\\d+}")
